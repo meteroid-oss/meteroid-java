@@ -1,18 +1,22 @@
 # Meteroid Java SDK
 
-Meteroid API client
+The official Java SDK for [Meteroid](https://meteroid.com), the open-source billing and pricing platform. Meteroid manages subscriptions, usage-based billing and metering, invoicing and revenue analytics; this library calls its REST API and verifies its webhooks, against Meteroid Cloud (`https://api.meteroid.com`) or a self-hosted instance.
 
+[Website](https://meteroid.com) · [Documentation](https://docs.meteroid.com) · [API reference](https://docs.meteroid.com/api-reference) · [Meteroid on GitHub](https://github.com/meteroid-oss/meteroid)
+
+<!-- x-release-please-start-version -->
 ```kotlin
-implementation("com.meteroid:meteroid:0.1.0")
+implementation("com.meteroid:meteroid:0.27.1")
 ```
 
 ```xml
 <dependency>
   <groupId>com.meteroid</groupId>
   <artifactId>meteroid</artifactId>
-  <version>0.1.0</version>
+  <version>0.27.1</version>
 </dependency>
 ```
+<!-- x-release-please-end -->
 
 Requires Java 11 or later. Every method of the API is listed in [api.md](api.md).
 
@@ -35,7 +39,7 @@ import com.meteroid.MeteroidOptions;
 Meteroid client = new Meteroid(
         MeteroidOptions.builder()
                 .apiKey("your-api-key")
-                .baseUrl("https://api.example.com")
+                .baseUrl("https://api.meteroid.com")
                 .timeout(Duration.ofSeconds(20))
                 .maxRetries(3)
                 .build());
