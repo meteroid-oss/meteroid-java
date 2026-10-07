@@ -11,6 +11,7 @@ import com.meteroid.models.ProductListResponse;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateProductRequest;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,9 +44,9 @@ public final class ProductsAsync {
     /**
      * List products
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductListResponse> list() {
+    public CompletableFuture<ProductsListAsyncPage> list() {
         return list(ProductsListOptions.none(), RequestOptions.none());
     }
 
@@ -53,9 +54,9 @@ public final class ProductsAsync {
      * List products
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductListResponse> list(final ProductsListOptions options) {
+    public CompletableFuture<ProductsListAsyncPage> list(final ProductsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -63,9 +64,9 @@ public final class ProductsAsync {
      * List products
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<ProductsListAsyncPage> list(final RequestOptions requestOptions) {
         return list(ProductsListOptions.none(), requestOptions);
     }
 
@@ -74,11 +75,27 @@ public final class ProductsAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductListResponse> list(
+    public CompletableFuture<ProductsListAsyncPage> list(
             final ProductsListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private ProductsListAsyncPage pageOfList(
+            ProductListResponse response,
+            final ProductsListOptions options,
+            final RequestOptions requestOptions) {
+        List<Product> items = Products.itemsOfList(response);
+        Integer next = Products.nextOfList(response, items, options.page().orElse(0));
+        return new ProductsListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -274,9 +291,9 @@ public final class ProductsAsync {
         /**
          * List products
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductListResponse>> list() {
+        public CompletableFuture<ApiResponse<ProductsListAsyncPage>> list() {
             return list(ProductsListOptions.none(), RequestOptions.none());
         }
 
@@ -284,9 +301,9 @@ public final class ProductsAsync {
          * List products
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductsListAsyncPage>> list(
                 final ProductsListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -295,9 +312,9 @@ public final class ProductsAsync {
          * List products
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductsListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(ProductsListOptions.none(), requestOptions);
         }
@@ -307,11 +324,18 @@ public final class ProductsAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductsListAsyncPage>> list(
                 final ProductsListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

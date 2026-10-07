@@ -7,7 +7,9 @@ import com.meteroid.internal.MeteroidHttpClient;
 import com.meteroid.internal.Utils;
 import com.meteroid.models.BatchJobDetailResponse;
 import com.meteroid.models.BatchJobFailuresResponse;
+import com.meteroid.models.BatchJobItemFailureResponse;
 import com.meteroid.models.BatchJobListResponse;
+import com.meteroid.models.BatchJobResponse;
 import com.meteroid.models.BatchJobStatus;
 import com.meteroid.models.BatchJobType;
 
@@ -46,9 +48,9 @@ public final class BatchJobs {
     /**
      * List batch jobs with optional filtering by type and status.
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobListResponse list() {
+    public BatchJobsListPage list() {
         return list(BatchJobsListOptions.none(), RequestOptions.none());
     }
 
@@ -56,9 +58,9 @@ public final class BatchJobs {
      * List batch jobs with optional filtering by type and status.
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobListResponse list(final BatchJobsListOptions options) {
+    public BatchJobsListPage list(final BatchJobsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -66,9 +68,9 @@ public final class BatchJobs {
      * List batch jobs with optional filtering by type and status.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobListResponse list(final RequestOptions requestOptions) {
+    public BatchJobsListPage list(final RequestOptions requestOptions) {
         return list(BatchJobsListOptions.none(), requestOptions);
     }
 
@@ -77,11 +79,11 @@ public final class BatchJobs {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobListResponse list(
+    public BatchJobsListPage list(
             final BatchJobsListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<BatchJobListResponse> exchangeList(
@@ -108,6 +110,41 @@ public final class BatchJobs {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(BatchJobListResponse.class);
+    }
+
+    private BatchJobsListPage pageOfList(
+            BatchJobListResponse response,
+            final BatchJobsListOptions options,
+            final RequestOptions requestOptions) {
+        List<BatchJobResponse> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new BatchJobsListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<BatchJobResponse> itemsOfList(BatchJobListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(
+            BatchJobListResponse response, List<BatchJobResponse> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -156,9 +193,9 @@ public final class BatchJobs {
      * <p>Retrieve paginated failures for a batch job.
      *
      * @param batchJobId the {@code batch_job_id} path parameter
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobFailuresResponse listFailures(final String batchJobId) {
+    public BatchJobsListFailuresPage listFailures(final String batchJobId) {
         return listFailures(batchJobId, BatchJobsListFailuresOptions.none(), RequestOptions.none());
     }
 
@@ -169,9 +206,9 @@ public final class BatchJobs {
      *
      * @param batchJobId the {@code batch_job_id} path parameter
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobFailuresResponse listFailures(
+    public BatchJobsListFailuresPage listFailures(
             final String batchJobId, final BatchJobsListFailuresOptions options) {
         return listFailures(batchJobId, options, RequestOptions.none());
     }
@@ -183,9 +220,9 @@ public final class BatchJobs {
      *
      * @param batchJobId the {@code batch_job_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobFailuresResponse listFailures(
+    public BatchJobsListFailuresPage listFailures(
             final String batchJobId, final RequestOptions requestOptions) {
         return listFailures(batchJobId, BatchJobsListFailuresOptions.none(), requestOptions);
     }
@@ -198,13 +235,17 @@ public final class BatchJobs {
      * @param batchJobId the {@code batch_job_id} path parameter
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public BatchJobFailuresResponse listFailures(
+    public BatchJobsListFailuresPage listFailures(
             final String batchJobId,
             final BatchJobsListFailuresOptions options,
             final RequestOptions requestOptions) {
-        return exchangeListFailures(batchJobId, options, requestOptions).send();
+        return pageOfListFailures(
+                exchangeListFailures(batchJobId, options, requestOptions).send(),
+                batchJobId,
+                options,
+                requestOptions);
     }
 
     MeteroidHttpClient.Exchange<BatchJobFailuresResponse> exchangeListFailures(
@@ -236,6 +277,47 @@ public final class BatchJobs {
                 .returning(BatchJobFailuresResponse.class);
     }
 
+    private BatchJobsListFailuresPage pageOfListFailures(
+            BatchJobFailuresResponse response,
+            final String batchJobId,
+            final BatchJobsListFailuresOptions options,
+            final RequestOptions requestOptions) {
+        List<BatchJobItemFailureResponse> items = itemsOfListFailures(response);
+        Integer next = nextOfListFailures(response, items, options.offset().orElse(0));
+        return new BatchJobsListFailuresPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () ->
+                                listFailures(
+                                        batchJobId,
+                                        options.toBuilder().offset(next).build(),
+                                        requestOptions));
+    }
+
+    static List<BatchJobItemFailureResponse> itemsOfListFailures(
+            BatchJobFailuresResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfListFailures(
+            BatchJobFailuresResponse response,
+            List<BatchJobItemFailureResponse> items,
+            Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        Integer next = current + items.size();
+        long total =
+                Utils.optional(response.totalCount()).map(Number::longValue).orElse(Long.MAX_VALUE);
+        if (next >= total) {
+            return null;
+        }
+        return next;
+    }
+
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
@@ -243,9 +325,9 @@ public final class BatchJobs {
         /**
          * List batch jobs with optional filtering by type and status.
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobListResponse> list() {
+        public ApiResponse<BatchJobsListPage> list() {
             return list(BatchJobsListOptions.none(), RequestOptions.none());
         }
 
@@ -253,9 +335,9 @@ public final class BatchJobs {
          * List batch jobs with optional filtering by type and status.
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobListResponse> list(final BatchJobsListOptions options) {
+        public ApiResponse<BatchJobsListPage> list(final BatchJobsListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -263,9 +345,9 @@ public final class BatchJobs {
          * List batch jobs with optional filtering by type and status.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<BatchJobsListPage> list(final RequestOptions requestOptions) {
             return list(BatchJobsListOptions.none(), requestOptions);
         }
 
@@ -274,11 +356,16 @@ public final class BatchJobs {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobListResponse> list(
+        public ApiResponse<BatchJobsListPage> list(
                 final BatchJobsListOptions options, final RequestOptions requestOptions) {
-            return BatchJobs.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<BatchJobListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**
@@ -313,9 +400,9 @@ public final class BatchJobs {
          * <p>Retrieve paginated failures for a batch job.
          *
          * @param batchJobId the {@code batch_job_id} path parameter
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobFailuresResponse> listFailures(final String batchJobId) {
+        public ApiResponse<BatchJobsListFailuresPage> listFailures(final String batchJobId) {
             return listFailures(
                     batchJobId, BatchJobsListFailuresOptions.none(), RequestOptions.none());
         }
@@ -327,9 +414,9 @@ public final class BatchJobs {
          *
          * @param batchJobId the {@code batch_job_id} path parameter
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobFailuresResponse> listFailures(
+        public ApiResponse<BatchJobsListFailuresPage> listFailures(
                 final String batchJobId, final BatchJobsListFailuresOptions options) {
             return listFailures(batchJobId, options, RequestOptions.none());
         }
@@ -341,9 +428,9 @@ public final class BatchJobs {
          *
          * @param batchJobId the {@code batch_job_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobFailuresResponse> listFailures(
+        public ApiResponse<BatchJobsListFailuresPage> listFailures(
                 final String batchJobId, final RequestOptions requestOptions) {
             return listFailures(batchJobId, BatchJobsListFailuresOptions.none(), requestOptions);
         }
@@ -356,15 +443,18 @@ public final class BatchJobs {
          * @param batchJobId the {@code batch_job_id} path parameter
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<BatchJobFailuresResponse> listFailures(
+        public ApiResponse<BatchJobsListFailuresPage> listFailures(
                 final String batchJobId,
                 final BatchJobsListFailuresOptions options,
                 final RequestOptions requestOptions) {
-            return BatchJobs.this
-                    .exchangeListFailures(batchJobId, options, requestOptions)
-                    .sendRaw();
+            ApiResponse<BatchJobFailuresResponse> response =
+                    exchangeListFailures(batchJobId, options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfListFailures(response.body(), batchJobId, options, requestOptions));
         }
     }
 }

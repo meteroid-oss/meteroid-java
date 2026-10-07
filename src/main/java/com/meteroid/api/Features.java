@@ -46,9 +46,9 @@ public final class Features {
     /**
      * List features
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public FeatureListResponse list() {
+    public FeaturesListPage list() {
         return list(FeaturesListOptions.none(), RequestOptions.none());
     }
 
@@ -56,9 +56,9 @@ public final class Features {
      * List features
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public FeatureListResponse list(final FeaturesListOptions options) {
+    public FeaturesListPage list(final FeaturesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -66,9 +66,9 @@ public final class Features {
      * List features
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public FeatureListResponse list(final RequestOptions requestOptions) {
+    public FeaturesListPage list(final RequestOptions requestOptions) {
         return list(FeaturesListOptions.none(), requestOptions);
     }
 
@@ -77,11 +77,11 @@ public final class Features {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public FeatureListResponse list(
+    public FeaturesListPage list(
             final FeaturesListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<FeatureListResponse> exchangeList(
@@ -112,6 +112,40 @@ public final class Features {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429")
                 .options(requestOptions)
                 .returning(FeatureListResponse.class);
+    }
+
+    private FeaturesListPage pageOfList(
+            FeatureListResponse response,
+            final FeaturesListOptions options,
+            final RequestOptions requestOptions) {
+        List<Feature> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new FeaturesListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Feature> itemsOfList(FeatureListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(FeatureListResponse response, List<Feature> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -309,9 +343,9 @@ public final class Features {
         /**
          * List features
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<FeatureListResponse> list() {
+        public ApiResponse<FeaturesListPage> list() {
             return list(FeaturesListOptions.none(), RequestOptions.none());
         }
 
@@ -319,9 +353,9 @@ public final class Features {
          * List features
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<FeatureListResponse> list(final FeaturesListOptions options) {
+        public ApiResponse<FeaturesListPage> list(final FeaturesListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -329,9 +363,9 @@ public final class Features {
          * List features
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<FeatureListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<FeaturesListPage> list(final RequestOptions requestOptions) {
             return list(FeaturesListOptions.none(), requestOptions);
         }
 
@@ -340,11 +374,16 @@ public final class Features {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<FeatureListResponse> list(
+        public ApiResponse<FeaturesListPage> list(
                 final FeaturesListOptions options, final RequestOptions requestOptions) {
-            return Features.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<FeatureListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

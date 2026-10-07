@@ -11,6 +11,7 @@ import com.meteroid.models.EntitlementListResponse;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateAddOnRequest;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,9 +44,9 @@ public final class AddOnsAsync {
     /**
      * List add-ons
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<AddOnListResponse> list() {
+    public CompletableFuture<AddOnsListAsyncPage> list() {
         return list(AddOnsListOptions.none(), RequestOptions.none());
     }
 
@@ -53,9 +54,9 @@ public final class AddOnsAsync {
      * List add-ons
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<AddOnListResponse> list(final AddOnsListOptions options) {
+    public CompletableFuture<AddOnsListAsyncPage> list(final AddOnsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -63,9 +64,9 @@ public final class AddOnsAsync {
      * List add-ons
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<AddOnListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<AddOnsListAsyncPage> list(final RequestOptions requestOptions) {
         return list(AddOnsListOptions.none(), requestOptions);
     }
 
@@ -74,11 +75,27 @@ public final class AddOnsAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<AddOnListResponse> list(
+    public CompletableFuture<AddOnsListAsyncPage> list(
             final AddOnsListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private AddOnsListAsyncPage pageOfList(
+            AddOnListResponse response,
+            final AddOnsListOptions options,
+            final RequestOptions requestOptions) {
+        List<AddOn> items = AddOns.itemsOfList(response);
+        Integer next = AddOns.nextOfList(response, items, options.page().orElse(0));
+        return new AddOnsListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -258,9 +275,9 @@ public final class AddOnsAsync {
         /**
          * List add-ons
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<AddOnListResponse>> list() {
+        public CompletableFuture<ApiResponse<AddOnsListAsyncPage>> list() {
             return list(AddOnsListOptions.none(), RequestOptions.none());
         }
 
@@ -268,9 +285,9 @@ public final class AddOnsAsync {
          * List add-ons
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<AddOnListResponse>> list(
+        public CompletableFuture<ApiResponse<AddOnsListAsyncPage>> list(
                 final AddOnsListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -279,9 +296,9 @@ public final class AddOnsAsync {
          * List add-ons
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<AddOnListResponse>> list(
+        public CompletableFuture<ApiResponse<AddOnsListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(AddOnsListOptions.none(), requestOptions);
         }
@@ -291,11 +308,18 @@ public final class AddOnsAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<AddOnListResponse>> list(
+        public CompletableFuture<ApiResponse<AddOnsListAsyncPage>> list(
                 final AddOnsListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

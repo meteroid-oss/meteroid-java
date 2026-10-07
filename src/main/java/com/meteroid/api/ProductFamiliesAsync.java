@@ -7,6 +7,7 @@ import com.meteroid.models.ProductFamily;
 import com.meteroid.models.ProductFamilyCreateRequest;
 import com.meteroid.models.ProductFamilyListResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -39,9 +40,9 @@ public final class ProductFamiliesAsync {
     /**
      * List product families
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductFamilyListResponse> list() {
+    public CompletableFuture<ProductFamiliesListAsyncPage> list() {
         return list(ProductFamiliesListOptions.none(), RequestOptions.none());
     }
 
@@ -49,9 +50,9 @@ public final class ProductFamiliesAsync {
      * List product families
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductFamilyListResponse> list(
+    public CompletableFuture<ProductFamiliesListAsyncPage> list(
             final ProductFamiliesListOptions options) {
         return list(options, RequestOptions.none());
     }
@@ -60,9 +61,10 @@ public final class ProductFamiliesAsync {
      * List product families
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductFamilyListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<ProductFamiliesListAsyncPage> list(
+            final RequestOptions requestOptions) {
         return list(ProductFamiliesListOptions.none(), requestOptions);
     }
 
@@ -71,11 +73,27 @@ public final class ProductFamiliesAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<ProductFamilyListResponse> list(
+    public CompletableFuture<ProductFamiliesListAsyncPage> list(
             final ProductFamiliesListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private ProductFamiliesListAsyncPage pageOfList(
+            ProductFamilyListResponse response,
+            final ProductFamiliesListOptions options,
+            final RequestOptions requestOptions) {
+        List<ProductFamily> items = ProductFamilies.itemsOfList(response);
+        Integer next = ProductFamilies.nextOfList(response, items, options.page().orElse(0));
+        return new ProductFamiliesListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -135,9 +153,9 @@ public final class ProductFamiliesAsync {
         /**
          * List product families
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductFamilyListResponse>> list() {
+        public CompletableFuture<ApiResponse<ProductFamiliesListAsyncPage>> list() {
             return list(ProductFamiliesListOptions.none(), RequestOptions.none());
         }
 
@@ -145,9 +163,9 @@ public final class ProductFamiliesAsync {
          * List product families
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductFamilyListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductFamiliesListAsyncPage>> list(
                 final ProductFamiliesListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -156,9 +174,9 @@ public final class ProductFamiliesAsync {
          * List product families
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductFamilyListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductFamiliesListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(ProductFamiliesListOptions.none(), requestOptions);
         }
@@ -168,11 +186,18 @@ public final class ProductFamiliesAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<ProductFamilyListResponse>> list(
+        public CompletableFuture<ApiResponse<ProductFamiliesListAsyncPage>> list(
                 final ProductFamiliesListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

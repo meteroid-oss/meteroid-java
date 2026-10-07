@@ -12,6 +12,7 @@ import com.meteroid.models.CustomerPortalTokenResponse;
 import com.meteroid.models.CustomerUpdateRequest;
 import com.meteroid.models.EffectiveEntitlementListResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -44,9 +45,9 @@ public final class CustomersAsync {
     /**
      * List customers with optional pagination and search filtering.
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomerListResponse> list() {
+    public CompletableFuture<CustomersListAsyncPage> list() {
         return list(CustomersListOptions.none(), RequestOptions.none());
     }
 
@@ -54,9 +55,9 @@ public final class CustomersAsync {
      * List customers with optional pagination and search filtering.
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomerListResponse> list(final CustomersListOptions options) {
+    public CompletableFuture<CustomersListAsyncPage> list(final CustomersListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -64,9 +65,9 @@ public final class CustomersAsync {
      * List customers with optional pagination and search filtering.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomerListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<CustomersListAsyncPage> list(final RequestOptions requestOptions) {
         return list(CustomersListOptions.none(), requestOptions);
     }
 
@@ -75,11 +76,27 @@ public final class CustomersAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomerListResponse> list(
+    public CompletableFuture<CustomersListAsyncPage> list(
             final CustomersListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private CustomersListAsyncPage pageOfList(
+            CustomerListResponse response,
+            final CustomersListOptions options,
+            final RequestOptions requestOptions) {
+        List<Customer> items = Customers.itemsOfList(response);
+        Integer next = Customers.nextOfList(response, items, options.page().orElse(0));
+        return new CustomersListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -303,9 +320,9 @@ public final class CustomersAsync {
         /**
          * List customers with optional pagination and search filtering.
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomerListResponse>> list() {
+        public CompletableFuture<ApiResponse<CustomersListAsyncPage>> list() {
             return list(CustomersListOptions.none(), RequestOptions.none());
         }
 
@@ -313,9 +330,9 @@ public final class CustomersAsync {
          * List customers with optional pagination and search filtering.
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomerListResponse>> list(
+        public CompletableFuture<ApiResponse<CustomersListAsyncPage>> list(
                 final CustomersListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -324,9 +341,9 @@ public final class CustomersAsync {
          * List customers with optional pagination and search filtering.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomerListResponse>> list(
+        public CompletableFuture<ApiResponse<CustomersListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(CustomersListOptions.none(), requestOptions);
         }
@@ -336,11 +353,18 @@ public final class CustomersAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomerListResponse>> list(
+        public CompletableFuture<ApiResponse<CustomersListAsyncPage>> list(
                 final CustomersListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

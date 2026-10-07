@@ -15,6 +15,7 @@ import com.meteroid.models.PlanListResponse;
 import com.meteroid.models.PlanStatusEnum;
 import com.meteroid.models.PlanTypeEnum;
 import com.meteroid.models.PlanVersionListResponse;
+import com.meteroid.models.PlanVersionSummary;
 import com.meteroid.models.ReplacePlanRequest;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 
@@ -144,9 +145,9 @@ public final class Plans {
     /**
      * List plans
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanListResponse list() {
+    public PlansListPage list() {
         return list(PlansListOptions.none(), RequestOptions.none());
     }
 
@@ -154,9 +155,9 @@ public final class Plans {
      * List plans
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanListResponse list(final PlansListOptions options) {
+    public PlansListPage list(final PlansListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -164,9 +165,9 @@ public final class Plans {
      * List plans
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanListResponse list(final RequestOptions requestOptions) {
+    public PlansListPage list(final RequestOptions requestOptions) {
         return list(PlansListOptions.none(), requestOptions);
     }
 
@@ -175,11 +176,10 @@ public final class Plans {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanListResponse list(
-            final PlansListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+    public PlansListPage list(final PlansListOptions options, final RequestOptions requestOptions) {
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<PlanListResponse> exchangeList(
@@ -218,6 +218,40 @@ public final class Plans {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429")
                 .options(requestOptions)
                 .returning(PlanListResponse.class);
+    }
+
+    private PlansListPage pageOfList(
+            PlanListResponse response,
+            final PlansListOptions options,
+            final RequestOptions requestOptions) {
+        List<Plan> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new PlansListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Plan> itemsOfList(PlanListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(PlanListResponse response, List<Plan> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -634,9 +668,9 @@ public final class Plans {
      * List plan versions
      *
      * @param planId the {@code plan_id} path parameter
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanVersionListResponse listVersions(final String planId) {
+    public PlansListVersionsPage listVersions(final String planId) {
         return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
     }
 
@@ -645,9 +679,9 @@ public final class Plans {
      *
      * @param planId the {@code plan_id} path parameter
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanVersionListResponse listVersions(
+    public PlansListVersionsPage listVersions(
             final String planId, final PlansListVersionsOptions options) {
         return listVersions(planId, options, RequestOptions.none());
     }
@@ -657,9 +691,9 @@ public final class Plans {
      *
      * @param planId the {@code plan_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanVersionListResponse listVersions(
+    public PlansListVersionsPage listVersions(
             final String planId, final RequestOptions requestOptions) {
         return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
     }
@@ -670,13 +704,17 @@ public final class Plans {
      * @param planId the {@code plan_id} path parameter
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public PlanVersionListResponse listVersions(
+    public PlansListVersionsPage listVersions(
             final String planId,
             final PlansListVersionsOptions options,
             final RequestOptions requestOptions) {
-        return exchangeListVersions(planId, options, requestOptions).send();
+        return pageOfListVersions(
+                exchangeListVersions(planId, options, requestOptions).send(),
+                planId,
+                options,
+                requestOptions);
     }
 
     MeteroidHttpClient.Exchange<PlanVersionListResponse> exchangeListVersions(
@@ -702,6 +740,46 @@ public final class Plans {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
                 .options(requestOptions)
                 .returning(PlanVersionListResponse.class);
+    }
+
+    private PlansListVersionsPage pageOfListVersions(
+            PlanVersionListResponse response,
+            final String planId,
+            final PlansListVersionsOptions options,
+            final RequestOptions requestOptions) {
+        List<PlanVersionSummary> items = itemsOfListVersions(response);
+        Integer next = nextOfListVersions(response, items, options.page().orElse(0));
+        return new PlansListVersionsPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () ->
+                                listVersions(
+                                        planId,
+                                        options.toBuilder().page(next).build(),
+                                        requestOptions));
+    }
+
+    static List<PlanVersionSummary> itemsOfListVersions(PlanVersionListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfListVersions(
+            PlanVersionListResponse response, List<PlanVersionSummary> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /** The operations, returning the status and headers along with the body. */
@@ -772,9 +850,9 @@ public final class Plans {
         /**
          * List plans
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanListResponse> list() {
+        public ApiResponse<PlansListPage> list() {
             return list(PlansListOptions.none(), RequestOptions.none());
         }
 
@@ -782,9 +860,9 @@ public final class Plans {
          * List plans
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanListResponse> list(final PlansListOptions options) {
+        public ApiResponse<PlansListPage> list(final PlansListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -792,9 +870,9 @@ public final class Plans {
          * List plans
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<PlansListPage> list(final RequestOptions requestOptions) {
             return list(PlansListOptions.none(), requestOptions);
         }
 
@@ -803,11 +881,16 @@ public final class Plans {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanListResponse> list(
+        public ApiResponse<PlansListPage> list(
                 final PlansListOptions options, final RequestOptions requestOptions) {
-            return Plans.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<PlanListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**
@@ -1089,9 +1172,9 @@ public final class Plans {
          * List plan versions
          *
          * @param planId the {@code plan_id} path parameter
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanVersionListResponse> listVersions(final String planId) {
+        public ApiResponse<PlansListVersionsPage> listVersions(final String planId) {
             return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
         }
 
@@ -1100,9 +1183,9 @@ public final class Plans {
          *
          * @param planId the {@code plan_id} path parameter
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanVersionListResponse> listVersions(
+        public ApiResponse<PlansListVersionsPage> listVersions(
                 final String planId, final PlansListVersionsOptions options) {
             return listVersions(planId, options, RequestOptions.none());
         }
@@ -1112,9 +1195,9 @@ public final class Plans {
          *
          * @param planId the {@code plan_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanVersionListResponse> listVersions(
+        public ApiResponse<PlansListVersionsPage> listVersions(
                 final String planId, final RequestOptions requestOptions) {
             return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
         }
@@ -1125,13 +1208,18 @@ public final class Plans {
          * @param planId the {@code plan_id} path parameter
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<PlanVersionListResponse> listVersions(
+        public ApiResponse<PlansListVersionsPage> listVersions(
                 final String planId,
                 final PlansListVersionsOptions options,
                 final RequestOptions requestOptions) {
-            return Plans.this.exchangeListVersions(planId, options, requestOptions).sendRaw();
+            ApiResponse<PlanVersionListResponse> response =
+                    exchangeListVersions(planId, options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfListVersions(response.body(), planId, options, requestOptions));
         }
     }
 }

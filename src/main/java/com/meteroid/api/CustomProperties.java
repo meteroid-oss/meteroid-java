@@ -13,6 +13,7 @@ import com.meteroid.models.CustomPropertyEntityType;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -45,9 +46,9 @@ public final class CustomProperties {
     /**
      * List custom property definitions
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomPropertyDefinitionListResponse listCustomPropertyDefinitions() {
+    public CustomPropertiesListCustomPropertyDefinitionsPage listCustomPropertyDefinitions() {
         return listCustomPropertyDefinitions(
                 CustomPropertiesListCustomPropertyDefinitionsOptions.none(), RequestOptions.none());
     }
@@ -56,9 +57,9 @@ public final class CustomProperties {
      * List custom property definitions
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomPropertyDefinitionListResponse listCustomPropertyDefinitions(
+    public CustomPropertiesListCustomPropertyDefinitionsPage listCustomPropertyDefinitions(
             final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
         return listCustomPropertyDefinitions(options, RequestOptions.none());
     }
@@ -67,9 +68,9 @@ public final class CustomProperties {
      * List custom property definitions
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomPropertyDefinitionListResponse listCustomPropertyDefinitions(
+    public CustomPropertiesListCustomPropertyDefinitionsPage listCustomPropertyDefinitions(
             final RequestOptions requestOptions) {
         return listCustomPropertyDefinitions(
                 CustomPropertiesListCustomPropertyDefinitionsOptions.none(), requestOptions);
@@ -80,12 +81,15 @@ public final class CustomProperties {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomPropertyDefinitionListResponse listCustomPropertyDefinitions(
+    public CustomPropertiesListCustomPropertyDefinitionsPage listCustomPropertyDefinitions(
             final CustomPropertiesListCustomPropertyDefinitionsOptions options,
             final RequestOptions requestOptions) {
-        return exchangeListCustomPropertyDefinitions(options, requestOptions).send();
+        return pageOfListCustomPropertyDefinitions(
+                exchangeListCustomPropertyDefinitions(options, requestOptions).send(),
+                options,
+                requestOptions);
     }
 
     MeteroidHttpClient.Exchange<CustomPropertyDefinitionListResponse>
@@ -115,6 +119,47 @@ public final class CustomProperties {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(CustomPropertyDefinitionListResponse.class);
+    }
+
+    private CustomPropertiesListCustomPropertyDefinitionsPage pageOfListCustomPropertyDefinitions(
+            CustomPropertyDefinitionListResponse response,
+            final CustomPropertiesListCustomPropertyDefinitionsOptions options,
+            final RequestOptions requestOptions) {
+        List<CustomPropertyDefinition> items = itemsOfListCustomPropertyDefinitions(response);
+        Integer next =
+                nextOfListCustomPropertyDefinitions(response, items, options.page().orElse(0));
+        return new CustomPropertiesListCustomPropertyDefinitionsPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () ->
+                                listCustomPropertyDefinitions(
+                                        options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<CustomPropertyDefinition> itemsOfListCustomPropertyDefinitions(
+            CustomPropertyDefinitionListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfListCustomPropertyDefinitions(
+            CustomPropertyDefinitionListResponse response,
+            List<CustomPropertyDefinition> items,
+            Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -293,9 +338,10 @@ public final class CustomProperties {
         /**
          * List custom property definitions
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions() {
+        public ApiResponse<CustomPropertiesListCustomPropertyDefinitionsPage>
+                listCustomPropertyDefinitions() {
             return listCustomPropertyDefinitions(
                     CustomPropertiesListCustomPropertyDefinitionsOptions.none(),
                     RequestOptions.none());
@@ -305,10 +351,11 @@ public final class CustomProperties {
          * List custom property definitions
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-                final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
+        public ApiResponse<CustomPropertiesListCustomPropertyDefinitionsPage>
+                listCustomPropertyDefinitions(
+                        final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
             return listCustomPropertyDefinitions(options, RequestOptions.none());
         }
 
@@ -316,10 +363,10 @@ public final class CustomProperties {
          * List custom property definitions
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-                final RequestOptions requestOptions) {
+        public ApiResponse<CustomPropertiesListCustomPropertyDefinitionsPage>
+                listCustomPropertyDefinitions(final RequestOptions requestOptions) {
             return listCustomPropertyDefinitions(
                     CustomPropertiesListCustomPropertyDefinitionsOptions.none(), requestOptions);
         }
@@ -329,14 +376,18 @@ public final class CustomProperties {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-                final CustomPropertiesListCustomPropertyDefinitionsOptions options,
-                final RequestOptions requestOptions) {
-            return CustomProperties.this
-                    .exchangeListCustomPropertyDefinitions(options, requestOptions)
-                    .sendRaw();
+        public ApiResponse<CustomPropertiesListCustomPropertyDefinitionsPage>
+                listCustomPropertyDefinitions(
+                        final CustomPropertiesListCustomPropertyDefinitionsOptions options,
+                        final RequestOptions requestOptions) {
+            ApiResponse<CustomPropertyDefinitionListResponse> response =
+                    exchangeListCustomPropertyDefinitions(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfListCustomPropertyDefinitions(response.body(), options, requestOptions));
         }
 
         /**

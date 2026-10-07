@@ -6,8 +6,10 @@ import com.meteroid.RequestOptions;
 import com.meteroid.models.CreateMetricRequest;
 import com.meteroid.models.Metric;
 import com.meteroid.models.MetricListResponse;
+import com.meteroid.models.MetricSummary;
 import com.meteroid.models.UpdateMetricRequest;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -40,9 +42,9 @@ public final class MetricsAsync {
     /**
      * List billable metrics
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<MetricListResponse> list() {
+    public CompletableFuture<MetricsListAsyncPage> list() {
         return list(MetricsListOptions.none(), RequestOptions.none());
     }
 
@@ -50,9 +52,9 @@ public final class MetricsAsync {
      * List billable metrics
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<MetricListResponse> list(final MetricsListOptions options) {
+    public CompletableFuture<MetricsListAsyncPage> list(final MetricsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -60,9 +62,9 @@ public final class MetricsAsync {
      * List billable metrics
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<MetricListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<MetricsListAsyncPage> list(final RequestOptions requestOptions) {
         return list(MetricsListOptions.none(), requestOptions);
     }
 
@@ -71,11 +73,27 @@ public final class MetricsAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<MetricListResponse> list(
+    public CompletableFuture<MetricsListAsyncPage> list(
             final MetricsListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private MetricsListAsyncPage pageOfList(
+            MetricListResponse response,
+            final MetricsListOptions options,
+            final RequestOptions requestOptions) {
+        List<MetricSummary> items = Metrics.itemsOfList(response);
+        Integer next = Metrics.nextOfList(response, items, options.page().orElse(0));
+        return new MetricsListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -204,9 +222,9 @@ public final class MetricsAsync {
         /**
          * List billable metrics
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<MetricListResponse>> list() {
+        public CompletableFuture<ApiResponse<MetricsListAsyncPage>> list() {
             return list(MetricsListOptions.none(), RequestOptions.none());
         }
 
@@ -214,9 +232,9 @@ public final class MetricsAsync {
          * List billable metrics
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<MetricListResponse>> list(
+        public CompletableFuture<ApiResponse<MetricsListAsyncPage>> list(
                 final MetricsListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -225,9 +243,9 @@ public final class MetricsAsync {
          * List billable metrics
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<MetricListResponse>> list(
+        public CompletableFuture<ApiResponse<MetricsListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(MetricsListOptions.none(), requestOptions);
         }
@@ -237,11 +255,18 @@ public final class MetricsAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<MetricListResponse>> list(
+        public CompletableFuture<ApiResponse<MetricsListAsyncPage>> list(
                 final MetricsListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

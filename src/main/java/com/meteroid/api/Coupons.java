@@ -13,6 +13,7 @@ import com.meteroid.models.UpdateCouponRequest;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -45,9 +46,9 @@ public final class Coupons {
     /**
      * List coupons
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CouponListResponse list() {
+    public CouponsListPage list() {
         return list(CouponsListOptions.none(), RequestOptions.none());
     }
 
@@ -55,9 +56,9 @@ public final class Coupons {
      * List coupons
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CouponListResponse list(final CouponsListOptions options) {
+    public CouponsListPage list(final CouponsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -65,9 +66,9 @@ public final class Coupons {
      * List coupons
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CouponListResponse list(final RequestOptions requestOptions) {
+    public CouponsListPage list(final RequestOptions requestOptions) {
         return list(CouponsListOptions.none(), requestOptions);
     }
 
@@ -76,11 +77,11 @@ public final class Coupons {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CouponListResponse list(
+    public CouponsListPage list(
             final CouponsListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<CouponListResponse> exchangeList(
@@ -111,6 +112,40 @@ public final class Coupons {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429")
                 .options(requestOptions)
                 .returning(CouponListResponse.class);
+    }
+
+    private CouponsListPage pageOfList(
+            CouponListResponse response,
+            final CouponsListOptions options,
+            final RequestOptions requestOptions) {
+        List<Coupon> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new CouponsListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Coupon> itemsOfList(CouponListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(CouponListResponse response, List<Coupon> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -368,9 +403,9 @@ public final class Coupons {
         /**
          * List coupons
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CouponListResponse> list() {
+        public ApiResponse<CouponsListPage> list() {
             return list(CouponsListOptions.none(), RequestOptions.none());
         }
 
@@ -378,9 +413,9 @@ public final class Coupons {
          * List coupons
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CouponListResponse> list(final CouponsListOptions options) {
+        public ApiResponse<CouponsListPage> list(final CouponsListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -388,9 +423,9 @@ public final class Coupons {
          * List coupons
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CouponListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<CouponsListPage> list(final RequestOptions requestOptions) {
             return list(CouponsListOptions.none(), requestOptions);
         }
 
@@ -399,11 +434,16 @@ public final class Coupons {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CouponListResponse> list(
+        public ApiResponse<CouponsListPage> list(
                 final CouponsListOptions options, final RequestOptions requestOptions) {
-            return Coupons.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<CouponListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

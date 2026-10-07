@@ -12,6 +12,7 @@ import com.meteroid.models.CreditNoteStatus;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,9 +47,9 @@ public final class CreditNotes {
      *
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CreditNoteListResponse list() {
+    public CreditNotesListPage list() {
         return list(CreditNotesListOptions.none(), RequestOptions.none());
     }
 
@@ -58,9 +59,9 @@ public final class CreditNotes {
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CreditNoteListResponse list(final CreditNotesListOptions options) {
+    public CreditNotesListPage list(final CreditNotesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -70,9 +71,9 @@ public final class CreditNotes {
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CreditNoteListResponse list(final RequestOptions requestOptions) {
+    public CreditNotesListPage list(final RequestOptions requestOptions) {
         return list(CreditNotesListOptions.none(), requestOptions);
     }
 
@@ -83,11 +84,11 @@ public final class CreditNotes {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CreditNoteListResponse list(
+    public CreditNotesListPage list(
             final CreditNotesListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<CreditNoteListResponse> exchangeList(
@@ -126,6 +127,41 @@ public final class CreditNotes {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(CreditNoteListResponse.class);
+    }
+
+    private CreditNotesListPage pageOfList(
+            CreditNoteListResponse response,
+            final CreditNotesListOptions options,
+            final RequestOptions requestOptions) {
+        List<CreditNote> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new CreditNotesListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<CreditNote> itemsOfList(CreditNoteListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(
+            CreditNoteListResponse response, List<CreditNote> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -320,9 +356,9 @@ public final class CreditNotes {
          *
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CreditNoteListResponse> list() {
+        public ApiResponse<CreditNotesListPage> list() {
             return list(CreditNotesListOptions.none(), RequestOptions.none());
         }
 
@@ -332,9 +368,9 @@ public final class CreditNotes {
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CreditNoteListResponse> list(final CreditNotesListOptions options) {
+        public ApiResponse<CreditNotesListPage> list(final CreditNotesListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -344,9 +380,9 @@ public final class CreditNotes {
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CreditNoteListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<CreditNotesListPage> list(final RequestOptions requestOptions) {
             return list(CreditNotesListOptions.none(), requestOptions);
         }
 
@@ -357,11 +393,16 @@ public final class CreditNotes {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CreditNoteListResponse> list(
+        public ApiResponse<CreditNotesListPage> list(
                 final CreditNotesListOptions options, final RequestOptions requestOptions) {
-            return CreditNotes.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<CreditNoteListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

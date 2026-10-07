@@ -51,9 +51,9 @@ public final class Subscriptions {
     /**
      * List subscriptions with optional filtering by customer or plan.
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public SubscriptionListResponse list() {
+    public SubscriptionsListPage list() {
         return list(SubscriptionsListOptions.none(), RequestOptions.none());
     }
 
@@ -61,9 +61,9 @@ public final class Subscriptions {
      * List subscriptions with optional filtering by customer or plan.
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public SubscriptionListResponse list(final SubscriptionsListOptions options) {
+    public SubscriptionsListPage list(final SubscriptionsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -71,9 +71,9 @@ public final class Subscriptions {
      * List subscriptions with optional filtering by customer or plan.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public SubscriptionListResponse list(final RequestOptions requestOptions) {
+    public SubscriptionsListPage list(final RequestOptions requestOptions) {
         return list(SubscriptionsListOptions.none(), requestOptions);
     }
 
@@ -82,11 +82,11 @@ public final class Subscriptions {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public SubscriptionListResponse list(
+    public SubscriptionsListPage list(
             final SubscriptionsListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<SubscriptionListResponse> exchangeList(
@@ -121,6 +121,41 @@ public final class Subscriptions {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(SubscriptionListResponse.class);
+    }
+
+    private SubscriptionsListPage pageOfList(
+            SubscriptionListResponse response,
+            final SubscriptionsListOptions options,
+            final RequestOptions requestOptions) {
+        List<Subscription> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new SubscriptionsListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Subscription> itemsOfList(SubscriptionListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(
+            SubscriptionListResponse response, List<Subscription> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -394,9 +429,9 @@ public final class Subscriptions {
         /**
          * List subscriptions with optional filtering by customer or plan.
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<SubscriptionListResponse> list() {
+        public ApiResponse<SubscriptionsListPage> list() {
             return list(SubscriptionsListOptions.none(), RequestOptions.none());
         }
 
@@ -404,9 +439,9 @@ public final class Subscriptions {
          * List subscriptions with optional filtering by customer or plan.
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<SubscriptionListResponse> list(final SubscriptionsListOptions options) {
+        public ApiResponse<SubscriptionsListPage> list(final SubscriptionsListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -414,9 +449,9 @@ public final class Subscriptions {
          * List subscriptions with optional filtering by customer or plan.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<SubscriptionListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<SubscriptionsListPage> list(final RequestOptions requestOptions) {
             return list(SubscriptionsListOptions.none(), requestOptions);
         }
 
@@ -425,11 +460,16 @@ public final class Subscriptions {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<SubscriptionListResponse> list(
+        public ApiResponse<SubscriptionsListPage> list(
                 final SubscriptionsListOptions options, final RequestOptions requestOptions) {
-            return Subscriptions.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<SubscriptionListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

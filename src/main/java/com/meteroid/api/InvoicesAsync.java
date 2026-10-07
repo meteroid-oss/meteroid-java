@@ -7,6 +7,7 @@ import com.meteroid.models.Invoice;
 import com.meteroid.models.InvoiceCustomPropertiesRequest;
 import com.meteroid.models.InvoiceListResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -39,9 +40,9 @@ public final class InvoicesAsync {
     /**
      * List invoices with optional filtering by customer, subscription, or status.
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<InvoiceListResponse> list() {
+    public CompletableFuture<InvoicesListAsyncPage> list() {
         return list(InvoicesListOptions.none(), RequestOptions.none());
     }
 
@@ -49,9 +50,9 @@ public final class InvoicesAsync {
      * List invoices with optional filtering by customer, subscription, or status.
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<InvoiceListResponse> list(final InvoicesListOptions options) {
+    public CompletableFuture<InvoicesListAsyncPage> list(final InvoicesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -59,9 +60,9 @@ public final class InvoicesAsync {
      * List invoices with optional filtering by customer, subscription, or status.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<InvoiceListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<InvoicesListAsyncPage> list(final RequestOptions requestOptions) {
         return list(InvoicesListOptions.none(), requestOptions);
     }
 
@@ -70,11 +71,27 @@ public final class InvoicesAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<InvoiceListResponse> list(
+    public CompletableFuture<InvoicesListAsyncPage> list(
             final InvoicesListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private InvoicesListAsyncPage pageOfList(
+            InvoiceListResponse response,
+            final InvoicesListOptions options,
+            final RequestOptions requestOptions) {
+        List<Invoice> items = Invoices.itemsOfList(response);
+        Integer next = Invoices.nextOfList(response, items, options.page().orElse(0));
+        return new InvoicesListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -237,9 +254,9 @@ public final class InvoicesAsync {
         /**
          * List invoices with optional filtering by customer, subscription, or status.
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<InvoiceListResponse>> list() {
+        public CompletableFuture<ApiResponse<InvoicesListAsyncPage>> list() {
             return list(InvoicesListOptions.none(), RequestOptions.none());
         }
 
@@ -247,9 +264,9 @@ public final class InvoicesAsync {
          * List invoices with optional filtering by customer, subscription, or status.
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<InvoiceListResponse>> list(
+        public CompletableFuture<ApiResponse<InvoicesListAsyncPage>> list(
                 final InvoicesListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -258,9 +275,9 @@ public final class InvoicesAsync {
          * List invoices with optional filtering by customer, subscription, or status.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<InvoiceListResponse>> list(
+        public CompletableFuture<ApiResponse<InvoicesListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(InvoicesListOptions.none(), requestOptions);
         }
@@ -270,11 +287,18 @@ public final class InvoicesAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<InvoiceListResponse>> list(
+        public CompletableFuture<ApiResponse<InvoicesListAsyncPage>> list(
                 final InvoicesListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

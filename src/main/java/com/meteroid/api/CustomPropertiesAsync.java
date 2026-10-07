@@ -8,6 +8,7 @@ import com.meteroid.models.CustomPropertyDefinitionCreateRequest;
 import com.meteroid.models.CustomPropertyDefinitionListResponse;
 import com.meteroid.models.CustomPropertyDefinitionUpdateRequest;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -40,9 +41,10 @@ public final class CustomPropertiesAsync {
     /**
      * List custom property definitions
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions() {
+    public CompletableFuture<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>
+            listCustomPropertyDefinitions() {
         return listCustomPropertyDefinitions(
                 CustomPropertiesListCustomPropertyDefinitionsOptions.none(), RequestOptions.none());
     }
@@ -51,10 +53,11 @@ public final class CustomPropertiesAsync {
      * List custom property definitions
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-            final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
+    public CompletableFuture<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>
+            listCustomPropertyDefinitions(
+                    final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
         return listCustomPropertyDefinitions(options, RequestOptions.none());
     }
 
@@ -62,10 +65,10 @@ public final class CustomPropertiesAsync {
      * List custom property definitions
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-            final RequestOptions requestOptions) {
+    public CompletableFuture<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>
+            listCustomPropertyDefinitions(final RequestOptions requestOptions) {
         return listCustomPropertyDefinitions(
                 CustomPropertiesListCustomPropertyDefinitionsOptions.none(), requestOptions);
     }
@@ -75,12 +78,38 @@ public final class CustomPropertiesAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CustomPropertyDefinitionListResponse> listCustomPropertyDefinitions(
-            final CustomPropertiesListCustomPropertyDefinitionsOptions options,
-            final RequestOptions requestOptions) {
-        return sync.exchangeListCustomPropertyDefinitions(options, requestOptions).sendAsync();
+    public CompletableFuture<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>
+            listCustomPropertyDefinitions(
+                    final CustomPropertiesListCustomPropertyDefinitionsOptions options,
+                    final RequestOptions requestOptions) {
+        return sync.exchangeListCustomPropertyDefinitions(options, requestOptions)
+                .sendAsync()
+                .thenApply(
+                        response ->
+                                pageOfListCustomPropertyDefinitions(
+                                        response, options, requestOptions));
+    }
+
+    private CustomPropertiesListCustomPropertyDefinitionsAsyncPage
+            pageOfListCustomPropertyDefinitions(
+                    CustomPropertyDefinitionListResponse response,
+                    final CustomPropertiesListCustomPropertyDefinitionsOptions options,
+                    final RequestOptions requestOptions) {
+        List<CustomPropertyDefinition> items =
+                CustomProperties.itemsOfListCustomPropertyDefinitions(response);
+        Integer next =
+                CustomProperties.nextOfListCustomPropertyDefinitions(
+                        response, items, options.page().orElse(0));
+        return new CustomPropertiesListCustomPropertyDefinitionsAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () ->
+                                listCustomPropertyDefinitions(
+                                        options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -199,9 +228,10 @@ public final class CustomPropertiesAsync {
         /**
          * List custom property definitions
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomPropertyDefinitionListResponse>>
+        public CompletableFuture<
+                        ApiResponse<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>>
                 listCustomPropertyDefinitions() {
             return listCustomPropertyDefinitions(
                     CustomPropertiesListCustomPropertyDefinitionsOptions.none(),
@@ -212,9 +242,10 @@ public final class CustomPropertiesAsync {
          * List custom property definitions
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomPropertyDefinitionListResponse>>
+        public CompletableFuture<
+                        ApiResponse<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>>
                 listCustomPropertyDefinitions(
                         final CustomPropertiesListCustomPropertyDefinitionsOptions options) {
             return listCustomPropertyDefinitions(options, RequestOptions.none());
@@ -224,9 +255,10 @@ public final class CustomPropertiesAsync {
          * List custom property definitions
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomPropertyDefinitionListResponse>>
+        public CompletableFuture<
+                        ApiResponse<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>>
                 listCustomPropertyDefinitions(final RequestOptions requestOptions) {
             return listCustomPropertyDefinitions(
                     CustomPropertiesListCustomPropertyDefinitionsOptions.none(), requestOptions);
@@ -237,14 +269,22 @@ public final class CustomPropertiesAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CustomPropertyDefinitionListResponse>>
+        public CompletableFuture<
+                        ApiResponse<CustomPropertiesListCustomPropertyDefinitionsAsyncPage>>
                 listCustomPropertyDefinitions(
                         final CustomPropertiesListCustomPropertyDefinitionsOptions options,
                         final RequestOptions requestOptions) {
             return sync.exchangeListCustomPropertyDefinitions(options, requestOptions)
-                    .sendRawAsync();
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfListCustomPropertyDefinitions(
+                                                    response.body(), options, requestOptions)));
         }
 
         /**
