@@ -9,7 +9,8 @@
       "release-type": "simple",
       "extra-files": [
         "gradle.properties",
-        "src/main/java/com/meteroid/Version.java"
+        "src/main/java/com/meteroid/Version.java",
+        "README.md"
       ],
       "component": "java",
       "include-component-in-tag": false
