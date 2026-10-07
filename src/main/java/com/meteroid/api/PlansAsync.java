@@ -11,9 +11,11 @@ import com.meteroid.models.PatchPlanRequest;
 import com.meteroid.models.Plan;
 import com.meteroid.models.PlanListResponse;
 import com.meteroid.models.PlanVersionListResponse;
+import com.meteroid.models.PlanVersionSummary;
 import com.meteroid.models.ReplacePlanRequest;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -103,9 +105,9 @@ public final class PlansAsync {
     /**
      * List plans
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanListResponse> list() {
+    public CompletableFuture<PlansListAsyncPage> list() {
         return list(PlansListOptions.none(), RequestOptions.none());
     }
 
@@ -113,9 +115,9 @@ public final class PlansAsync {
      * List plans
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanListResponse> list(final PlansListOptions options) {
+    public CompletableFuture<PlansListAsyncPage> list(final PlansListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -123,9 +125,9 @@ public final class PlansAsync {
      * List plans
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<PlansListAsyncPage> list(final RequestOptions requestOptions) {
         return list(PlansListOptions.none(), requestOptions);
     }
 
@@ -134,11 +136,27 @@ public final class PlansAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanListResponse> list(
+    public CompletableFuture<PlansListAsyncPage> list(
             final PlansListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private PlansListAsyncPage pageOfList(
+            PlanListResponse response,
+            final PlansListOptions options,
+            final RequestOptions requestOptions) {
+        List<Plan> items = Plans.itemsOfList(response);
+        Integer next = Plans.nextOfList(response, items, options.page().orElse(0));
+        return new PlansListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -422,9 +440,9 @@ public final class PlansAsync {
      * List plan versions
      *
      * @param planId the {@code plan_id} path parameter
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanVersionListResponse> listVersions(final String planId) {
+    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(final String planId) {
         return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
     }
 
@@ -433,9 +451,9 @@ public final class PlansAsync {
      *
      * @param planId the {@code plan_id} path parameter
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanVersionListResponse> listVersions(
+    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
             final String planId, final PlansListVersionsOptions options) {
         return listVersions(planId, options, RequestOptions.none());
     }
@@ -445,9 +463,9 @@ public final class PlansAsync {
      *
      * @param planId the {@code plan_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanVersionListResponse> listVersions(
+    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
             final String planId, final RequestOptions requestOptions) {
         return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
     }
@@ -458,13 +476,35 @@ public final class PlansAsync {
      * @param planId the {@code plan_id} path parameter
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<PlanVersionListResponse> listVersions(
+    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
             final String planId,
             final PlansListVersionsOptions options,
             final RequestOptions requestOptions) {
-        return sync.exchangeListVersions(planId, options, requestOptions).sendAsync();
+        return sync.exchangeListVersions(planId, options, requestOptions)
+                .sendAsync()
+                .thenApply(
+                        response -> pageOfListVersions(response, planId, options, requestOptions));
+    }
+
+    private PlansListVersionsAsyncPage pageOfListVersions(
+            PlanVersionListResponse response,
+            final String planId,
+            final PlansListVersionsOptions options,
+            final RequestOptions requestOptions) {
+        List<PlanVersionSummary> items = Plans.itemsOfListVersions(response);
+        Integer next = Plans.nextOfListVersions(response, items, options.page().orElse(0));
+        return new PlansListVersionsAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () ->
+                                listVersions(
+                                        planId,
+                                        options.toBuilder().page(next).build(),
+                                        requestOptions));
     }
 
     /** The operations, returning the status and headers along with the body. */
@@ -534,9 +574,9 @@ public final class PlansAsync {
         /**
          * List plans
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanListResponse>> list() {
+        public CompletableFuture<ApiResponse<PlansListAsyncPage>> list() {
             return list(PlansListOptions.none(), RequestOptions.none());
         }
 
@@ -544,9 +584,9 @@ public final class PlansAsync {
          * List plans
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanListResponse>> list(
+        public CompletableFuture<ApiResponse<PlansListAsyncPage>> list(
                 final PlansListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -555,9 +595,9 @@ public final class PlansAsync {
          * List plans
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanListResponse>> list(
+        public CompletableFuture<ApiResponse<PlansListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(PlansListOptions.none(), requestOptions);
         }
@@ -567,11 +607,18 @@ public final class PlansAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanListResponse>> list(
+        public CompletableFuture<ApiResponse<PlansListAsyncPage>> list(
                 final PlansListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**
@@ -858,9 +905,9 @@ public final class PlansAsync {
          * List plan versions
          *
          * @param planId the {@code plan_id} path parameter
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanVersionListResponse>> listVersions(
+        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
                 final String planId) {
             return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
         }
@@ -870,9 +917,9 @@ public final class PlansAsync {
          *
          * @param planId the {@code plan_id} path parameter
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanVersionListResponse>> listVersions(
+        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
                 final String planId, final PlansListVersionsOptions options) {
             return listVersions(planId, options, RequestOptions.none());
         }
@@ -882,9 +929,9 @@ public final class PlansAsync {
          *
          * @param planId the {@code plan_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanVersionListResponse>> listVersions(
+        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
                 final String planId, final RequestOptions requestOptions) {
             return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
         }
@@ -895,13 +942,24 @@ public final class PlansAsync {
          * @param planId the {@code plan_id} path parameter
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<PlanVersionListResponse>> listVersions(
+        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
                 final String planId,
                 final PlansListVersionsOptions options,
                 final RequestOptions requestOptions) {
-            return sync.exchangeListVersions(planId, options, requestOptions).sendRawAsync();
+            return sync.exchangeListVersions(planId, options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfListVersions(
+                                                    response.body(),
+                                                    planId,
+                                                    options,
+                                                    requestOptions)));
         }
     }
 }

@@ -13,6 +13,7 @@ import com.meteroid.models.SubscriptionListResponse;
 import com.meteroid.models.SubscriptionUpdateRequest;
 import com.meteroid.models.SubscriptionUpdateResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -45,9 +46,9 @@ public final class SubscriptionsAsync {
     /**
      * List subscriptions with optional filtering by customer or plan.
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<SubscriptionListResponse> list() {
+    public CompletableFuture<SubscriptionsListAsyncPage> list() {
         return list(SubscriptionsListOptions.none(), RequestOptions.none());
     }
 
@@ -55,9 +56,9 @@ public final class SubscriptionsAsync {
      * List subscriptions with optional filtering by customer or plan.
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<SubscriptionListResponse> list(
+    public CompletableFuture<SubscriptionsListAsyncPage> list(
             final SubscriptionsListOptions options) {
         return list(options, RequestOptions.none());
     }
@@ -66,9 +67,9 @@ public final class SubscriptionsAsync {
      * List subscriptions with optional filtering by customer or plan.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<SubscriptionListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<SubscriptionsListAsyncPage> list(final RequestOptions requestOptions) {
         return list(SubscriptionsListOptions.none(), requestOptions);
     }
 
@@ -77,11 +78,27 @@ public final class SubscriptionsAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<SubscriptionListResponse> list(
+    public CompletableFuture<SubscriptionsListAsyncPage> list(
             final SubscriptionsListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private SubscriptionsListAsyncPage pageOfList(
+            SubscriptionListResponse response,
+            final SubscriptionsListOptions options,
+            final RequestOptions requestOptions) {
+        List<Subscription> items = Subscriptions.itemsOfList(response);
+        Integer next = Subscriptions.nextOfList(response, items, options.page().orElse(0));
+        return new SubscriptionsListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -260,9 +277,9 @@ public final class SubscriptionsAsync {
         /**
          * List subscriptions with optional filtering by customer or plan.
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<SubscriptionListResponse>> list() {
+        public CompletableFuture<ApiResponse<SubscriptionsListAsyncPage>> list() {
             return list(SubscriptionsListOptions.none(), RequestOptions.none());
         }
 
@@ -270,9 +287,9 @@ public final class SubscriptionsAsync {
          * List subscriptions with optional filtering by customer or plan.
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<SubscriptionListResponse>> list(
+        public CompletableFuture<ApiResponse<SubscriptionsListAsyncPage>> list(
                 final SubscriptionsListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -281,9 +298,9 @@ public final class SubscriptionsAsync {
          * List subscriptions with optional filtering by customer or plan.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<SubscriptionListResponse>> list(
+        public CompletableFuture<ApiResponse<SubscriptionsListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(SubscriptionsListOptions.none(), requestOptions);
         }
@@ -293,11 +310,18 @@ public final class SubscriptionsAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<SubscriptionListResponse>> list(
+        public CompletableFuture<ApiResponse<SubscriptionsListAsyncPage>> list(
                 final SubscriptionsListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

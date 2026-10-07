@@ -15,6 +15,7 @@ import com.meteroid.models.UpdateAddOnRequest;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,9 +48,9 @@ public final class AddOns {
     /**
      * List add-ons
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public AddOnListResponse list() {
+    public AddOnsListPage list() {
         return list(AddOnsListOptions.none(), RequestOptions.none());
     }
 
@@ -57,9 +58,9 @@ public final class AddOns {
      * List add-ons
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public AddOnListResponse list(final AddOnsListOptions options) {
+    public AddOnsListPage list(final AddOnsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -67,9 +68,9 @@ public final class AddOns {
      * List add-ons
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public AddOnListResponse list(final RequestOptions requestOptions) {
+    public AddOnsListPage list(final RequestOptions requestOptions) {
         return list(AddOnsListOptions.none(), requestOptions);
     }
 
@@ -78,11 +79,11 @@ public final class AddOns {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public AddOnListResponse list(
+    public AddOnsListPage list(
             final AddOnsListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<AddOnListResponse> exchangeList(
@@ -117,6 +118,40 @@ public final class AddOns {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429")
                 .options(requestOptions)
                 .returning(AddOnListResponse.class);
+    }
+
+    private AddOnsListPage pageOfList(
+            AddOnListResponse response,
+            final AddOnsListOptions options,
+            final RequestOptions requestOptions) {
+        List<AddOn> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new AddOnsListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<AddOn> itemsOfList(AddOnListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(AddOnListResponse response, List<AddOn> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -393,9 +428,9 @@ public final class AddOns {
         /**
          * List add-ons
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<AddOnListResponse> list() {
+        public ApiResponse<AddOnsListPage> list() {
             return list(AddOnsListOptions.none(), RequestOptions.none());
         }
 
@@ -403,9 +438,9 @@ public final class AddOns {
          * List add-ons
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<AddOnListResponse> list(final AddOnsListOptions options) {
+        public ApiResponse<AddOnsListPage> list(final AddOnsListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -413,9 +448,9 @@ public final class AddOns {
          * List add-ons
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<AddOnListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<AddOnsListPage> list(final RequestOptions requestOptions) {
             return list(AddOnsListOptions.none(), requestOptions);
         }
 
@@ -424,11 +459,16 @@ public final class AddOns {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<AddOnListResponse> list(
+        public ApiResponse<AddOnsListPage> list(
                 final AddOnsListOptions options, final RequestOptions requestOptions) {
-            return AddOns.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<AddOnListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

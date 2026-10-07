@@ -16,6 +16,7 @@ import com.meteroid.models.EffectiveEntitlementListResponse;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -48,9 +49,9 @@ public final class Customers {
     /**
      * List customers with optional pagination and search filtering.
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomerListResponse list() {
+    public CustomersListPage list() {
         return list(CustomersListOptions.none(), RequestOptions.none());
     }
 
@@ -58,9 +59,9 @@ public final class Customers {
      * List customers with optional pagination and search filtering.
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomerListResponse list(final CustomersListOptions options) {
+    public CustomersListPage list(final CustomersListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -68,9 +69,9 @@ public final class Customers {
      * List customers with optional pagination and search filtering.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomerListResponse list(final RequestOptions requestOptions) {
+    public CustomersListPage list(final RequestOptions requestOptions) {
         return list(CustomersListOptions.none(), requestOptions);
     }
 
@@ -79,11 +80,11 @@ public final class Customers {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public CustomerListResponse list(
+    public CustomersListPage list(
             final CustomersListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<CustomerListResponse> exchangeList(
@@ -114,6 +115,41 @@ public final class Customers {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(CustomerListResponse.class);
+    }
+
+    private CustomersListPage pageOfList(
+            CustomerListResponse response,
+            final CustomersListOptions options,
+            final RequestOptions requestOptions) {
+        List<Customer> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new CustomersListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Customer> itemsOfList(CustomerListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(
+            CustomerListResponse response, List<Customer> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -478,9 +514,9 @@ public final class Customers {
         /**
          * List customers with optional pagination and search filtering.
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomerListResponse> list() {
+        public ApiResponse<CustomersListPage> list() {
             return list(CustomersListOptions.none(), RequestOptions.none());
         }
 
@@ -488,9 +524,9 @@ public final class Customers {
          * List customers with optional pagination and search filtering.
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomerListResponse> list(final CustomersListOptions options) {
+        public ApiResponse<CustomersListPage> list(final CustomersListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -498,9 +534,9 @@ public final class Customers {
          * List customers with optional pagination and search filtering.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomerListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<CustomersListPage> list(final RequestOptions requestOptions) {
             return list(CustomersListOptions.none(), requestOptions);
         }
 
@@ -509,11 +545,16 @@ public final class Customers {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<CustomerListResponse> list(
+        public ApiResponse<CustomersListPage> list(
                 final CustomersListOptions options, final RequestOptions requestOptions) {
-            return Customers.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<CustomerListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

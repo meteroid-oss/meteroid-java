@@ -46,9 +46,9 @@ public final class Invoices {
     /**
      * List invoices with optional filtering by customer, subscription, or status.
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public InvoiceListResponse list() {
+    public InvoicesListPage list() {
         return list(InvoicesListOptions.none(), RequestOptions.none());
     }
 
@@ -56,9 +56,9 @@ public final class Invoices {
      * List invoices with optional filtering by customer, subscription, or status.
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public InvoiceListResponse list(final InvoicesListOptions options) {
+    public InvoicesListPage list(final InvoicesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -66,9 +66,9 @@ public final class Invoices {
      * List invoices with optional filtering by customer, subscription, or status.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public InvoiceListResponse list(final RequestOptions requestOptions) {
+    public InvoicesListPage list(final RequestOptions requestOptions) {
         return list(InvoicesListOptions.none(), requestOptions);
     }
 
@@ -77,11 +77,11 @@ public final class Invoices {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public InvoiceListResponse list(
+    public InvoicesListPage list(
             final InvoicesListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<InvoiceListResponse> exchangeList(
@@ -120,6 +120,40 @@ public final class Invoices {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429", "500")
                 .options(requestOptions)
                 .returning(InvoiceListResponse.class);
+    }
+
+    private InvoicesListPage pageOfList(
+            InvoiceListResponse response,
+            final InvoicesListOptions options,
+            final RequestOptions requestOptions) {
+        List<Invoice> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new InvoicesListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<Invoice> itemsOfList(InvoiceListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(InvoiceListResponse response, List<Invoice> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -368,9 +402,9 @@ public final class Invoices {
         /**
          * List invoices with optional filtering by customer, subscription, or status.
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<InvoiceListResponse> list() {
+        public ApiResponse<InvoicesListPage> list() {
             return list(InvoicesListOptions.none(), RequestOptions.none());
         }
 
@@ -378,9 +412,9 @@ public final class Invoices {
          * List invoices with optional filtering by customer, subscription, or status.
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<InvoiceListResponse> list(final InvoicesListOptions options) {
+        public ApiResponse<InvoicesListPage> list(final InvoicesListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -388,9 +422,9 @@ public final class Invoices {
          * List invoices with optional filtering by customer, subscription, or status.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<InvoiceListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<InvoicesListPage> list(final RequestOptions requestOptions) {
             return list(InvoicesListOptions.none(), requestOptions);
         }
 
@@ -399,11 +433,16 @@ public final class Invoices {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<InvoiceListResponse> list(
+        public ApiResponse<InvoicesListPage> list(
                 final InvoicesListOptions options, final RequestOptions requestOptions) {
-            return Invoices.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<InvoiceListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

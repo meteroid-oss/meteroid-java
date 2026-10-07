@@ -8,6 +8,12 @@ idempotency key of that call. `client.async()` has the same methods returning
 `CompletableFuture`s, and `client.withRawResponse()` returning `ApiResponse`s. Models are in
 [`com.meteroid.models`](src/main/java/com/meteroid/models).
 
+A paginated list returns a page: the getters of its response body (`page.data()`), its items
+(`page.items()`), `hasNextPage()` and `nextPage()`. Iterating it, or its `stream()`, yields every
+item from that page on, and `pages()` every page, fetching the next ones on demand. `body()` is
+the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
+`forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
+
 [Add ons](#add-ons) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Product families](#product-families) · [Products](#products) · [Subscriptions](#subscriptions) · [Usage](#usage)
 
 ## Add ons
@@ -16,7 +22,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `AddOnListResponse client.addOns().list([AddOnsListOptions options])` | `GET /api/v1/addons` | [`AddOnListResponse`](src/main/java/com/meteroid/models/AddOnListResponse.java) |
+| `AddOnsListPage client.addOns().list([AddOnsListOptions options])` | `GET /api/v1/addons` | [page](src/main/java/com/meteroid/api/AddOnsListPage.java) of [`AddOn`](src/main/java/com/meteroid/models/AddOn.java), with the properties of [`AddOnListResponse`](src/main/java/com/meteroid/models/AddOnListResponse.java) |
 | `AddOn client.addOns().create(CreateAddOnRequest createAddOnRequest)` | `POST /api/v1/addons` | [`AddOn`](src/main/java/com/meteroid/models/AddOn.java) |
 | `AddOn client.addOns().retrieve(String addonId)` | `GET /api/v1/addons/{addon_id}` | [`AddOn`](src/main/java/com/meteroid/models/AddOn.java) |
 | `AddOn client.addOns().update(String addonId, UpdateAddOnRequest updateAddOnRequest)` | `PATCH /api/v1/addons/{addon_id}` | [`AddOn`](src/main/java/com/meteroid/models/AddOn.java) |
@@ -31,9 +37,9 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `BatchJobListResponse client.batchJobs().list([BatchJobsListOptions options])` | `GET /api/v1/batch-jobs` | [`BatchJobListResponse`](src/main/java/com/meteroid/models/BatchJobListResponse.java) |
+| `BatchJobsListPage client.batchJobs().list([BatchJobsListOptions options])` | `GET /api/v1/batch-jobs` | [page](src/main/java/com/meteroid/api/BatchJobsListPage.java) of [`BatchJobResponse`](src/main/java/com/meteroid/models/BatchJobResponse.java), with the properties of [`BatchJobListResponse`](src/main/java/com/meteroid/models/BatchJobListResponse.java) |
 | `BatchJobDetailResponse client.batchJobs().retrieve(String batchJobId)` | `GET /api/v1/batch-jobs/{batch_job_id}` | [`BatchJobDetailResponse`](src/main/java/com/meteroid/models/BatchJobDetailResponse.java) |
-| `BatchJobFailuresResponse client.batchJobs().listFailures(String batchJobId, [BatchJobsListFailuresOptions options])` | `GET /api/v1/batch-jobs/{batch_job_id}/failures` | [`BatchJobFailuresResponse`](src/main/java/com/meteroid/models/BatchJobFailuresResponse.java) |
+| `BatchJobsListFailuresPage client.batchJobs().listFailures(String batchJobId, [BatchJobsListFailuresOptions options])` | `GET /api/v1/batch-jobs/{batch_job_id}/failures` | [page](src/main/java/com/meteroid/api/BatchJobsListFailuresPage.java) of [`BatchJobItemFailureResponse`](src/main/java/com/meteroid/models/BatchJobItemFailureResponse.java), with the properties of [`BatchJobFailuresResponse`](src/main/java/com/meteroid/models/BatchJobFailuresResponse.java) |
 
 ## Checkout sessions
 
@@ -64,7 +70,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `CouponListResponse client.coupons().list([CouponsListOptions options])` | `GET /api/v1/coupons` | [`CouponListResponse`](src/main/java/com/meteroid/models/CouponListResponse.java) |
+| `CouponsListPage client.coupons().list([CouponsListOptions options])` | `GET /api/v1/coupons` | [page](src/main/java/com/meteroid/api/CouponsListPage.java) of [`Coupon`](src/main/java/com/meteroid/models/Coupon.java), with the properties of [`CouponListResponse`](src/main/java/com/meteroid/models/CouponListResponse.java) |
 | `Coupon client.coupons().create(CreateCouponRequest createCouponRequest)` | `POST /api/v1/coupons` | [`Coupon`](src/main/java/com/meteroid/models/Coupon.java) |
 | `Coupon client.coupons().retrieve(String couponId)` | `GET /api/v1/coupons/{coupon_id}` | [`Coupon`](src/main/java/com/meteroid/models/Coupon.java) |
 | `Coupon client.coupons().update(String couponId, UpdateCouponRequest updateCouponRequest)` | `PATCH /api/v1/coupons/{coupon_id}` | [`Coupon`](src/main/java/com/meteroid/models/Coupon.java) |
@@ -79,7 +85,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `CreditNoteListResponse client.creditNotes().list([CreditNotesListOptions options])` | `GET /api/v1/credit-notes` | [`CreditNoteListResponse`](src/main/java/com/meteroid/models/CreditNoteListResponse.java) |
+| `CreditNotesListPage client.creditNotes().list([CreditNotesListOptions options])` | `GET /api/v1/credit-notes` | [page](src/main/java/com/meteroid/api/CreditNotesListPage.java) of [`CreditNote`](src/main/java/com/meteroid/models/CreditNote.java), with the properties of [`CreditNoteListResponse`](src/main/java/com/meteroid/models/CreditNoteListResponse.java) |
 | `CreditNote client.creditNotes().retrieve(String creditNoteId)` | `GET /api/v1/credit-notes/{credit_note_id}` | [`CreditNote`](src/main/java/com/meteroid/models/CreditNote.java) |
 | `CreditNote client.creditNotes().updateCustomProperties(String creditNoteId, CreditNoteCustomPropertiesRequest creditNoteCustomPropertiesRequest)` | `PATCH /api/v1/credit-notes/{credit_note_id}/custom-properties` | [`CreditNote`](src/main/java/com/meteroid/models/CreditNote.java) |
 | `byte[] client.creditNotes().download(String creditNoteId)` | `GET /api/v1/credit-notes/{credit_note_id}/download` | bytes |
@@ -91,7 +97,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `CustomPropertyDefinitionListResponse client.customProperties().listCustomPropertyDefinitions([CustomPropertiesListCustomPropertyDefinitionsOptions options])` | `GET /api/v1/custom-property-definitions` | [`CustomPropertyDefinitionListResponse`](src/main/java/com/meteroid/models/CustomPropertyDefinitionListResponse.java) |
+| `CustomPropertiesListCustomPropertyDefinitionsPage client.customProperties().listCustomPropertyDefinitions([CustomPropertiesListCustomPropertyDefinitionsOptions options])` | `GET /api/v1/custom-property-definitions` | [page](src/main/java/com/meteroid/api/CustomPropertiesListCustomPropertyDefinitionsPage.java) of [`CustomPropertyDefinition`](src/main/java/com/meteroid/models/CustomPropertyDefinition.java), with the properties of [`CustomPropertyDefinitionListResponse`](src/main/java/com/meteroid/models/CustomPropertyDefinitionListResponse.java) |
 | `CustomPropertyDefinition client.customProperties().createCustomPropertyDefinition(CustomPropertyDefinitionCreateRequest customPropertyDefinitionCreateRequest)` | `POST /api/v1/custom-property-definitions` | [`CustomPropertyDefinition`](src/main/java/com/meteroid/models/CustomPropertyDefinition.java) |
 | `CustomPropertyDefinition client.customProperties().retrieveCustomPropertyDefinition(String id)` | `GET /api/v1/custom-property-definitions/{id}` | [`CustomPropertyDefinition`](src/main/java/com/meteroid/models/CustomPropertyDefinition.java) |
 | `CustomPropertyDefinition client.customProperties().updateCustomPropertyDefinition(String id, CustomPropertyDefinitionUpdateRequest customPropertyDefinitionUpdateRequest)` | `PUT /api/v1/custom-property-definitions/{id}` | [`CustomPropertyDefinition`](src/main/java/com/meteroid/models/CustomPropertyDefinition.java) |
@@ -103,7 +109,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `CustomerListResponse client.customers().list([CustomersListOptions options])` | `GET /api/v1/customers` | [`CustomerListResponse`](src/main/java/com/meteroid/models/CustomerListResponse.java) |
+| `CustomersListPage client.customers().list([CustomersListOptions options])` | `GET /api/v1/customers` | [page](src/main/java/com/meteroid/api/CustomersListPage.java) of [`Customer`](src/main/java/com/meteroid/models/Customer.java), with the properties of [`CustomerListResponse`](src/main/java/com/meteroid/models/CustomerListResponse.java) |
 | `Customer client.customers().create(CustomerCreateRequest customerCreateRequest)` | `POST /api/v1/customers` | [`Customer`](src/main/java/com/meteroid/models/Customer.java) |
 | `Customer client.customers().retrieve(String idOrAlias)` | `GET /api/v1/customers/{id_or_alias}` | [`Customer`](src/main/java/com/meteroid/models/Customer.java) |
 | `Customer client.customers().replace(String idOrAlias, CustomerUpdateRequest customerUpdateRequest)` | `PUT /api/v1/customers/{id_or_alias}` | [`Customer`](src/main/java/com/meteroid/models/Customer.java) |
@@ -137,7 +143,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `FeatureListResponse client.features().list([FeaturesListOptions options])` | `GET /api/v1/features` | [`FeatureListResponse`](src/main/java/com/meteroid/models/FeatureListResponse.java) |
+| `FeaturesListPage client.features().list([FeaturesListOptions options])` | `GET /api/v1/features` | [page](src/main/java/com/meteroid/api/FeaturesListPage.java) of [`Feature`](src/main/java/com/meteroid/models/Feature.java), with the properties of [`FeatureListResponse`](src/main/java/com/meteroid/models/FeatureListResponse.java) |
 | `Feature client.features().create(CreateFeatureRequest createFeatureRequest)` | `POST /api/v1/features` | [`Feature`](src/main/java/com/meteroid/models/Feature.java) |
 | `Feature client.features().retrieve(String idOrCode)` | `GET /api/v1/features/{id_or_code}` | [`Feature`](src/main/java/com/meteroid/models/Feature.java) |
 | `Feature client.features().update(String idOrCode, UpdateFeatureRequest updateFeatureRequest)` | `PATCH /api/v1/features/{id_or_code}` | [`Feature`](src/main/java/com/meteroid/models/Feature.java) |
@@ -150,7 +156,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `InvoiceListResponse client.invoices().list([InvoicesListOptions options])` | `GET /api/v1/invoices` | [`InvoiceListResponse`](src/main/java/com/meteroid/models/InvoiceListResponse.java) |
+| `InvoicesListPage client.invoices().list([InvoicesListOptions options])` | `GET /api/v1/invoices` | [page](src/main/java/com/meteroid/api/InvoicesListPage.java) of [`Invoice`](src/main/java/com/meteroid/models/Invoice.java), with the properties of [`InvoiceListResponse`](src/main/java/com/meteroid/models/InvoiceListResponse.java) |
 | `Invoice client.invoices().retrieve(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `Invoice client.invoices().updateCustomProperties(String invoiceId, InvoiceCustomPropertiesRequest invoiceCustomPropertiesRequest)` | `PATCH /api/v1/invoices/{invoice_id}/custom-properties` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `byte[] client.invoices().download(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}/download` | bytes |
@@ -163,7 +169,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `MetricListResponse client.metrics().list([MetricsListOptions options])` | `GET /api/v1/metrics` | [`MetricListResponse`](src/main/java/com/meteroid/models/MetricListResponse.java) |
+| `MetricsListPage client.metrics().list([MetricsListOptions options])` | `GET /api/v1/metrics` | [page](src/main/java/com/meteroid/api/MetricsListPage.java) of [`MetricSummary`](src/main/java/com/meteroid/models/MetricSummary.java), with the properties of [`MetricListResponse`](src/main/java/com/meteroid/models/MetricListResponse.java) |
 | `Metric client.metrics().create(CreateMetricRequest createMetricRequest)` | `POST /api/v1/metrics` | [`Metric`](src/main/java/com/meteroid/models/Metric.java) |
 | `Metric client.metrics().retrieve(String metricId)` | `GET /api/v1/metrics/{metric_id}` | [`Metric`](src/main/java/com/meteroid/models/Metric.java) |
 | `Metric client.metrics().update(String metricId, UpdateMetricRequest updateMetricRequest)` | `PATCH /api/v1/metrics/{metric_id}` | [`Metric`](src/main/java/com/meteroid/models/Metric.java) |
@@ -200,7 +206,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 | --- | --- | --- |
 | `ResolvedEntitlementListResponse client.plans().listPlanVersionEntitlements(String planVersionId)` | `GET /api/v1/plan-versions/{plan_version_id}/entitlements` | [`ResolvedEntitlementListResponse`](src/main/java/com/meteroid/models/ResolvedEntitlementListResponse.java) |
 | `EntitlementListResponse client.plans().createPlanVersionEntitlement(String planVersionId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/plan-versions/{plan_version_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
-| `PlanListResponse client.plans().list([PlansListOptions options])` | `GET /api/v1/plans` | [`PlanListResponse`](src/main/java/com/meteroid/models/PlanListResponse.java) |
+| `PlansListPage client.plans().list([PlansListOptions options])` | `GET /api/v1/plans` | [page](src/main/java/com/meteroid/api/PlansListPage.java) of [`Plan`](src/main/java/com/meteroid/models/Plan.java), with the properties of [`PlanListResponse`](src/main/java/com/meteroid/models/PlanListResponse.java) |
 | `Plan client.plans().create(CreatePlanRequest createPlanRequest)` | `POST /api/v1/plans` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `MinimumCommitment client.plans().updateVersionMinimum(String planVersionId, MinimumCommitment minimumCommitment)` | `PUT /api/v1/plans/versions/{plan_version_id}/minimum` | [`MinimumCommitment`](src/main/java/com/meteroid/models/MinimumCommitment.java) |
 | `void client.plans().deleteVersionMinimum(String planVersionId)` | `DELETE /api/v1/plans/versions/{plan_version_id}/minimum` | nothing |
@@ -210,7 +216,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 | `void client.plans().archive(String planId)` | `POST /api/v1/plans/{plan_id}/archive` | nothing |
 | `Plan client.plans().publish(String planId)` | `POST /api/v1/plans/{plan_id}/publish` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `void client.plans().unarchive(String planId)` | `POST /api/v1/plans/{plan_id}/unarchive` | nothing |
-| `PlanVersionListResponse client.plans().listVersions(String planId, [PlansListVersionsOptions options])` | `GET /api/v1/plans/{plan_id}/versions` | [`PlanVersionListResponse`](src/main/java/com/meteroid/models/PlanVersionListResponse.java) |
+| `PlansListVersionsPage client.plans().listVersions(String planId, [PlansListVersionsOptions options])` | `GET /api/v1/plans/{plan_id}/versions` | [page](src/main/java/com/meteroid/api/PlansListVersionsPage.java) of [`PlanVersionSummary`](src/main/java/com/meteroid/models/PlanVersionSummary.java), with the properties of [`PlanVersionListResponse`](src/main/java/com/meteroid/models/PlanVersionListResponse.java) |
 
 ## Product families
 
@@ -218,7 +224,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `ProductFamilyListResponse client.productFamilies().list([ProductFamiliesListOptions options])` | `GET /api/v1/product_families` | [`ProductFamilyListResponse`](src/main/java/com/meteroid/models/ProductFamilyListResponse.java) |
+| `ProductFamiliesListPage client.productFamilies().list([ProductFamiliesListOptions options])` | `GET /api/v1/product_families` | [page](src/main/java/com/meteroid/api/ProductFamiliesListPage.java) of [`ProductFamily`](src/main/java/com/meteroid/models/ProductFamily.java), with the properties of [`ProductFamilyListResponse`](src/main/java/com/meteroid/models/ProductFamilyListResponse.java) |
 | `ProductFamily client.productFamilies().create(ProductFamilyCreateRequest productFamilyCreateRequest)` | `POST /api/v1/product_families` | [`ProductFamily`](src/main/java/com/meteroid/models/ProductFamily.java) |
 | `ProductFamily client.productFamilies().retrieve(String idOrAlias)` | `GET /api/v1/product_families/{id_or_alias}` | [`ProductFamily`](src/main/java/com/meteroid/models/ProductFamily.java) |
 
@@ -228,7 +234,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `ProductListResponse client.products().list([ProductsListOptions options])` | `GET /api/v1/products` | [`ProductListResponse`](src/main/java/com/meteroid/models/ProductListResponse.java) |
+| `ProductsListPage client.products().list([ProductsListOptions options])` | `GET /api/v1/products` | [page](src/main/java/com/meteroid/api/ProductsListPage.java) of [`Product`](src/main/java/com/meteroid/models/Product.java), with the properties of [`ProductListResponse`](src/main/java/com/meteroid/models/ProductListResponse.java) |
 | `Product client.products().create(CreateProductRequest createProductRequest)` | `POST /api/v1/products` | [`Product`](src/main/java/com/meteroid/models/Product.java) |
 | `Product client.products().retrieve(String productId)` | `GET /api/v1/products/{product_id}` | [`Product`](src/main/java/com/meteroid/models/Product.java) |
 | `Product client.products().update(String productId, UpdateProductRequest updateProductRequest)` | `PATCH /api/v1/products/{product_id}` | [`Product`](src/main/java/com/meteroid/models/Product.java) |
@@ -243,7 +249,7 @@ idempotency key of that call. `client.async()` has the same methods returning
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `SubscriptionListResponse client.subscriptions().list([SubscriptionsListOptions options])` | `GET /api/v1/subscriptions` | [`SubscriptionListResponse`](src/main/java/com/meteroid/models/SubscriptionListResponse.java) |
+| `SubscriptionsListPage client.subscriptions().list([SubscriptionsListOptions options])` | `GET /api/v1/subscriptions` | [page](src/main/java/com/meteroid/api/SubscriptionsListPage.java) of [`Subscription`](src/main/java/com/meteroid/models/Subscription.java), with the properties of [`SubscriptionListResponse`](src/main/java/com/meteroid/models/SubscriptionListResponse.java) |
 | `SubscriptionDetails client.subscriptions().create(SubscriptionCreateRequest subscriptionCreateRequest)` | `POST /api/v1/subscriptions` | [`SubscriptionDetails`](src/main/java/com/meteroid/models/SubscriptionDetails.java) |
 | `SubscriptionDetails client.subscriptions().retrieve(String subscriptionId)` | `GET /api/v1/subscriptions/{subscription_id}` | [`SubscriptionDetails`](src/main/java/com/meteroid/models/SubscriptionDetails.java) |
 | `SubscriptionUpdateResponse client.subscriptions().update(String subscriptionId, SubscriptionUpdateRequest subscriptionUpdateRequest)` | `PATCH /api/v1/subscriptions/{subscription_id}` | [`SubscriptionUpdateResponse`](src/main/java/com/meteroid/models/SubscriptionUpdateResponse.java) |

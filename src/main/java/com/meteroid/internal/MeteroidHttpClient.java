@@ -63,6 +63,13 @@ public final class MeteroidHttpClient implements AutoCloseable {
     private static final Set<String> IDEMPOTENT_METHODS =
             Set.of("GET", "HEAD", "PUT", "DELETE", "OPTIONS", "TRACE");
     private static final Set<String> BODY_METHODS = Set.of("POST", "PUT", "PATCH");
+
+    /**
+     * Whether the API deduplicates POSTs by {@code Idempotency-Key}, so that each gets one to be
+     * retried.
+     */
+    private static final boolean AUTO_IDEMPOTENCY_KEY = false;
+
     private static final Duration MAX_RETRY_AFTER = Duration.ofSeconds(60);
     private static final Duration MAX_CONNECT_TIMEOUT = Duration.ofSeconds(10);
     private static final long DEFAULT_BACKOFF_MILLIS = 500;
@@ -151,6 +158,8 @@ public final class MeteroidHttpClient implements AutoCloseable {
         JsonNode answer =
                 withSecurity(List.of())
                         .call("POST", url)
+                        // Another token is as good as the first: the request is safe to retry.
+                        .retrySafe()
                         .headers(headers)
                         .body(form.build())
                         .returning(JsonNode.class)
@@ -347,6 +356,7 @@ public final class MeteroidHttpClient implements AutoCloseable {
         private RequestBody body;
         private final Map<String, Class<?>> errors = new HashMap<>();
         private RequestOptions options = RequestOptions.none();
+        private boolean retrySafe;
 
         private Call(String method, HttpUrl url) {
             this.method = method;
@@ -401,6 +411,16 @@ public final class MeteroidHttpClient implements AutoCloseable {
          */
         public Call body(RequestBody body) {
             this.body = body;
+            return this;
+        }
+
+        /**
+         * Marks a POST as safe to retry without an idempotency key.
+         *
+         * @return this call
+         */
+        public Call retrySafe() {
+            this.retrySafe = true;
             return this;
         }
 
@@ -581,6 +601,9 @@ public final class MeteroidHttpClient implements AutoCloseable {
                 content = RequestBody.create(new byte[0], null);
             }
             Request.Builder request = new Request.Builder().url(url).method(verb, content);
+            if (retrySafe) {
+                request.tag(RetrySafe.class, RetrySafe.INSTANCE);
+            }
             defaultHeaders.forEach(request::header);
             if (auth != null) {
                 auth.apply(request, url, security);
@@ -600,7 +623,9 @@ public final class MeteroidHttpClient implements AutoCloseable {
                 request.header("Cookie", String.join("; ", cookies));
             }
             String idempotencyKey = request.build().header("idempotency-key");
-            if ((idempotencyKey == null || idempotencyKey.isEmpty()) && verb.equals("POST")) {
+            if (AUTO_IDEMPOTENCY_KEY
+                    && (idempotencyKey == null || idempotencyKey.isEmpty())
+                    && verb.equals("POST")) {
                 request.header("idempotency-key", "auto_" + UUID.randomUUID());
             }
             request.header(
@@ -888,9 +913,15 @@ public final class MeteroidHttpClient implements AutoCloseable {
         }
     }
 
+    /** Tags the requests that are safe to retry whatever their method. */
+    private enum RetrySafe {
+        INSTANCE
+    }
+
     private static boolean retryable(Request request) {
         RequestBody body = request.body();
         return (IDEMPOTENT_METHODS.contains(request.method())
+                        || request.tag(RetrySafe.class) != null
                         || request.header("idempotency-key") != null)
                 && (body == null || !body.isOneShot());
     }

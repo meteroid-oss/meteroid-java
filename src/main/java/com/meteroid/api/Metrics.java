@@ -8,10 +8,12 @@ import com.meteroid.internal.Utils;
 import com.meteroid.models.CreateMetricRequest;
 import com.meteroid.models.Metric;
 import com.meteroid.models.MetricListResponse;
+import com.meteroid.models.MetricSummary;
 import com.meteroid.models.UpdateMetricRequest;
 
 import okhttp3.HttpUrl;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,9 +46,9 @@ public final class Metrics {
     /**
      * List billable metrics
      *
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public MetricListResponse list() {
+    public MetricsListPage list() {
         return list(MetricsListOptions.none(), RequestOptions.none());
     }
 
@@ -54,9 +56,9 @@ public final class Metrics {
      * List billable metrics
      *
      * @param options the optional parameters
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public MetricListResponse list(final MetricsListOptions options) {
+    public MetricsListPage list(final MetricsListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -64,9 +66,9 @@ public final class Metrics {
      * List billable metrics
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public MetricListResponse list(final RequestOptions requestOptions) {
+    public MetricsListPage list(final RequestOptions requestOptions) {
         return list(MetricsListOptions.none(), requestOptions);
     }
 
@@ -75,11 +77,11 @@ public final class Metrics {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
+     * @return the page: the response body, its items and the way to the next pages
      */
-    public MetricListResponse list(
+    public MetricsListPage list(
             final MetricsListOptions options, final RequestOptions requestOptions) {
-        return exchangeList(options, requestOptions).send();
+        return pageOfList(exchangeList(options, requestOptions).send(), options, requestOptions);
     }
 
     MeteroidHttpClient.Exchange<MetricListResponse> exchangeList(
@@ -110,6 +112,41 @@ public final class Metrics {
                 .errors(com.meteroid.models.RestErrorResponse.class, "401", "429")
                 .options(requestOptions)
                 .returning(MetricListResponse.class);
+    }
+
+    private MetricsListPage pageOfList(
+            MetricListResponse response,
+            final MetricsListOptions options,
+            final RequestOptions requestOptions) {
+        List<MetricSummary> items = itemsOfList(response);
+        Integer next = nextOfList(response, items, options.page().orElse(0));
+        return new MetricsListPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
+    }
+
+    static List<MetricSummary> itemsOfList(MetricListResponse response) {
+        return Utils.optional(response.data()).orElse(List.of());
+    }
+
+    /** The parameter of the page after {@code response}, null after the last one. */
+    static Integer nextOfList(
+            MetricListResponse response, List<MetricSummary> items, Integer current) {
+        if (items.isEmpty()) {
+            return null;
+        }
+        long pages =
+                Utils.optional(response.paginationMeta())
+                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
+                        .map(Number::longValue)
+                        .orElse(Long.MAX_VALUE);
+        if (current - 0 + 1 >= pages) {
+            return null;
+        }
+        return current + 1;
     }
 
     /**
@@ -303,9 +340,9 @@ public final class Metrics {
         /**
          * List billable metrics
          *
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<MetricListResponse> list() {
+        public ApiResponse<MetricsListPage> list() {
             return list(MetricsListOptions.none(), RequestOptions.none());
         }
 
@@ -313,9 +350,9 @@ public final class Metrics {
          * List billable metrics
          *
          * @param options the optional parameters
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<MetricListResponse> list(final MetricsListOptions options) {
+        public ApiResponse<MetricsListPage> list(final MetricsListOptions options) {
             return list(options, RequestOptions.none());
         }
 
@@ -323,9 +360,9 @@ public final class Metrics {
          * List billable metrics
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<MetricListResponse> list(final RequestOptions requestOptions) {
+        public ApiResponse<MetricsListPage> list(final RequestOptions requestOptions) {
             return list(MetricsListOptions.none(), requestOptions);
         }
 
@@ -334,11 +371,16 @@ public final class Metrics {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
+         * @return the status, headers and page
          */
-        public ApiResponse<MetricListResponse> list(
+        public ApiResponse<MetricsListPage> list(
                 final MetricsListOptions options, final RequestOptions requestOptions) {
-            return Metrics.this.exchangeList(options, requestOptions).sendRaw();
+            ApiResponse<MetricListResponse> response =
+                    exchangeList(options, requestOptions).sendRaw();
+            return new ApiResponse<>(
+                    response.statusCode(),
+                    response.headers(),
+                    pageOfList(response.body(), options, requestOptions));
         }
 
         /**

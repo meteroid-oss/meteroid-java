@@ -8,6 +8,7 @@ import com.meteroid.models.Feature;
 import com.meteroid.models.FeatureListResponse;
 import com.meteroid.models.UpdateFeatureRequest;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -40,9 +41,9 @@ public final class FeaturesAsync {
     /**
      * List features
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<FeatureListResponse> list() {
+    public CompletableFuture<FeaturesListAsyncPage> list() {
         return list(FeaturesListOptions.none(), RequestOptions.none());
     }
 
@@ -50,9 +51,9 @@ public final class FeaturesAsync {
      * List features
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<FeatureListResponse> list(final FeaturesListOptions options) {
+    public CompletableFuture<FeaturesListAsyncPage> list(final FeaturesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -60,9 +61,9 @@ public final class FeaturesAsync {
      * List features
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<FeatureListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<FeaturesListAsyncPage> list(final RequestOptions requestOptions) {
         return list(FeaturesListOptions.none(), requestOptions);
     }
 
@@ -71,11 +72,27 @@ public final class FeaturesAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<FeatureListResponse> list(
+    public CompletableFuture<FeaturesListAsyncPage> list(
             final FeaturesListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private FeaturesListAsyncPage pageOfList(
+            FeatureListResponse response,
+            final FeaturesListOptions options,
+            final RequestOptions requestOptions) {
+        List<Feature> items = Features.itemsOfList(response);
+        Integer next = Features.nextOfList(response, items, options.page().orElse(0));
+        return new FeaturesListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -208,9 +225,9 @@ public final class FeaturesAsync {
         /**
          * List features
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<FeatureListResponse>> list() {
+        public CompletableFuture<ApiResponse<FeaturesListAsyncPage>> list() {
             return list(FeaturesListOptions.none(), RequestOptions.none());
         }
 
@@ -218,9 +235,9 @@ public final class FeaturesAsync {
          * List features
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<FeatureListResponse>> list(
+        public CompletableFuture<ApiResponse<FeaturesListAsyncPage>> list(
                 final FeaturesListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -229,9 +246,9 @@ public final class FeaturesAsync {
          * List features
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<FeatureListResponse>> list(
+        public CompletableFuture<ApiResponse<FeaturesListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(FeaturesListOptions.none(), requestOptions);
         }
@@ -241,11 +258,18 @@ public final class FeaturesAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<FeatureListResponse>> list(
+        public CompletableFuture<ApiResponse<FeaturesListAsyncPage>> list(
                 final FeaturesListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

@@ -7,6 +7,7 @@ import com.meteroid.models.CreditNote;
 import com.meteroid.models.CreditNoteCustomPropertiesRequest;
 import com.meteroid.models.CreditNoteListResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -41,9 +42,9 @@ public final class CreditNotesAsync {
      *
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CreditNoteListResponse> list() {
+    public CompletableFuture<CreditNotesListAsyncPage> list() {
         return list(CreditNotesListOptions.none(), RequestOptions.none());
     }
 
@@ -53,9 +54,9 @@ public final class CreditNotesAsync {
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
      * @param options the optional parameters
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CreditNoteListResponse> list(final CreditNotesListOptions options) {
+    public CompletableFuture<CreditNotesListAsyncPage> list(final CreditNotesListOptions options) {
         return list(options, RequestOptions.none());
     }
 
@@ -65,9 +66,9 @@ public final class CreditNotesAsync {
      * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
      *
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CreditNoteListResponse> list(final RequestOptions requestOptions) {
+    public CompletableFuture<CreditNotesListAsyncPage> list(final RequestOptions requestOptions) {
         return list(CreditNotesListOptions.none(), requestOptions);
     }
 
@@ -78,11 +79,27 @@ public final class CreditNotesAsync {
      *
      * @param options the optional parameters
      * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
+     * @return the page, once received
      */
-    public CompletableFuture<CreditNoteListResponse> list(
+    public CompletableFuture<CreditNotesListAsyncPage> list(
             final CreditNotesListOptions options, final RequestOptions requestOptions) {
-        return sync.exchangeList(options, requestOptions).sendAsync();
+        return sync.exchangeList(options, requestOptions)
+                .sendAsync()
+                .thenApply(response -> pageOfList(response, options, requestOptions));
+    }
+
+    private CreditNotesListAsyncPage pageOfList(
+            CreditNoteListResponse response,
+            final CreditNotesListOptions options,
+            final RequestOptions requestOptions) {
+        List<CreditNote> items = CreditNotes.itemsOfList(response);
+        Integer next = CreditNotes.nextOfList(response, items, options.page().orElse(0));
+        return new CreditNotesListAsyncPage(
+                response,
+                items,
+                next == null
+                        ? null
+                        : () -> list(options.toBuilder().page(next).build(), requestOptions));
     }
 
     /**
@@ -211,9 +228,9 @@ public final class CreditNotesAsync {
          *
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CreditNoteListResponse>> list() {
+        public CompletableFuture<ApiResponse<CreditNotesListAsyncPage>> list() {
             return list(CreditNotesListOptions.none(), RequestOptions.none());
         }
 
@@ -223,9 +240,9 @@ public final class CreditNotesAsync {
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
          * @param options the optional parameters
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CreditNoteListResponse>> list(
+        public CompletableFuture<ApiResponse<CreditNotesListAsyncPage>> list(
                 final CreditNotesListOptions options) {
             return list(options, RequestOptions.none());
         }
@@ -236,9 +253,9 @@ public final class CreditNotesAsync {
          * <p>List a tenant's credit notes, optionally filtered by customer, invoice or status.
          *
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CreditNoteListResponse>> list(
+        public CompletableFuture<ApiResponse<CreditNotesListAsyncPage>> list(
                 final RequestOptions requestOptions) {
             return list(CreditNotesListOptions.none(), requestOptions);
         }
@@ -250,11 +267,18 @@ public final class CreditNotesAsync {
          *
          * @param options the optional parameters
          * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
+         * @return the status, headers and page, once received
          */
-        public CompletableFuture<ApiResponse<CreditNoteListResponse>> list(
+        public CompletableFuture<ApiResponse<CreditNotesListAsyncPage>> list(
                 final CreditNotesListOptions options, final RequestOptions requestOptions) {
-            return sync.exchangeList(options, requestOptions).sendRawAsync();
+            return sync.exchangeList(options, requestOptions)
+                    .sendRawAsync()
+                    .thenApply(
+                            response ->
+                                    new ApiResponse<>(
+                                            response.statusCode(),
+                                            response.headers(),
+                                            pageOfList(response.body(), options, requestOptions)));
         }
 
         /**

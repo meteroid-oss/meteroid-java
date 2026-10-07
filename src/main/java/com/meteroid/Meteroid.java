@@ -42,12 +42,14 @@ import java.util.Map;
  * }</pre>
  *
  * <p>Without an API key, the client reads {@value MeteroidOptions#API_KEY_ENV}, and {@value
- * MeteroidOptions#BASE_URL_ENV} overrides the base URL, which the API has no default for: one of
- * them is required.
+ * MeteroidOptions#BASE_URL_ENV} overrides the base URL, {@link #DEFAULT_BASE_URL} otherwise.
  */
 public final class Meteroid implements AutoCloseable {
     private static final Map<String, MeteroidAuth.Scheme> SECURITY_SCHEMES =
             Map.ofEntries(Map.entry("bearer_auth", new MeteroidAuth.Scheme("bearer", null, null)));
+
+    /** The base URL of the API when neither the options nor the environment set one. */
+    public static final String DEFAULT_BASE_URL = "https://api.meteroid.com";
 
     private final MeteroidOptions options;
     private final MeteroidHttpClient httpClient;
@@ -107,17 +109,12 @@ public final class Meteroid implements AutoCloseable {
      * A client with custom options.
      *
      * @param options the options; the environment supplies the API key and base URL they leave out
-     * @throws IllegalStateException when neither the options nor the environment set a base URL
      */
     public Meteroid(MeteroidOptions options) {
         this.options = options;
-        String baseUrl = options.baseUrl().orElseGet(() -> env(MeteroidOptions.BASE_URL_ENV, null));
-        if (baseUrl == null) {
-            throw new IllegalStateException(
-                    "no base URL: set MeteroidOptions.builder().baseUrl(...) or the "
-                            + MeteroidOptions.BASE_URL_ENV
-                            + " environment variable");
-        }
+        String baseUrl =
+                options.baseUrl()
+                        .orElseGet(() -> env(MeteroidOptions.BASE_URL_ENV, DEFAULT_BASE_URL));
         HttpUrl parsedUrl = HttpUrl.parse(baseUrl);
         if (parsedUrl == null) {
             throw new IllegalArgumentException("Invalid base URL: " + baseUrl);
