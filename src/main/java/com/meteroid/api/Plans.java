@@ -8,14 +8,11 @@ import com.meteroid.internal.Utils;
 import com.meteroid.models.CreateEntitlementsRequest;
 import com.meteroid.models.CreatePlanRequest;
 import com.meteroid.models.EntitlementListResponse;
-import com.meteroid.models.MinimumCommitment;
 import com.meteroid.models.PatchPlanRequest;
 import com.meteroid.models.Plan;
 import com.meteroid.models.PlanListResponse;
 import com.meteroid.models.PlanStatusEnum;
 import com.meteroid.models.PlanTypeEnum;
-import com.meteroid.models.PlanVersionListResponse;
-import com.meteroid.models.PlanVersionSummary;
 import com.meteroid.models.ReplacePlanRequest;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 
@@ -32,6 +29,8 @@ public final class Plans {
     private final MeteroidHttpClient client;
     private final WithRawResponse withRawResponse;
 
+    private final PlansVersions versions;
+
     /**
      * The operations, sending through {@code client}.
      *
@@ -40,6 +39,8 @@ public final class Plans {
     public Plans(MeteroidHttpClient client) {
         this.client = client;
         this.withRawResponse = new WithRawResponse();
+
+        this.versions = new PlansVersions(client);
     }
 
     /**
@@ -49,6 +50,15 @@ public final class Plans {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code versions} operations.
+     *
+     * @return the operations
+     */
+    public PlansVersions versions() {
+        return versions;
     }
 
     /**
@@ -291,88 +301,6 @@ public final class Plans {
                 .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "409", "429")
                 .options(requestOptions)
                 .returning(Plan.class);
-    }
-
-    /**
-     * Set or replace the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param minimumCommitment the request body
-     * @return the response body
-     */
-    public MinimumCommitment updateVersionMinimum(
-            final String planVersionId, final MinimumCommitment minimumCommitment) {
-        return updateVersionMinimum(planVersionId, minimumCommitment, RequestOptions.none());
-    }
-
-    /**
-     * Set or replace the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param minimumCommitment the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public MinimumCommitment updateVersionMinimum(
-            final String planVersionId,
-            final MinimumCommitment minimumCommitment,
-            final RequestOptions requestOptions) {
-        return exchangeUpdateVersionMinimum(planVersionId, minimumCommitment, requestOptions)
-                .send();
-    }
-
-    MeteroidHttpClient.Exchange<MinimumCommitment> exchangeUpdateVersionMinimum(
-            final String planVersionId,
-            final MinimumCommitment minimumCommitment,
-            final RequestOptions requestOptions) {
-        Objects.requireNonNull(planVersionId, "plan_version_id");
-        Objects.requireNonNull(minimumCommitment, "body");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/plans/versions")
-                        .addPathSegment(Utils.pathSegment("plan_version_id", planVersionId))
-                        .addPathSegments("minimum")
-                        .build();
-        return client.call("PUT", url)
-                .json(minimumCommitment)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
-                .options(requestOptions)
-                .returning(MinimumCommitment.class);
-    }
-
-    /**
-     * Remove the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     */
-    public void deleteVersionMinimum(final String planVersionId) {
-        deleteVersionMinimum(planVersionId, RequestOptions.none());
-    }
-
-    /**
-     * Remove the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     */
-    public void deleteVersionMinimum(
-            final String planVersionId, final RequestOptions requestOptions) {
-        exchangeDeleteVersionMinimum(planVersionId, requestOptions).send();
-    }
-
-    MeteroidHttpClient.Exchange<Void> exchangeDeleteVersionMinimum(
-            final String planVersionId, final RequestOptions requestOptions) {
-        Objects.requireNonNull(planVersionId, "plan_version_id");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/plans/versions")
-                        .addPathSegment(Utils.pathSegment("plan_version_id", planVersionId))
-                        .addPathSegments("minimum")
-                        .build();
-        return client.call("DELETE", url)
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
-                .options(requestOptions)
-                .returningNothing();
     }
 
     /**
@@ -664,127 +592,18 @@ public final class Plans {
                 .returningNothing();
     }
 
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @return the page: the response body, its items and the way to the next pages
-     */
-    public PlansListVersionsPage listVersions(final String planId) {
-        return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param options the optional parameters
-     * @return the page: the response body, its items and the way to the next pages
-     */
-    public PlansListVersionsPage listVersions(
-            final String planId, final PlansListVersionsOptions options) {
-        return listVersions(planId, options, RequestOptions.none());
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the page: the response body, its items and the way to the next pages
-     */
-    public PlansListVersionsPage listVersions(
-            final String planId, final RequestOptions requestOptions) {
-        return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param options the optional parameters
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the page: the response body, its items and the way to the next pages
-     */
-    public PlansListVersionsPage listVersions(
-            final String planId,
-            final PlansListVersionsOptions options,
-            final RequestOptions requestOptions) {
-        return pageOfListVersions(
-                exchangeListVersions(planId, options, requestOptions).send(),
-                planId,
-                options,
-                requestOptions);
-    }
-
-    MeteroidHttpClient.Exchange<PlanVersionListResponse> exchangeListVersions(
-            final String planId,
-            final PlansListVersionsOptions options,
-            final RequestOptions requestOptions) {
-        Objects.requireNonNull(planId, "plan_id");
-        Objects.requireNonNull(options, "options");
-        HttpUrl.Builder url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/plans")
-                        .addPathSegment(Utils.pathSegment("plan_id", planId))
-                        .addPathSegments("versions");
-        Integer value1 = options.page().orElse(null);
-        if (value1 != null) {
-            url.addQueryParameter("page", Utils.serializeQueryParam(value1));
-        }
-        Integer value2 = options.perPage().orElse(null);
-        if (value2 != null) {
-            url.addQueryParameter("per_page", Utils.serializeQueryParam(value2));
-        }
-        return client.call("GET", url.build())
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
-                .options(requestOptions)
-                .returning(PlanVersionListResponse.class);
-    }
-
-    private PlansListVersionsPage pageOfListVersions(
-            PlanVersionListResponse response,
-            final String planId,
-            final PlansListVersionsOptions options,
-            final RequestOptions requestOptions) {
-        List<PlanVersionSummary> items = itemsOfListVersions(response);
-        Integer next = nextOfListVersions(response, items, options.page().orElse(0));
-        return new PlansListVersionsPage(
-                response,
-                items,
-                next == null
-                        ? null
-                        : () ->
-                                listVersions(
-                                        planId,
-                                        options.toBuilder().page(next).build(),
-                                        requestOptions));
-    }
-
-    static List<PlanVersionSummary> itemsOfListVersions(PlanVersionListResponse response) {
-        return Utils.optional(response.data()).orElse(List.of());
-    }
-
-    /** The parameter of the page after {@code response}, null after the last one. */
-    static Integer nextOfListVersions(
-            PlanVersionListResponse response, List<PlanVersionSummary> items, Integer current) {
-        if (items.isEmpty()) {
-            return null;
-        }
-        long pages =
-                Utils.optional(response.paginationMeta())
-                        .flatMap(v2 -> Utils.optional(v2.totalPages()))
-                        .map(Number::longValue)
-                        .orElse(Long.MAX_VALUE);
-        if (current - 0 + 1 >= pages) {
-            return null;
-        }
-        return current + 1;
-    }
-
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code versions} operations.
+         *
+         * @return the operations
+         */
+        public PlansVersions.WithRawResponse versions() {
+            return Plans.this.versions.withRawResponse();
+        }
 
         /**
          * List plan version entitlements
@@ -919,57 +738,6 @@ public final class Plans {
         public ApiResponse<Plan> create(
                 final CreatePlanRequest createPlanRequest, final RequestOptions requestOptions) {
             return Plans.this.exchangeCreate(createPlanRequest, requestOptions).sendRaw();
-        }
-
-        /**
-         * Set or replace the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param minimumCommitment the request body
-         * @return the status, headers and body
-         */
-        public ApiResponse<MinimumCommitment> updateVersionMinimum(
-                final String planVersionId, final MinimumCommitment minimumCommitment) {
-            return updateVersionMinimum(planVersionId, minimumCommitment, RequestOptions.none());
-        }
-
-        /**
-         * Set or replace the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param minimumCommitment the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<MinimumCommitment> updateVersionMinimum(
-                final String planVersionId,
-                final MinimumCommitment minimumCommitment,
-                final RequestOptions requestOptions) {
-            return Plans.this
-                    .exchangeUpdateVersionMinimum(planVersionId, minimumCommitment, requestOptions)
-                    .sendRaw();
-        }
-
-        /**
-         * Remove the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @return the status, headers and body
-         */
-        public ApiResponse<Void> deleteVersionMinimum(final String planVersionId) {
-            return deleteVersionMinimum(planVersionId, RequestOptions.none());
-        }
-
-        /**
-         * Remove the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<Void> deleteVersionMinimum(
-                final String planVersionId, final RequestOptions requestOptions) {
-            return Plans.this.exchangeDeleteVersionMinimum(planVersionId, requestOptions).sendRaw();
         }
 
         /**
@@ -1166,60 +934,6 @@ public final class Plans {
         public ApiResponse<Void> unarchive(
                 final String planId, final RequestOptions requestOptions) {
             return Plans.this.exchangeUnarchive(planId, requestOptions).sendRaw();
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @return the status, headers and page
-         */
-        public ApiResponse<PlansListVersionsPage> listVersions(final String planId) {
-            return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param options the optional parameters
-         * @return the status, headers and page
-         */
-        public ApiResponse<PlansListVersionsPage> listVersions(
-                final String planId, final PlansListVersionsOptions options) {
-            return listVersions(planId, options, RequestOptions.none());
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and page
-         */
-        public ApiResponse<PlansListVersionsPage> listVersions(
-                final String planId, final RequestOptions requestOptions) {
-            return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param options the optional parameters
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and page
-         */
-        public ApiResponse<PlansListVersionsPage> listVersions(
-                final String planId,
-                final PlansListVersionsOptions options,
-                final RequestOptions requestOptions) {
-            ApiResponse<PlanVersionListResponse> response =
-                    exchangeListVersions(planId, options, requestOptions).sendRaw();
-            return new ApiResponse<>(
-                    response.statusCode(),
-                    response.headers(),
-                    pageOfListVersions(response.body(), planId, options, requestOptions));
         }
     }
 }

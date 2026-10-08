@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * A page of {@link Plans#listVersions}: the {@link PlanVersionSummary} items of one response, and
+ * A page of {@link PlansVersions#list}: the {@link PlanVersionSummary} items of one response, and
  * the properties of its body, {@link PlanVersionListResponse}.
  *
  * <p>Iterating it yields every item from this page on, fetching the next pages as the iteration
  * goes.
  */
-public final class PlansListVersionsPage extends Page<PlansListVersionsPage, PlanVersionSummary> {
+public final class PlansVersionsListPage extends Page<PlansVersionsListPage, PlanVersionSummary> {
     private final PlanVersionListResponse body;
 
     /**
@@ -26,10 +26,10 @@ public final class PlansListVersionsPage extends Page<PlansListVersionsPage, Pla
      * @param items the items of the page
      * @param next fetches the next page, or null on the last page
      */
-    public PlansListVersionsPage(
+    public PlansVersionsListPage(
             PlanVersionListResponse body,
             List<PlanVersionSummary> items,
-            Supplier<PlansListVersionsPage> next) {
+            Supplier<PlansVersionsListPage> next) {
         super(items, next);
         this.body = body;
     }
@@ -63,6 +63,6 @@ public final class PlansListVersionsPage extends Page<PlansListVersionsPage, Pla
 
     @Override
     public String toString() {
-        return "PlansListVersionsPage{body=" + body + ", hasNextPage=" + hasNextPage() + "}";
+        return "PlansVersionsListPage{body=" + body + ", hasNextPage=" + hasNextPage() + "}";
     }
 }

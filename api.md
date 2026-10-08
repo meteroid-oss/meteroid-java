@@ -14,7 +14,7 @@ item from that page on, and `pages()` every page, fetching the next ones on dema
 the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
 `forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
 
-[Add ons](#add-ons) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Product families](#product-families) · [Products](#products) · [Subscriptions](#subscriptions) · [Usage](#usage)
+[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage)
 
 ## Add ons
 
@@ -27,9 +27,16 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `AddOn client.addOns().retrieve(String addonId)` | `GET /api/v1/addons/{addon_id}` | [`AddOn`](src/main/java/com/meteroid/models/AddOn.java) |
 | `AddOn client.addOns().update(String addonId, UpdateAddOnRequest updateAddOnRequest)` | `PATCH /api/v1/addons/{addon_id}` | [`AddOn`](src/main/java/com/meteroid/models/AddOn.java) |
 | `void client.addOns().archive(String addonId)` | `POST /api/v1/addons/{addon_id}/archive` | nothing |
-| `ResolvedEntitlementListResponse client.addOns().listEntitlements(String addonId)` | `GET /api/v1/addons/{addon_id}/entitlements` | [`ResolvedEntitlementListResponse`](src/main/java/com/meteroid/models/ResolvedEntitlementListResponse.java) |
-| `EntitlementListResponse client.addOns().createEntitlement(String addonId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/addons/{addon_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
 | `void client.addOns().unarchive(String addonId)` | `POST /api/v1/addons/{addon_id}/unarchive` | nothing |
+
+### Add ons entitlements
+
+[`client.addOns().entitlements()`](src/main/java/com/meteroid/api/AddOnsEntitlements.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `ResolvedEntitlementListResponse client.addOns().entitlements().list(String addonId)` | `GET /api/v1/addons/{addon_id}/entitlements` | [`ResolvedEntitlementListResponse`](src/main/java/com/meteroid/models/ResolvedEntitlementListResponse.java) |
+| `EntitlementListResponse client.addOns().entitlements().create(String addonId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/addons/{addon_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
 
 ## Batch jobs
 
@@ -208,15 +215,22 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `EntitlementListResponse client.plans().createPlanVersionEntitlement(String planVersionId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/plan-versions/{plan_version_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
 | `PlansListPage client.plans().list([PlansListOptions options])` | `GET /api/v1/plans` | [page](src/main/java/com/meteroid/api/PlansListPage.java) of [`Plan`](src/main/java/com/meteroid/models/Plan.java), with the properties of [`PlanListResponse`](src/main/java/com/meteroid/models/PlanListResponse.java) |
 | `Plan client.plans().create(CreatePlanRequest createPlanRequest)` | `POST /api/v1/plans` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
-| `MinimumCommitment client.plans().updateVersionMinimum(String planVersionId, MinimumCommitment minimumCommitment)` | `PUT /api/v1/plans/versions/{plan_version_id}/minimum` | [`MinimumCommitment`](src/main/java/com/meteroid/models/MinimumCommitment.java) |
-| `void client.plans().deleteVersionMinimum(String planVersionId)` | `DELETE /api/v1/plans/versions/{plan_version_id}/minimum` | nothing |
 | `Plan client.plans().retrieve(String planId, [PlansRetrieveOptions options])` | `GET /api/v1/plans/{plan_id}` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `Plan client.plans().replace(String planId, ReplacePlanRequest replacePlanRequest)` | `PUT /api/v1/plans/{plan_id}` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `Plan client.plans().update(String planId, PatchPlanRequest patchPlanRequest)` | `PATCH /api/v1/plans/{plan_id}` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `void client.plans().archive(String planId)` | `POST /api/v1/plans/{plan_id}/archive` | nothing |
 | `Plan client.plans().publish(String planId)` | `POST /api/v1/plans/{plan_id}/publish` | [`Plan`](src/main/java/com/meteroid/models/Plan.java) |
 | `void client.plans().unarchive(String planId)` | `POST /api/v1/plans/{plan_id}/unarchive` | nothing |
-| `PlansListVersionsPage client.plans().listVersions(String planId, [PlansListVersionsOptions options])` | `GET /api/v1/plans/{plan_id}/versions` | [page](src/main/java/com/meteroid/api/PlansListVersionsPage.java) of [`PlanVersionSummary`](src/main/java/com/meteroid/models/PlanVersionSummary.java), with the properties of [`PlanVersionListResponse`](src/main/java/com/meteroid/models/PlanVersionListResponse.java) |
+
+### Plans versions
+
+[`client.plans().versions()`](src/main/java/com/meteroid/api/PlansVersions.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `MinimumCommitment client.plans().versions().updateMinimum(String planVersionId, MinimumCommitment minimumCommitment)` | `PUT /api/v1/plans/versions/{plan_version_id}/minimum` | [`MinimumCommitment`](src/main/java/com/meteroid/models/MinimumCommitment.java) |
+| `void client.plans().versions().deleteMinimum(String planVersionId)` | `DELETE /api/v1/plans/versions/{plan_version_id}/minimum` | nothing |
+| `PlansVersionsListPage client.plans().versions().list(String planId, [PlansVersionsListOptions options])` | `GET /api/v1/plans/{plan_id}/versions` | [page](src/main/java/com/meteroid/api/PlansVersionsListPage.java) of [`PlanVersionSummary`](src/main/java/com/meteroid/models/PlanVersionSummary.java), with the properties of [`PlanVersionListResponse`](src/main/java/com/meteroid/models/PlanVersionListResponse.java) |
 
 ## Product families
 
@@ -239,9 +253,16 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `Product client.products().retrieve(String productId)` | `GET /api/v1/products/{product_id}` | [`Product`](src/main/java/com/meteroid/models/Product.java) |
 | `Product client.products().update(String productId, UpdateProductRequest updateProductRequest)` | `PATCH /api/v1/products/{product_id}` | [`Product`](src/main/java/com/meteroid/models/Product.java) |
 | `void client.products().archive(String productId)` | `POST /api/v1/products/{product_id}/archive` | nothing |
-| `ResolvedEntitlementListResponse client.products().listEntitlements(String productId)` | `GET /api/v1/products/{product_id}/entitlements` | [`ResolvedEntitlementListResponse`](src/main/java/com/meteroid/models/ResolvedEntitlementListResponse.java) |
-| `EntitlementListResponse client.products().createEntitlement(String productId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/products/{product_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
 | `void client.products().unarchive(String productId)` | `POST /api/v1/products/{product_id}/unarchive` | nothing |
+
+### Products entitlements
+
+[`client.products().entitlements()`](src/main/java/com/meteroid/api/ProductsEntitlements.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `ResolvedEntitlementListResponse client.products().entitlements().list(String productId)` | `GET /api/v1/products/{product_id}/entitlements` | [`ResolvedEntitlementListResponse`](src/main/java/com/meteroid/models/ResolvedEntitlementListResponse.java) |
+| `EntitlementListResponse client.products().entitlements().create(String productId, CreateEntitlementsRequest createEntitlementsRequest)` | `POST /api/v1/products/{product_id}/entitlements` | [`EntitlementListResponse`](src/main/java/com/meteroid/models/EntitlementListResponse.java) |
 
 ## Subscriptions
 

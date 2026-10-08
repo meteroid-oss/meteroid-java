@@ -67,31 +67,6 @@ class PlansTest {
     }
 
     @Test
-    void updateVersionMinimum() throws Exception {
-        PerseidMock mock =
-                new PerseidMock(
-                        200,
-                        "application/json",
-                        "{\"amount\":\"sample\",\"scope\":{\"type\":\"all_components\"}}");
-        mock.client
-                .plans()
-                .updateVersionMinimum(
-                        "plan_version_id",
-                        PerseidMock.decode(
-                                com.meteroid.models.MinimumCommitment.class,
-                                "{\"amount\":\"sample\",\"scope\":{\"type\":\"all_components\"}}"));
-        assertEquals(List.of("PUT /api/v1/plans/versions/plan_version_id/minimum"), mock.requests);
-    }
-
-    @Test
-    void deleteVersionMinimum() throws Exception {
-        PerseidMock mock = new PerseidMock(204, null, "");
-        mock.client.plans().deleteVersionMinimum("plan_version_id");
-        assertEquals(
-                List.of("DELETE /api/v1/plans/versions/plan_version_id/minimum"), mock.requests);
-    }
-
-    @Test
     void retrieve() throws Exception {
         PerseidMock mock =
                 new PerseidMock(
@@ -157,16 +132,5 @@ class PlansTest {
         PerseidMock mock = new PerseidMock(204, null, "");
         mock.client.plans().unarchive("plan_id");
         assertEquals(List.of("POST /api/v1/plans/plan_id/unarchive"), mock.requests);
-    }
-
-    @Test
-    void listVersions() throws Exception {
-        PerseidMock mock =
-                new PerseidMock(
-                        200,
-                        "application/json",
-                        "{\"data\":[{\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_version_id_2\",\"is_draft\":true,\"version\":-2147483648}],\"pagination_meta\":{\"page\":-123456789,\"per_page\":-123456789,\"total_items\":-9007199254740993,\"total_pages\":123456789}}");
-        mock.client.plans().listVersions("plan_id");
-        assertEquals(List.of("GET /api/v1/plans/plan_id/versions"), mock.requests);
     }
 }

@@ -3,12 +3,9 @@ package com.meteroid.api;
 
 import com.meteroid.ApiResponse;
 import com.meteroid.RequestOptions;
-import com.meteroid.models.CreateEntitlementsRequest;
 import com.meteroid.models.CreateProductRequest;
-import com.meteroid.models.EntitlementListResponse;
 import com.meteroid.models.Product;
 import com.meteroid.models.ProductListResponse;
-import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateProductRequest;
 
 import java.util.List;
@@ -22,6 +19,8 @@ public final class ProductsAsync {
     private final Products sync;
     private final WithRawResponse withRawResponse;
 
+    private final ProductsEntitlementsAsync entitlements;
+
     /**
      * The operations, sending through {@code sync}.
      *
@@ -30,6 +29,8 @@ public final class ProductsAsync {
     public ProductsAsync(Products sync) {
         this.sync = sync;
         this.withRawResponse = new WithRawResponse();
+
+        this.entitlements = new ProductsEntitlementsAsync(sync.entitlements());
     }
 
     /**
@@ -39,6 +40,15 @@ public final class ProductsAsync {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code entitlements} operations.
+     *
+     * @return the operations
+     */
+    public ProductsEntitlementsAsync entitlements() {
+        return entitlements;
     }
 
     /**
@@ -196,73 +206,6 @@ public final class ProductsAsync {
     }
 
     /**
-     * List product entitlements
-     *
-     * @param productId the {@code product_id} path parameter
-     * @return the response body, once received
-     */
-    public CompletableFuture<ResolvedEntitlementListResponse> listEntitlements(
-            final String productId) {
-        return listEntitlements(productId, RequestOptions.none());
-    }
-
-    /**
-     * List product entitlements
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<ResolvedEntitlementListResponse> listEntitlements(
-            final String productId, final RequestOptions requestOptions) {
-        return sync.exchangeListEntitlements(productId, requestOptions).sendAsync();
-    }
-
-    /**
-     * Create product entitlements
-     *
-     * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-     * defaults of the features scoped to it, which is what <code>GET</code> on this path resolves.
-     * Every spec must therefore target a feature belonging to <code>product_id</code>. Features
-     * that already carry a default entitlement are skipped.
-     *
-     * <p>Specs are validated up front, but the writes are not atomic: each feature is written on
-     * its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @return the response body, once received
-     */
-    public CompletableFuture<EntitlementListResponse> createEntitlement(
-            final String productId, final CreateEntitlementsRequest createEntitlementsRequest) {
-        return createEntitlement(productId, createEntitlementsRequest, RequestOptions.none());
-    }
-
-    /**
-     * Create product entitlements
-     *
-     * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-     * defaults of the features scoped to it, which is what <code>GET</code> on this path resolves.
-     * Every spec must therefore target a feature belonging to <code>product_id</code>. Features
-     * that already carry a default entitlement are skipped.
-     *
-     * <p>Specs are validated up front, but the writes are not atomic: each feature is written on
-     * its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<EntitlementListResponse> createEntitlement(
-            final String productId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        return sync.exchangeCreateEntitlement(productId, createEntitlementsRequest, requestOptions)
-                .sendAsync();
-    }
-
-    /**
      * Unarchive a product
      *
      * @param productId the {@code product_id} path parameter
@@ -287,6 +230,15 @@ public final class ProductsAsync {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code entitlements} operations.
+         *
+         * @return the operations
+         */
+        public ProductsEntitlementsAsync.WithRawResponse entitlements() {
+            return ProductsAsync.this.entitlements.withRawResponse();
+        }
 
         /**
          * List products
@@ -436,74 +388,6 @@ public final class ProductsAsync {
         public CompletableFuture<ApiResponse<Void>> archive(
                 final String productId, final RequestOptions requestOptions) {
             return sync.exchangeArchive(productId, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * List product entitlements
-         *
-         * @param productId the {@code product_id} path parameter
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<ResolvedEntitlementListResponse>> listEntitlements(
-                final String productId) {
-            return listEntitlements(productId, RequestOptions.none());
-        }
-
-        /**
-         * List product entitlements
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<ResolvedEntitlementListResponse>> listEntitlements(
-                final String productId, final RequestOptions requestOptions) {
-            return sync.exchangeListEntitlements(productId, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * Create product entitlements
-         *
-         * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-         * defaults of the features scoped to it, which is what <code>GET</code> on this path
-         * resolves. Every spec must therefore target a feature belonging to <code>product_id</code>
-         * . Features that already carry a default entitlement are skipped.
-         *
-         * <p>Specs are validated up front, but the writes are not atomic: each feature is written
-         * on its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<EntitlementListResponse>> createEntitlement(
-                final String productId, final CreateEntitlementsRequest createEntitlementsRequest) {
-            return createEntitlement(productId, createEntitlementsRequest, RequestOptions.none());
-        }
-
-        /**
-         * Create product entitlements
-         *
-         * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-         * defaults of the features scoped to it, which is what <code>GET</code> on this path
-         * resolves. Every spec must therefore target a feature belonging to <code>product_id</code>
-         * . Features that already carry a default entitlement are skipped.
-         *
-         * <p>Specs are validated up front, but the writes are not atomic: each feature is written
-         * on its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<EntitlementListResponse>> createEntitlement(
-                final String productId,
-                final CreateEntitlementsRequest createEntitlementsRequest,
-                final RequestOptions requestOptions) {
-            return sync.exchangeCreateEntitlement(
-                            productId, createEntitlementsRequest, requestOptions)
-                    .sendRawAsync();
         }
 
         /**
