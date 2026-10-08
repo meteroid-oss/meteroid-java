@@ -4,12 +4,12 @@ package com.meteroid.api;
 import java.util.Objects;
 import java.util.Optional;
 
-/** Optional parameters of {@code listVersions}, immutable: build them with {@link #builder()}. */
-public final class PlansListVersionsOptions {
+/** Optional parameters of {@code list}, immutable: build them with {@link #builder()}. */
+public final class PlansVersionsListOptions {
     private final Integer page;
     private final Integer perPage;
 
-    private PlansListVersionsOptions(Builder builder) {
+    private PlansVersionsListOptions(Builder builder) {
         this.page = builder.page;
         this.perPage = builder.perPage;
     }
@@ -28,7 +28,7 @@ public final class PlansListVersionsOptions {
      *
      * @return empty parameters
      */
-    public static PlansListVersionsOptions none() {
+    public static PlansVersionsListOptions none() {
         return builder().build();
     }
 
@@ -70,7 +70,7 @@ public final class PlansListVersionsOptions {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PlansListVersionsOptions that = (PlansListVersionsOptions) o;
+        PlansVersionsListOptions that = (PlansVersionsListOptions) o;
         return Objects.equals(page, that.page) && Objects.equals(perPage, that.perPage);
     }
 
@@ -81,10 +81,10 @@ public final class PlansListVersionsOptions {
 
     @Override
     public String toString() {
-        return "PlansListVersionsOptions{" + "page=" + page + ", perPage=" + perPage + "}";
+        return "PlansVersionsListOptions{" + "page=" + page + ", perPage=" + perPage + "}";
     }
 
-    /** Builds {@link PlansListVersionsOptions}. */
+    /** Builds {@link PlansVersionsListOptions}. */
     public static final class Builder {
         private Integer page;
         private Integer perPage;
@@ -118,8 +118,8 @@ public final class PlansListVersionsOptions {
          *
          * @return immutable parameters
          */
-        public PlansListVersionsOptions build() {
-            return new PlansListVersionsOptions(this);
+        public PlansVersionsListOptions build() {
+            return new PlansVersionsListOptions(this);
         }
     }
 }

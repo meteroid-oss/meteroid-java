@@ -6,12 +6,9 @@ import com.meteroid.RequestOptions;
 import com.meteroid.models.CreateEntitlementsRequest;
 import com.meteroid.models.CreatePlanRequest;
 import com.meteroid.models.EntitlementListResponse;
-import com.meteroid.models.MinimumCommitment;
 import com.meteroid.models.PatchPlanRequest;
 import com.meteroid.models.Plan;
 import com.meteroid.models.PlanListResponse;
-import com.meteroid.models.PlanVersionListResponse;
-import com.meteroid.models.PlanVersionSummary;
 import com.meteroid.models.ReplacePlanRequest;
 import com.meteroid.models.ResolvedEntitlementListResponse;
 
@@ -26,6 +23,8 @@ public final class PlansAsync {
     private final Plans sync;
     private final WithRawResponse withRawResponse;
 
+    private final PlansVersionsAsync versions;
+
     /**
      * The operations, sending through {@code sync}.
      *
@@ -34,6 +33,8 @@ public final class PlansAsync {
     public PlansAsync(Plans sync) {
         this.sync = sync;
         this.withRawResponse = new WithRawResponse();
+
+        this.versions = new PlansVersionsAsync(sync.versions());
     }
 
     /**
@@ -43,6 +44,15 @@ public final class PlansAsync {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code versions} operations.
+     *
+     * @return the operations
+     */
+    public PlansVersionsAsync versions() {
+        return versions;
     }
 
     /**
@@ -185,56 +195,6 @@ public final class PlansAsync {
     public CompletableFuture<Plan> create(
             final CreatePlanRequest createPlanRequest, final RequestOptions requestOptions) {
         return sync.exchangeCreate(createPlanRequest, requestOptions).sendAsync();
-    }
-
-    /**
-     * Set or replace the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param minimumCommitment the request body
-     * @return the response body, once received
-     */
-    public CompletableFuture<MinimumCommitment> updateVersionMinimum(
-            final String planVersionId, final MinimumCommitment minimumCommitment) {
-        return updateVersionMinimum(planVersionId, minimumCommitment, RequestOptions.none());
-    }
-
-    /**
-     * Set or replace the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param minimumCommitment the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<MinimumCommitment> updateVersionMinimum(
-            final String planVersionId,
-            final MinimumCommitment minimumCommitment,
-            final RequestOptions requestOptions) {
-        return sync.exchangeUpdateVersionMinimum(planVersionId, minimumCommitment, requestOptions)
-                .sendAsync();
-    }
-
-    /**
-     * Remove the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @return the response body, once received
-     */
-    public CompletableFuture<Void> deleteVersionMinimum(final String planVersionId) {
-        return deleteVersionMinimum(planVersionId, RequestOptions.none());
-    }
-
-    /**
-     * Remove the plan-level minimum commitment for a draft plan version.
-     *
-     * @param planVersionId the {@code plan_version_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<Void> deleteVersionMinimum(
-            final String planVersionId, final RequestOptions requestOptions) {
-        return sync.exchangeDeleteVersionMinimum(planVersionId, requestOptions).sendAsync();
     }
 
     /**
@@ -436,80 +396,18 @@ public final class PlansAsync {
         return sync.exchangeUnarchive(planId, requestOptions).sendAsync();
     }
 
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @return the page, once received
-     */
-    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(final String planId) {
-        return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param options the optional parameters
-     * @return the page, once received
-     */
-    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
-            final String planId, final PlansListVersionsOptions options) {
-        return listVersions(planId, options, RequestOptions.none());
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the page, once received
-     */
-    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
-            final String planId, final RequestOptions requestOptions) {
-        return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
-    }
-
-    /**
-     * List plan versions
-     *
-     * @param planId the {@code plan_id} path parameter
-     * @param options the optional parameters
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the page, once received
-     */
-    public CompletableFuture<PlansListVersionsAsyncPage> listVersions(
-            final String planId,
-            final PlansListVersionsOptions options,
-            final RequestOptions requestOptions) {
-        return sync.exchangeListVersions(planId, options, requestOptions)
-                .sendAsync()
-                .thenApply(
-                        response -> pageOfListVersions(response, planId, options, requestOptions));
-    }
-
-    private PlansListVersionsAsyncPage pageOfListVersions(
-            PlanVersionListResponse response,
-            final String planId,
-            final PlansListVersionsOptions options,
-            final RequestOptions requestOptions) {
-        List<PlanVersionSummary> items = Plans.itemsOfListVersions(response);
-        Integer next = Plans.nextOfListVersions(response, items, options.page().orElse(0));
-        return new PlansListVersionsAsyncPage(
-                response,
-                items,
-                next == null
-                        ? null
-                        : () ->
-                                listVersions(
-                                        planId,
-                                        options.toBuilder().page(next).build(),
-                                        requestOptions));
-    }
-
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code versions} operations.
+         *
+         * @return the operations
+         */
+        public PlansVersionsAsync.WithRawResponse versions() {
+            return PlansAsync.this.versions.withRawResponse();
+        }
 
         /**
          * List plan version entitlements
@@ -648,58 +546,6 @@ public final class PlansAsync {
         public CompletableFuture<ApiResponse<Plan>> create(
                 final CreatePlanRequest createPlanRequest, final RequestOptions requestOptions) {
             return sync.exchangeCreate(createPlanRequest, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * Set or replace the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param minimumCommitment the request body
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<MinimumCommitment>> updateVersionMinimum(
-                final String planVersionId, final MinimumCommitment minimumCommitment) {
-            return updateVersionMinimum(planVersionId, minimumCommitment, RequestOptions.none());
-        }
-
-        /**
-         * Set or replace the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param minimumCommitment the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<MinimumCommitment>> updateVersionMinimum(
-                final String planVersionId,
-                final MinimumCommitment minimumCommitment,
-                final RequestOptions requestOptions) {
-            return sync.exchangeUpdateVersionMinimum(
-                            planVersionId, minimumCommitment, requestOptions)
-                    .sendRawAsync();
-        }
-
-        /**
-         * Remove the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<Void>> deleteVersionMinimum(
-                final String planVersionId) {
-            return deleteVersionMinimum(planVersionId, RequestOptions.none());
-        }
-
-        /**
-         * Remove the plan-level minimum commitment for a draft plan version.
-         *
-         * @param planVersionId the {@code plan_version_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<Void>> deleteVersionMinimum(
-                final String planVersionId, final RequestOptions requestOptions) {
-            return sync.exchangeDeleteVersionMinimum(planVersionId, requestOptions).sendRawAsync();
         }
 
         /**
@@ -899,67 +745,6 @@ public final class PlansAsync {
         public CompletableFuture<ApiResponse<Void>> unarchive(
                 final String planId, final RequestOptions requestOptions) {
             return sync.exchangeUnarchive(planId, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @return the status, headers and page, once received
-         */
-        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
-                final String planId) {
-            return listVersions(planId, PlansListVersionsOptions.none(), RequestOptions.none());
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param options the optional parameters
-         * @return the status, headers and page, once received
-         */
-        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
-                final String planId, final PlansListVersionsOptions options) {
-            return listVersions(planId, options, RequestOptions.none());
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and page, once received
-         */
-        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
-                final String planId, final RequestOptions requestOptions) {
-            return listVersions(planId, PlansListVersionsOptions.none(), requestOptions);
-        }
-
-        /**
-         * List plan versions
-         *
-         * @param planId the {@code plan_id} path parameter
-         * @param options the optional parameters
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and page, once received
-         */
-        public CompletableFuture<ApiResponse<PlansListVersionsAsyncPage>> listVersions(
-                final String planId,
-                final PlansListVersionsOptions options,
-                final RequestOptions requestOptions) {
-            return sync.exchangeListVersions(planId, options, requestOptions)
-                    .sendRawAsync()
-                    .thenApply(
-                            response ->
-                                    new ApiResponse<>(
-                                            response.statusCode(),
-                                            response.headers(),
-                                            pageOfListVersions(
-                                                    response.body(),
-                                                    planId,
-                                                    options,
-                                                    requestOptions)));
         }
     }
 }

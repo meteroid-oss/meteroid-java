@@ -5,12 +5,9 @@ import com.meteroid.ApiResponse;
 import com.meteroid.RequestOptions;
 import com.meteroid.internal.MeteroidHttpClient;
 import com.meteroid.internal.Utils;
-import com.meteroid.models.CreateEntitlementsRequest;
 import com.meteroid.models.CreateProductRequest;
-import com.meteroid.models.EntitlementListResponse;
 import com.meteroid.models.Product;
 import com.meteroid.models.ProductListResponse;
-import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateProductRequest;
 
 import okhttp3.HttpUrl;
@@ -26,6 +23,8 @@ public final class Products {
     private final MeteroidHttpClient client;
     private final WithRawResponse withRawResponse;
 
+    private final ProductsEntitlements entitlements;
+
     /**
      * The operations, sending through {@code client}.
      *
@@ -34,6 +33,8 @@ public final class Products {
     public Products(MeteroidHttpClient client) {
         this.client = client;
         this.withRawResponse = new WithRawResponse();
+
+        this.entitlements = new ProductsEntitlements(client);
     }
 
     /**
@@ -43,6 +44,15 @@ public final class Products {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code entitlements} operations.
+     *
+     * @return the operations
+     */
+    public ProductsEntitlements entitlements() {
+        return entitlements;
     }
 
     /**
@@ -301,106 +311,6 @@ public final class Products {
     }
 
     /**
-     * List product entitlements
-     *
-     * @param productId the {@code product_id} path parameter
-     * @return the response body
-     */
-    public ResolvedEntitlementListResponse listEntitlements(final String productId) {
-        return listEntitlements(productId, RequestOptions.none());
-    }
-
-    /**
-     * List product entitlements
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public ResolvedEntitlementListResponse listEntitlements(
-            final String productId, final RequestOptions requestOptions) {
-        return exchangeListEntitlements(productId, requestOptions).send();
-    }
-
-    MeteroidHttpClient.Exchange<ResolvedEntitlementListResponse> exchangeListEntitlements(
-            final String productId, final RequestOptions requestOptions) {
-        Objects.requireNonNull(productId, "product_id");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/products")
-                        .addPathSegment(Utils.pathSegment("product_id", productId))
-                        .addPathSegments("entitlements")
-                        .build();
-        return client.call("GET", url)
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
-                .options(requestOptions)
-                .returning(ResolvedEntitlementListResponse.class);
-    }
-
-    /**
-     * Create product entitlements
-     *
-     * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-     * defaults of the features scoped to it, which is what <code>GET</code> on this path resolves.
-     * Every spec must therefore target a feature belonging to <code>product_id</code>. Features
-     * that already carry a default entitlement are skipped.
-     *
-     * <p>Specs are validated up front, but the writes are not atomic: each feature is written on
-     * its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @return the response body
-     */
-    public EntitlementListResponse createEntitlement(
-            final String productId, final CreateEntitlementsRequest createEntitlementsRequest) {
-        return createEntitlement(productId, createEntitlementsRequest, RequestOptions.none());
-    }
-
-    /**
-     * Create product entitlements
-     *
-     * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-     * defaults of the features scoped to it, which is what <code>GET</code> on this path resolves.
-     * Every spec must therefore target a feature belonging to <code>product_id</code>. Features
-     * that already carry a default entitlement are skipped.
-     *
-     * <p>Specs are validated up front, but the writes are not atomic: each feature is written on
-     * its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-     *
-     * @param productId the {@code product_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public EntitlementListResponse createEntitlement(
-            final String productId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        return exchangeCreateEntitlement(productId, createEntitlementsRequest, requestOptions)
-                .send();
-    }
-
-    MeteroidHttpClient.Exchange<EntitlementListResponse> exchangeCreateEntitlement(
-            final String productId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        Objects.requireNonNull(productId, "product_id");
-        Objects.requireNonNull(createEntitlementsRequest, "body");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/products")
-                        .addPathSegment(Utils.pathSegment("product_id", productId))
-                        .addPathSegments("entitlements")
-                        .build();
-        return client.call("POST", url)
-                .json(createEntitlementsRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
-                .options(requestOptions)
-                .returning(EntitlementListResponse.class);
-    }
-
-    /**
      * Unarchive a product
      *
      * @param productId the {@code product_id} path parameter
@@ -437,6 +347,15 @@ public final class Products {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code entitlements} operations.
+         *
+         * @return the operations
+         */
+        public ProductsEntitlements.WithRawResponse entitlements() {
+            return Products.this.entitlements.withRawResponse();
+        }
 
         /**
          * List products
@@ -582,74 +501,6 @@ public final class Products {
         public ApiResponse<Void> archive(
                 final String productId, final RequestOptions requestOptions) {
             return Products.this.exchangeArchive(productId, requestOptions).sendRaw();
-        }
-
-        /**
-         * List product entitlements
-         *
-         * @param productId the {@code product_id} path parameter
-         * @return the status, headers and body
-         */
-        public ApiResponse<ResolvedEntitlementListResponse> listEntitlements(
-                final String productId) {
-            return listEntitlements(productId, RequestOptions.none());
-        }
-
-        /**
-         * List product entitlements
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<ResolvedEntitlementListResponse> listEntitlements(
-                final String productId, final RequestOptions requestOptions) {
-            return Products.this.exchangeListEntitlements(productId, requestOptions).sendRaw();
-        }
-
-        /**
-         * Create product entitlements
-         *
-         * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-         * defaults of the features scoped to it, which is what <code>GET</code> on this path
-         * resolves. Every spec must therefore target a feature belonging to <code>product_id</code>
-         * . Features that already carry a default entitlement are skipped.
-         *
-         * <p>Specs are validated up front, but the writes are not atomic: each feature is written
-         * on its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @return the status, headers and body
-         */
-        public ApiResponse<EntitlementListResponse> createEntitlement(
-                final String productId, final CreateEntitlementsRequest createEntitlementsRequest) {
-            return createEntitlement(productId, createEntitlementsRequest, RequestOptions.none());
-        }
-
-        /**
-         * Create product entitlements
-         *
-         * <p>A product has no entitlement rows of its own: its entitlements are the feature-level
-         * defaults of the features scoped to it, which is what <code>GET</code> on this path
-         * resolves. Every spec must therefore target a feature belonging to <code>product_id</code>
-         * . Features that already carry a default entitlement are skipped.
-         *
-         * <p>Specs are validated up front, but the writes are not atomic: each feature is written
-         * on its own, so a failure part-way can leave earlier specs committed. Retrying is safe.
-         *
-         * @param productId the {@code product_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<EntitlementListResponse> createEntitlement(
-                final String productId,
-                final CreateEntitlementsRequest createEntitlementsRequest,
-                final RequestOptions requestOptions) {
-            return Products.this
-                    .exchangeCreateEntitlement(productId, createEntitlementsRequest, requestOptions)
-                    .sendRaw();
         }
 
         /**

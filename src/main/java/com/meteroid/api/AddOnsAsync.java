@@ -6,9 +6,6 @@ import com.meteroid.RequestOptions;
 import com.meteroid.models.AddOn;
 import com.meteroid.models.AddOnListResponse;
 import com.meteroid.models.CreateAddOnRequest;
-import com.meteroid.models.CreateEntitlementsRequest;
-import com.meteroid.models.EntitlementListResponse;
-import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateAddOnRequest;
 
 import java.util.List;
@@ -22,6 +19,8 @@ public final class AddOnsAsync {
     private final AddOns sync;
     private final WithRawResponse withRawResponse;
 
+    private final AddOnsEntitlementsAsync entitlements;
+
     /**
      * The operations, sending through {@code sync}.
      *
@@ -30,6 +29,8 @@ public final class AddOnsAsync {
     public AddOnsAsync(AddOns sync) {
         this.sync = sync;
         this.withRawResponse = new WithRawResponse();
+
+        this.entitlements = new AddOnsEntitlementsAsync(sync.entitlements());
     }
 
     /**
@@ -39,6 +40,15 @@ public final class AddOnsAsync {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code entitlements} operations.
+     *
+     * @return the operations
+     */
+    public AddOnsEntitlementsAsync entitlements() {
+        return entitlements;
     }
 
     /**
@@ -192,61 +202,6 @@ public final class AddOnsAsync {
     }
 
     /**
-     * List add-on entitlements
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @return the response body, once received
-     */
-    public CompletableFuture<ResolvedEntitlementListResponse> listEntitlements(
-            final String addonId) {
-        return listEntitlements(addonId, RequestOptions.none());
-    }
-
-    /**
-     * List add-on entitlements
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<ResolvedEntitlementListResponse> listEntitlements(
-            final String addonId, final RequestOptions requestOptions) {
-        return sync.exchangeListEntitlements(addonId, requestOptions).sendAsync();
-    }
-
-    /**
-     * Create add-on entitlements
-     *
-     * <p>Entitlements already present on this add-on are skipped.
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @return the response body, once received
-     */
-    public CompletableFuture<EntitlementListResponse> createEntitlement(
-            final String addonId, final CreateEntitlementsRequest createEntitlementsRequest) {
-        return createEntitlement(addonId, createEntitlementsRequest, RequestOptions.none());
-    }
-
-    /**
-     * Create add-on entitlements
-     *
-     * <p>Entitlements already present on this add-on are skipped.
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<EntitlementListResponse> createEntitlement(
-            final String addonId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        return sync.exchangeCreateEntitlement(addonId, createEntitlementsRequest, requestOptions)
-                .sendAsync();
-    }
-
-    /**
      * Unarchive an add-on
      *
      * @param addonId the {@code addon_id} path parameter
@@ -271,6 +226,15 @@ public final class AddOnsAsync {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code entitlements} operations.
+         *
+         * @return the operations
+         */
+        public AddOnsEntitlementsAsync.WithRawResponse entitlements() {
+            return AddOnsAsync.this.entitlements.withRawResponse();
+        }
 
         /**
          * List add-ons
@@ -414,62 +378,6 @@ public final class AddOnsAsync {
         public CompletableFuture<ApiResponse<Void>> archive(
                 final String addonId, final RequestOptions requestOptions) {
             return sync.exchangeArchive(addonId, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * List add-on entitlements
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<ResolvedEntitlementListResponse>> listEntitlements(
-                final String addonId) {
-            return listEntitlements(addonId, RequestOptions.none());
-        }
-
-        /**
-         * List add-on entitlements
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<ResolvedEntitlementListResponse>> listEntitlements(
-                final String addonId, final RequestOptions requestOptions) {
-            return sync.exchangeListEntitlements(addonId, requestOptions).sendRawAsync();
-        }
-
-        /**
-         * Create add-on entitlements
-         *
-         * <p>Entitlements already present on this add-on are skipped.
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<EntitlementListResponse>> createEntitlement(
-                final String addonId, final CreateEntitlementsRequest createEntitlementsRequest) {
-            return createEntitlement(addonId, createEntitlementsRequest, RequestOptions.none());
-        }
-
-        /**
-         * Create add-on entitlements
-         *
-         * <p>Entitlements already present on this add-on are skipped.
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<EntitlementListResponse>> createEntitlement(
-                final String addonId,
-                final CreateEntitlementsRequest createEntitlementsRequest,
-                final RequestOptions requestOptions) {
-            return sync.exchangeCreateEntitlement(
-                            addonId, createEntitlementsRequest, requestOptions)
-                    .sendRawAsync();
         }
 
         /**

@@ -8,9 +8,6 @@ import com.meteroid.internal.Utils;
 import com.meteroid.models.AddOn;
 import com.meteroid.models.AddOnListResponse;
 import com.meteroid.models.CreateAddOnRequest;
-import com.meteroid.models.CreateEntitlementsRequest;
-import com.meteroid.models.EntitlementListResponse;
-import com.meteroid.models.ResolvedEntitlementListResponse;
 import com.meteroid.models.UpdateAddOnRequest;
 
 import okhttp3.HttpUrl;
@@ -26,6 +23,8 @@ public final class AddOns {
     private final MeteroidHttpClient client;
     private final WithRawResponse withRawResponse;
 
+    private final AddOnsEntitlements entitlements;
+
     /**
      * The operations, sending through {@code client}.
      *
@@ -34,6 +33,8 @@ public final class AddOns {
     public AddOns(MeteroidHttpClient client) {
         this.client = client;
         this.withRawResponse = new WithRawResponse();
+
+        this.entitlements = new AddOnsEntitlements(client);
     }
 
     /**
@@ -43,6 +44,15 @@ public final class AddOns {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code entitlements} operations.
+     *
+     * @return the operations
+     */
+    public AddOnsEntitlements entitlements() {
+        return entitlements;
     }
 
     /**
@@ -301,93 +311,6 @@ public final class AddOns {
     }
 
     /**
-     * List add-on entitlements
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @return the response body
-     */
-    public ResolvedEntitlementListResponse listEntitlements(final String addonId) {
-        return listEntitlements(addonId, RequestOptions.none());
-    }
-
-    /**
-     * List add-on entitlements
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public ResolvedEntitlementListResponse listEntitlements(
-            final String addonId, final RequestOptions requestOptions) {
-        return exchangeListEntitlements(addonId, requestOptions).send();
-    }
-
-    MeteroidHttpClient.Exchange<ResolvedEntitlementListResponse> exchangeListEntitlements(
-            final String addonId, final RequestOptions requestOptions) {
-        Objects.requireNonNull(addonId, "addon_id");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/addons")
-                        .addPathSegment(Utils.pathSegment("addon_id", addonId))
-                        .addPathSegments("entitlements")
-                        .build();
-        return client.call("GET", url)
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
-                .options(requestOptions)
-                .returning(ResolvedEntitlementListResponse.class);
-    }
-
-    /**
-     * Create add-on entitlements
-     *
-     * <p>Entitlements already present on this add-on are skipped.
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @return the response body
-     */
-    public EntitlementListResponse createEntitlement(
-            final String addonId, final CreateEntitlementsRequest createEntitlementsRequest) {
-        return createEntitlement(addonId, createEntitlementsRequest, RequestOptions.none());
-    }
-
-    /**
-     * Create add-on entitlements
-     *
-     * <p>Entitlements already present on this add-on are skipped.
-     *
-     * @param addonId the {@code addon_id} path parameter
-     * @param createEntitlementsRequest the request body
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public EntitlementListResponse createEntitlement(
-            final String addonId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        return exchangeCreateEntitlement(addonId, createEntitlementsRequest, requestOptions).send();
-    }
-
-    MeteroidHttpClient.Exchange<EntitlementListResponse> exchangeCreateEntitlement(
-            final String addonId,
-            final CreateEntitlementsRequest createEntitlementsRequest,
-            final RequestOptions requestOptions) {
-        Objects.requireNonNull(addonId, "addon_id");
-        Objects.requireNonNull(createEntitlementsRequest, "body");
-        HttpUrl url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/addons")
-                        .addPathSegment(Utils.pathSegment("addon_id", addonId))
-                        .addPathSegments("entitlements")
-                        .build();
-        return client.call("POST", url)
-                .json(createEntitlementsRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
-                .options(requestOptions)
-                .returning(EntitlementListResponse.class);
-    }
-
-    /**
      * Unarchive an add-on
      *
      * @param addonId the {@code addon_id} path parameter
@@ -424,6 +347,15 @@ public final class AddOns {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code entitlements} operations.
+         *
+         * @return the operations
+         */
+        public AddOnsEntitlements.WithRawResponse entitlements() {
+            return AddOns.this.entitlements.withRawResponse();
+        }
 
         /**
          * List add-ons
@@ -564,61 +496,6 @@ public final class AddOns {
         public ApiResponse<Void> archive(
                 final String addonId, final RequestOptions requestOptions) {
             return AddOns.this.exchangeArchive(addonId, requestOptions).sendRaw();
-        }
-
-        /**
-         * List add-on entitlements
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @return the status, headers and body
-         */
-        public ApiResponse<ResolvedEntitlementListResponse> listEntitlements(final String addonId) {
-            return listEntitlements(addonId, RequestOptions.none());
-        }
-
-        /**
-         * List add-on entitlements
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<ResolvedEntitlementListResponse> listEntitlements(
-                final String addonId, final RequestOptions requestOptions) {
-            return AddOns.this.exchangeListEntitlements(addonId, requestOptions).sendRaw();
-        }
-
-        /**
-         * Create add-on entitlements
-         *
-         * <p>Entitlements already present on this add-on are skipped.
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @return the status, headers and body
-         */
-        public ApiResponse<EntitlementListResponse> createEntitlement(
-                final String addonId, final CreateEntitlementsRequest createEntitlementsRequest) {
-            return createEntitlement(addonId, createEntitlementsRequest, RequestOptions.none());
-        }
-
-        /**
-         * Create add-on entitlements
-         *
-         * <p>Entitlements already present on this add-on are skipped.
-         *
-         * @param addonId the {@code addon_id} path parameter
-         * @param createEntitlementsRequest the request body
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<EntitlementListResponse> createEntitlement(
-                final String addonId,
-                final CreateEntitlementsRequest createEntitlementsRequest,
-                final RequestOptions requestOptions) {
-            return AddOns.this
-                    .exchangeCreateEntitlement(addonId, createEntitlementsRequest, requestOptions)
-                    .sendRaw();
         }
 
         /**

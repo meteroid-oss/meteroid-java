@@ -11,11 +11,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 /**
- * A page of {@link PlansAsync#listVersions}: the {@link PlanVersionSummary} items of one response,
+ * A page of {@link PlansVersionsAsync#list}: the {@link PlanVersionSummary} items of one response,
  * and the properties of its body, {@link PlanVersionListResponse}.
  */
-public final class PlansListVersionsAsyncPage
-        extends AsyncPage<PlansListVersionsAsyncPage, PlanVersionSummary> {
+public final class PlansVersionsListAsyncPage
+        extends AsyncPage<PlansVersionsListAsyncPage, PlanVersionSummary> {
     private final PlanVersionListResponse body;
 
     /**
@@ -25,10 +25,10 @@ public final class PlansListVersionsAsyncPage
      * @param items the items of the page
      * @param next fetches the next page, or null on the last page
      */
-    public PlansListVersionsAsyncPage(
+    public PlansVersionsListAsyncPage(
             PlanVersionListResponse body,
             List<PlanVersionSummary> items,
-            Supplier<CompletableFuture<PlansListVersionsAsyncPage>> next) {
+            Supplier<CompletableFuture<PlansVersionsListAsyncPage>> next) {
         super(items, next);
         this.body = body;
     }
@@ -62,6 +62,6 @@ public final class PlansListVersionsAsyncPage
 
     @Override
     public String toString() {
-        return "PlansListVersionsAsyncPage{body=" + body + ", hasNextPage=" + hasNextPage() + "}";
+        return "PlansVersionsListAsyncPage{body=" + body + ", hasNextPage=" + hasNextPage() + "}";
     }
 }
