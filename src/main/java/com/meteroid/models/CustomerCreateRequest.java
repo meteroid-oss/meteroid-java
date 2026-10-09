@@ -250,10 +250,10 @@ public final class CustomerCreateRequest {
     /**
      * The {@code custom_taxes} property.
      *
-     * @return the value, never null
+     * @return the value, empty when unset
      */
-    public List<CustomTaxRate> customTaxes() {
-        return Utils.required(customTaxes, "custom_taxes");
+    public Optional<List<CustomTaxRate>> customTaxes() {
+        return Optional.ofNullable(customTaxes);
     }
 
     /**
@@ -287,10 +287,10 @@ public final class CustomerCreateRequest {
     /**
      * The {@code invoicing_emails} property.
      *
-     * @return the value, never null
+     * @return the value, empty when unset
      */
-    public List<String> invoicingEmails() {
-        return Utils.required(invoicingEmails, "invoicing_emails");
+    public Optional<List<String>> invoicingEmails() {
+        return Optional.ofNullable(invoicingEmails);
     }
 
     /**
@@ -889,8 +889,6 @@ public final class CustomerCreateRequest {
          */
         public CustomerCreateRequest build() {
             Utils.checkRequired(currency, "currency");
-            Utils.checkRequired(customTaxes, "custom_taxes");
-            Utils.checkRequired(invoicingEmails, "invoicing_emails");
             return new CustomerCreateRequest(this);
         }
     }

@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.meteroid.internal.Utils;
 
-import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,37 +25,21 @@ import java.util.Objects;
         getterVisibility = Visibility.NONE,
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public final class PlanVersionSummary {
-    @JsonProperty("created_at")
-    private OffsetDateTime createdAt;
-
-    @JsonProperty("currency")
-    private Currency currency;
-
-    @JsonProperty("id")
-    private String id;
-
-    @JsonProperty("is_draft")
-    private Boolean isDraft;
-
-    @JsonProperty("version")
-    private Integer version;
+public final class WebhookEndpointListResponse {
+    @JsonProperty("data")
+    private List<WebhookEndpoint> data;
 
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
-    private PlanVersionSummary() {}
+    private WebhookEndpointListResponse() {}
 
-    private PlanVersionSummary(Builder builder) {
-        this.createdAt = builder.createdAt;
-        this.currency = builder.currency;
-        this.id = builder.id;
-        this.isDraft = builder.isDraft;
-        this.version = builder.version;
+    private WebhookEndpointListResponse(Builder builder) {
+        this.data = Utils.copyList(builder.data);
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
     /**
-     * A builder of {@code PlanVersionSummary}.
+     * A builder of {@code WebhookEndpointListResponse}.
      *
      * @return a new builder
      */
@@ -69,58 +54,18 @@ public final class PlanVersionSummary {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
-        builder.createdAt = createdAt;
-        builder.currency = currency;
-        builder.id = id;
-        builder.isDraft = isDraft;
-        builder.version = version;
+        builder.data = Utils.mutableList(data);
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
 
     /**
-     * The {@code created_at} property.
+     * The {@code data} property.
      *
      * @return the value, never null
      */
-    public OffsetDateTime createdAt() {
-        return Utils.required(createdAt, "created_at");
-    }
-
-    /**
-     * The {@code currency} property.
-     *
-     * @return the value, never null
-     */
-    public Currency currency() {
-        return Utils.required(currency, "currency");
-    }
-
-    /**
-     * The {@code id} property.
-     *
-     * @return the value, never null
-     */
-    public String id() {
-        return Utils.required(id, "id");
-    }
-
-    /**
-     * The {@code is_draft} property.
-     *
-     * @return the value, never null
-     */
-    public Boolean isDraft() {
-        return Utils.required(isDraft, "is_draft");
-    }
-
-    /**
-     * The {@code version} property.
-     *
-     * @return the value, never null
-     */
-    public Integer version() {
-        return Utils.required(version, "version");
+    public List<WebhookEndpoint> data() {
+        return Utils.required(data, "data");
     }
 
     /**
@@ -150,101 +95,55 @@ public final class PlanVersionSummary {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PlanVersionSummary that = (PlanVersionSummary) o;
-        return Objects.equals(createdAt, that.createdAt)
-                && Objects.equals(currency, that.currency)
-                && Objects.equals(id, that.id)
-                && Objects.equals(isDraft, that.isDraft)
-                && Objects.equals(version, that.version)
+        WebhookEndpointListResponse that = (WebhookEndpointListResponse) o;
+        return Objects.equals(data, that.data)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdAt, currency, id, isDraft, version, additionalProperties);
+        return Objects.hash(data, additionalProperties);
     }
 
     @Override
     public String toString() {
-        return "PlanVersionSummary{"
-                + "createdAt="
-                + createdAt
-                + ", currency="
-                + currency
-                + ", id="
-                + id
-                + ", isDraft="
-                + isDraft
-                + ", version="
-                + version
+        return "WebhookEndpointListResponse{"
+                + "data="
+                + data
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
     }
 
-    /** Builds {@link PlanVersionSummary}. */
+    /** Builds {@link WebhookEndpointListResponse}. */
     public static final class Builder {
-        private OffsetDateTime createdAt;
-        private Currency currency;
-        private String id;
-        private Boolean isDraft;
-        private Integer version;
+        private List<WebhookEndpoint> data;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
 
         /**
-         * The {@code created_at} property.
+         * The {@code data} property.
          *
-         * @param createdAt the value
+         * @param data the value
          * @return this builder
          */
-        public Builder createdAt(OffsetDateTime createdAt) {
-            this.createdAt = createdAt;
+        public Builder data(List<WebhookEndpoint> data) {
+            this.data = Utils.mutableList(data);
             return this;
         }
 
         /**
-         * The {@code currency} property.
+         * Adds an item to {@code data}.
          *
-         * @param currency the value
+         * @param item the item
          * @return this builder
          */
-        public Builder currency(Currency currency) {
-            this.currency = currency;
-            return this;
-        }
-
-        /**
-         * The {@code id} property.
-         *
-         * @param id the value
-         * @return this builder
-         */
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        /**
-         * The {@code is_draft} property.
-         *
-         * @param isDraft the value
-         * @return this builder
-         */
-        public Builder isDraft(Boolean isDraft) {
-            this.isDraft = isDraft;
-            return this;
-        }
-
-        /**
-         * The {@code version} property.
-         *
-         * @param version the value
-         * @return this builder
-         */
-        public Builder version(Integer version) {
-            this.version = version;
+        public Builder addDataItem(WebhookEndpoint item) {
+            if (this.data == null) {
+                this.data = new ArrayList<>();
+            }
+            this.data.add(item);
             return this;
         }
 
@@ -283,30 +182,26 @@ public final class PlanVersionSummary {
         }
 
         /**
-         * The {@code PlanVersionSummary}.
+         * The {@code WebhookEndpointListResponse}.
          *
          * @return the immutable value
          * @throws IllegalStateException when a required property is not set
          */
-        public PlanVersionSummary build() {
-            Utils.checkRequired(createdAt, "created_at");
-            Utils.checkRequired(currency, "currency");
-            Utils.checkRequired(id, "id");
-            Utils.checkRequired(isDraft, "is_draft");
-            Utils.checkRequired(version, "version");
-            return new PlanVersionSummary(this);
+        public WebhookEndpointListResponse build() {
+            Utils.checkRequired(data, "data");
+            return new WebhookEndpointListResponse(this);
         }
     }
 
     /**
-     * Parse {@code json} as {@code PlanVersionSummary}.
+     * Parse {@code json} as {@code WebhookEndpointListResponse}.
      *
      * @param json the JSON text
      * @return the value
      * @throws com.meteroid.exceptions.InvalidDataException if it is not valid JSON of this shape
      */
-    public static PlanVersionSummary fromJson(String json) {
-        return Utils.parse(json, PlanVersionSummary.class);
+    public static WebhookEndpointListResponse fromJson(String json) {
+        return Utils.parse(json, WebhookEndpointListResponse.class);
     }
 
     /**

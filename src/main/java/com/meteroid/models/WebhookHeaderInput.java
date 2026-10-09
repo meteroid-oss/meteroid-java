@@ -9,52 +9,51 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-/** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
+/**
+ * A custom header to send with every delivery. A sensitive header is write-only: it is never
+ * returned, and on update sending it without a value keeps its value.
+ *
+ * <p>Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(
         getterVisibility = Visibility.NONE,
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
-public final class PlanVersionSummary {
-    @JsonProperty("created_at")
-    private OffsetDateTime createdAt;
+public final class WebhookHeaderInput {
+    @JsonProperty("name")
+    private String name;
 
-    @JsonProperty("currency")
-    private Currency currency;
+    @JsonProperty("sensitive")
+    private Boolean sensitive;
 
-    @JsonProperty("id")
-    private String id;
-
-    @JsonProperty("is_draft")
-    private Boolean isDraft;
-
-    @JsonProperty("version")
-    private Integer version;
+    @JsonProperty("value")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> value = JsonField.missing();
 
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
-    private PlanVersionSummary() {}
+    private WebhookHeaderInput() {}
 
-    private PlanVersionSummary(Builder builder) {
-        this.createdAt = builder.createdAt;
-        this.currency = builder.currency;
-        this.id = builder.id;
-        this.isDraft = builder.isDraft;
-        this.version = builder.version;
+    private WebhookHeaderInput(Builder builder) {
+        this.name = builder.name;
+        this.sensitive = builder.sensitive;
+        this.value = builder.value;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
     /**
-     * A builder of {@code PlanVersionSummary}.
+     * A builder of {@code WebhookHeaderInput}.
      *
      * @return a new builder
      */
@@ -69,58 +68,38 @@ public final class PlanVersionSummary {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
-        builder.createdAt = createdAt;
-        builder.currency = currency;
-        builder.id = id;
-        builder.isDraft = isDraft;
-        builder.version = version;
+        builder.name = name;
+        builder.sensitive = sensitive;
+        builder.value = value;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
 
     /**
-     * The {@code created_at} property.
+     * The {@code name} property.
      *
      * @return the value, never null
      */
-    public OffsetDateTime createdAt() {
-        return Utils.required(createdAt, "created_at");
+    public String name() {
+        return Utils.required(name, "name");
     }
 
     /**
-     * The {@code currency} property.
+     * The {@code sensitive} property.
      *
-     * @return the value, never null
+     * @return the value, empty when unset
      */
-    public Currency currency() {
-        return Utils.required(currency, "currency");
+    public Optional<Boolean> sensitive() {
+        return Optional.ofNullable(sensitive);
     }
 
     /**
-     * The {@code id} property.
+     * The {@code value} property.
      *
-     * @return the value, never null
+     * @return the value, empty when unset or null
      */
-    public String id() {
-        return Utils.required(id, "id");
-    }
-
-    /**
-     * The {@code is_draft} property.
-     *
-     * @return the value, never null
-     */
-    public Boolean isDraft() {
-        return Utils.required(isDraft, "is_draft");
-    }
-
-    /**
-     * The {@code version} property.
-     *
-     * @return the value, never null
-     */
-    public Integer version() {
-        return Utils.required(version, "version");
+    public Optional<String> value() {
+        return value.asOptional();
     }
 
     /**
@@ -150,101 +129,71 @@ public final class PlanVersionSummary {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PlanVersionSummary that = (PlanVersionSummary) o;
-        return Objects.equals(createdAt, that.createdAt)
-                && Objects.equals(currency, that.currency)
-                && Objects.equals(id, that.id)
-                && Objects.equals(isDraft, that.isDraft)
-                && Objects.equals(version, that.version)
+        WebhookHeaderInput that = (WebhookHeaderInput) o;
+        return Objects.equals(name, that.name)
+                && Objects.equals(sensitive, that.sensitive)
+                && Objects.equals(value, that.value)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdAt, currency, id, isDraft, version, additionalProperties);
+        return Objects.hash(name, sensitive, value, additionalProperties);
     }
 
     @Override
     public String toString() {
-        return "PlanVersionSummary{"
-                + "createdAt="
-                + createdAt
-                + ", currency="
-                + currency
-                + ", id="
-                + id
-                + ", isDraft="
-                + isDraft
-                + ", version="
-                + version
+        return "WebhookHeaderInput{"
+                + "name="
+                + name
+                + ", sensitive="
+                + sensitive
+                + ", value="
+                + value
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
     }
 
-    /** Builds {@link PlanVersionSummary}. */
+    /** Builds {@link WebhookHeaderInput}. */
     public static final class Builder {
-        private OffsetDateTime createdAt;
-        private Currency currency;
-        private String id;
-        private Boolean isDraft;
-        private Integer version;
+        private String name;
+        private Boolean sensitive;
+        private JsonField<String> value = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
 
         /**
-         * The {@code created_at} property.
+         * The {@code name} property.
          *
-         * @param createdAt the value
+         * @param name the value
          * @return this builder
          */
-        public Builder createdAt(OffsetDateTime createdAt) {
-            this.createdAt = createdAt;
+        public Builder name(String name) {
+            this.name = name;
             return this;
         }
 
         /**
-         * The {@code currency} property.
+         * The {@code sensitive} property.
          *
-         * @param currency the value
+         * @param sensitive the value
          * @return this builder
          */
-        public Builder currency(Currency currency) {
-            this.currency = currency;
+        public Builder sensitive(Boolean sensitive) {
+            this.sensitive = sensitive;
             return this;
         }
 
         /**
-         * The {@code id} property.
+         * The {@code value} property.
          *
-         * @param id the value
+         * @param value the value, null to send an explicit {@code null}
          * @return this builder
          */
-        public Builder id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        /**
-         * The {@code is_draft} property.
-         *
-         * @param isDraft the value
-         * @return this builder
-         */
-        public Builder isDraft(Boolean isDraft) {
-            this.isDraft = isDraft;
-            return this;
-        }
-
-        /**
-         * The {@code version} property.
-         *
-         * @param version the value
-         * @return this builder
-         */
-        public Builder version(Integer version) {
-            this.version = version;
+        public Builder value(String value) {
+            this.value = JsonField.ofNullable(value);
             return this;
         }
 
@@ -283,30 +232,26 @@ public final class PlanVersionSummary {
         }
 
         /**
-         * The {@code PlanVersionSummary}.
+         * The {@code WebhookHeaderInput}.
          *
          * @return the immutable value
          * @throws IllegalStateException when a required property is not set
          */
-        public PlanVersionSummary build() {
-            Utils.checkRequired(createdAt, "created_at");
-            Utils.checkRequired(currency, "currency");
-            Utils.checkRequired(id, "id");
-            Utils.checkRequired(isDraft, "is_draft");
-            Utils.checkRequired(version, "version");
-            return new PlanVersionSummary(this);
+        public WebhookHeaderInput build() {
+            Utils.checkRequired(name, "name");
+            return new WebhookHeaderInput(this);
         }
     }
 
     /**
-     * Parse {@code json} as {@code PlanVersionSummary}.
+     * Parse {@code json} as {@code WebhookHeaderInput}.
      *
      * @param json the JSON text
      * @return the value
      * @throws com.meteroid.exceptions.InvalidDataException if it is not valid JSON of this shape
      */
-    public static PlanVersionSummary fromJson(String json) {
-        return Utils.parse(json, PlanVersionSummary.class);
+    public static WebhookHeaderInput fromJson(String json) {
+        return Utils.parse(json, WebhookHeaderInput.class);
     }
 
     /**

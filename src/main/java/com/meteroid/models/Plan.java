@@ -40,7 +40,7 @@ public final class Plan {
     private OffsetDateTime createdAt;
 
     @JsonProperty("currency")
-    private String currency;
+    private Currency currency;
 
     @JsonProperty("description")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -195,7 +195,7 @@ public final class Plan {
      *
      * @return the value, never null
      */
-    public String currency() {
+    public Currency currency() {
         return Utils.required(currency, "currency");
     }
 
@@ -476,7 +476,7 @@ public final class Plan {
         private AvailableParameters availableParameters;
         private JsonField<Integer> billingCycles = JsonField.missing();
         private OffsetDateTime createdAt;
-        private String currency;
+        private Currency currency;
         private JsonField<String> description = JsonField.missing();
         private List<Entitlement> entitlements;
         private String id;
@@ -536,7 +536,7 @@ public final class Plan {
          * @param currency the value
          * @return this builder
          */
-        public Builder currency(String currency) {
+        public Builder currency(Currency currency) {
             this.currency = currency;
             return this;
         }

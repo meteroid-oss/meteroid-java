@@ -17,7 +17,7 @@ class EventsTest {
                 .ingest(
                         PerseidMock.decode(
                                 com.meteroid.models.IngestEventsRequest.class,
-                                "{\"events\":[{\"code\":\"sample\",\"customer_id\":\"sample\",\"event_id\":\"sample\",\"timestamp\":\"sample\"}]}"));
+                                "{\"events\":[{\"code\":\"sample\",\"customer_id\":\"sample\",\"event_id\":\"sample\"}]}"));
         assertEquals(List.of("POST /api/v1/events/ingest"), mock.requests);
     }
 }

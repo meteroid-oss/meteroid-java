@@ -45,7 +45,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"data\":[{\"available_parameters\":{},\"created_at\":\"2024-03-15T10:30:45.123+02:00\",\"currency\":\"sample\",\"id\":\"plan_id_78\",\"name\":\"sample\",\"net_terms\":-2147483648,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_82\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_59\",\"name\":\"sample\"},\"status\":\"INACTIVE\",\"tax_inclusive\":true,\"version\":-2147483648,\"version_id\":\"plan_version_id_92\"}],\"pagination_meta\":{\"page\":-123456789,\"per_page\":-123456789,\"total_items\":-9007199254740993,\"total_pages\":123456789}}");
+                        "{\"data\":[{\"available_parameters\":{},\"created_at\":\"2024-03-15T10:30:45.123+02:00\",\"currency\":\"WST\",\"id\":\"plan_id_78\",\"name\":\"sample\",\"net_terms\":-2147483648,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_82\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_59\",\"name\":\"sample\"},\"status\":\"INACTIVE\",\"tax_inclusive\":true,\"version\":-2147483648,\"version_id\":\"plan_version_id_92\"}],\"pagination_meta\":{\"page\":-123456789,\"per_page\":-123456789,\"total_items\":-9007199254740993,\"total_pages\":123456789}}");
         mock.client.plans().list();
         assertEquals(List.of("GET /api/v1/plans"), mock.requests);
     }
@@ -56,7 +56,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
+                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"COP\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
         mock.client
                 .plans()
                 .create(
@@ -72,7 +72,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
+                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"COP\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
         mock.client.plans().retrieve("plan_id");
         assertEquals(List.of("GET /api/v1/plans/plan_id"), mock.requests);
     }
@@ -83,7 +83,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
+                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"COP\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
         mock.client
                 .plans()
                 .replace(
@@ -100,7 +100,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
+                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"COP\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
         mock.client
                 .plans()
                 .update(
@@ -122,7 +122,7 @@ class PlansTest {
                 new PerseidMock(
                         200,
                         "application/json",
-                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"sample\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
+                        "{\"available_parameters\":{},\"created_at\":\"2023-12-31T23:59:59.999-05:30\",\"currency\":\"COP\",\"id\":\"plan_id_13\",\"name\":\"sample\",\"net_terms\":2147483647,\"plan_type\":\"FREE\",\"price_components\":[{\"id\":\"price_component_id_38\",\"name\":\"sample\"}],\"product_family\":{\"id\":\"product_family_id_66\",\"name\":\"sample\"},\"status\":\"ARCHIVED\",\"tax_inclusive\":false,\"version\":123456789,\"version_id\":\"plan_version_id_84\"}");
         mock.client.plans().publish("plan_id");
         assertEquals(List.of("POST /api/v1/plans/plan_id/publish"), mock.requests);
     }

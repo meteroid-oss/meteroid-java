@@ -32,7 +32,7 @@ class CustomersTest {
                 .create(
                         PerseidMock.decode(
                                 com.meteroid.models.CustomerCreateRequest.class,
-                                "{\"currency\":\"ERN\",\"custom_taxes\":[{\"name\":\"sample\",\"rate\":\"sample\",\"tax_code\":\"sample\"}],\"invoicing_emails\":[\"sample\"]}"));
+                                "{\"currency\":\"ERN\"}"));
         assertEquals(List.of("POST /api/v1/customers"), mock.requests);
     }
 

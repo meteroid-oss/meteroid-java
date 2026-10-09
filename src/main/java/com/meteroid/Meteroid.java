@@ -21,6 +21,7 @@ import com.meteroid.api.ProductFamilies;
 import com.meteroid.api.Products;
 import com.meteroid.api.Subscriptions;
 import com.meteroid.api.Usage;
+import com.meteroid.api.WebhookEndpoints;
 import com.meteroid.internal.MeteroidAuth;
 import com.meteroid.internal.MeteroidHttpClient;
 
@@ -75,6 +76,7 @@ public final class Meteroid implements AutoCloseable {
     private final Products products;
     private final Subscriptions subscriptions;
     private final Usage usage;
+    private final WebhookEndpoints webhookEndpoints;
 
     /**
      * A client with the default options, its API key and base URL read from the environment.
@@ -147,6 +149,7 @@ public final class Meteroid implements AutoCloseable {
         this.products = new Products(httpClient);
         this.subscriptions = new Subscriptions(httpClient);
         this.usage = new Usage(httpClient);
+        this.webhookEndpoints = new WebhookEndpoints(httpClient);
         this.withRawResponse = new WithRawResponse();
         this.async = new MeteroidAsync(this);
     }
@@ -372,6 +375,15 @@ public final class Meteroid implements AutoCloseable {
         return usage;
     }
 
+    /**
+     * The {@code webhook_endpoints} operations.
+     *
+     * @return the operations
+     */
+    public WebhookEndpoints webhookEndpoints() {
+        return webhookEndpoints;
+    }
+
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
@@ -554,6 +566,15 @@ public final class Meteroid implements AutoCloseable {
          */
         public Usage.WithRawResponse usage() {
             return usage.withRawResponse();
+        }
+
+        /**
+         * The {@code webhook_endpoints} operations.
+         *
+         * @return the operations
+         */
+        public WebhookEndpoints.WithRawResponse webhookEndpoints() {
+            return webhookEndpoints.withRawResponse();
         }
     }
 }

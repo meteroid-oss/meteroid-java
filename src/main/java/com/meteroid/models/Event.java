@@ -9,8 +9,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +40,8 @@ public final class Event {
     private Map<String, String> properties;
 
     @JsonProperty("timestamp")
-    private String timestamp;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<OffsetDateTime> timestamp = JsonField.missing();
 
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -118,10 +121,10 @@ public final class Event {
      * RFC 3339 timestamp. Defaults to ingestion time if omitted. Must be between 24 hours ago and 1
      * hour from now. Set <code>allow_backfilling</code> to remove the past limit.
      *
-     * @return the value, never null
+     * @return the value, empty when unset or null
      */
-    public String timestamp() {
-        return Utils.required(timestamp, "timestamp");
+    public Optional<OffsetDateTime> timestamp() {
+        return timestamp.asOptional();
     }
 
     /**
@@ -189,7 +192,7 @@ public final class Event {
         private String customerId;
         private String eventId;
         private Map<String, String> properties;
-        private String timestamp;
+        private JsonField<OffsetDateTime> timestamp = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -257,11 +260,11 @@ public final class Event {
          * RFC 3339 timestamp. Defaults to ingestion time if omitted. Must be between 24 hours ago
          * and 1 hour from now. Set <code>allow_backfilling</code> to remove the past limit.
          *
-         * @param timestamp the value
+         * @param timestamp the value, null to send an explicit {@code null}
          * @return this builder
          */
-        public Builder timestamp(String timestamp) {
-            this.timestamp = timestamp;
+        public Builder timestamp(OffsetDateTime timestamp) {
+            this.timestamp = JsonField.ofNullable(timestamp);
             return this;
         }
 
@@ -309,7 +312,6 @@ public final class Event {
             Utils.checkRequired(code, "code");
             Utils.checkRequired(customerId, "customer_id");
             Utils.checkRequired(eventId, "event_id");
-            Utils.checkRequired(timestamp, "timestamp");
             return new Event(this);
         }
     }
