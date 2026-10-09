@@ -21,6 +21,7 @@ import com.meteroid.api.ProductFamiliesAsync;
 import com.meteroid.api.ProductsAsync;
 import com.meteroid.api.SubscriptionsAsync;
 import com.meteroid.api.UsageAsync;
+import com.meteroid.api.WebhookEndpointsAsync;
 
 /**
  * The Meteroid client without blocking: every method returns a {@link
@@ -50,6 +51,7 @@ public final class MeteroidAsync implements AutoCloseable {
     private final ProductsAsync products;
     private final SubscriptionsAsync subscriptions;
     private final UsageAsync usage;
+    private final WebhookEndpointsAsync webhookEndpoints;
 
     MeteroidAsync(Meteroid sync) {
         this.sync = sync;
@@ -73,6 +75,7 @@ public final class MeteroidAsync implements AutoCloseable {
         this.products = new ProductsAsync(sync.products());
         this.subscriptions = new SubscriptionsAsync(sync.subscriptions());
         this.usage = new UsageAsync(sync.usage());
+        this.webhookEndpoints = new WebhookEndpointsAsync(sync.webhookEndpoints());
         this.withRawResponse = new WithRawResponse();
     }
 
@@ -274,6 +277,15 @@ public final class MeteroidAsync implements AutoCloseable {
         return usage;
     }
 
+    /**
+     * The {@code webhook_endpoints} operations.
+     *
+     * @return the operations
+     */
+    public WebhookEndpointsAsync webhookEndpoints() {
+        return webhookEndpoints;
+    }
+
     /** Closes the client shared with {@link #sync()}. */
     @Override
     public void close() {
@@ -462,6 +474,15 @@ public final class MeteroidAsync implements AutoCloseable {
          */
         public UsageAsync.WithRawResponse usage() {
             return usage.withRawResponse();
+        }
+
+        /**
+         * The {@code webhook_endpoints} operations.
+         *
+         * @return the operations
+         */
+        public WebhookEndpointsAsync.WithRawResponse webhookEndpoints() {
+            return webhookEndpoints.withRawResponse();
         }
     }
 }

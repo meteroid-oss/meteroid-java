@@ -14,7 +14,7 @@ item from that page on, and `pages()` every page, fetching the next ones on dema
 the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
 `forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
 
-[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage)
+[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
 
 ## Add ons
 
@@ -287,3 +287,26 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `UsageResponse client.usage().retrieveCustomer(String customerId, LocalDate startDate, LocalDate endDate, [UsageRetrieveCustomerOptions options])` | `GET /api/v1/usage/customer/{customer_id}` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
 | `UsageResponse client.usage().retrieveSubscription(String subscriptionId, [UsageRetrieveSubscriptionOptions options])` | `GET /api/v1/usage/subscription/{subscription_id}` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
 | `UsageResponse client.usage().retrieveSummary(LocalDate startDate, LocalDate endDate, [UsageRetrieveSummaryOptions options])` | `GET /api/v1/usage/summary` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
+
+## Webhook endpoints
+
+[`client.webhookEndpoints()`](src/main/java/com/meteroid/api/WebhookEndpoints.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `WebhookDelivery client.webhookEndpoints().resendWebhookDelivery(String deliveryId)` | `POST /api/v1/webhooks/deliveries/{delivery_id}/resend` | [`WebhookDelivery`](src/main/java/com/meteroid/models/WebhookDelivery.java) |
+
+### Webhook endpoints endpoints
+
+[`client.webhookEndpoints().endpoints()`](src/main/java/com/meteroid/api/WebhookEndpointsEndpoints.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `WebhookEndpointListResponse client.webhookEndpoints().endpoints().list()` | `GET /api/v1/webhooks/endpoints` | [`WebhookEndpointListResponse`](src/main/java/com/meteroid/models/WebhookEndpointListResponse.java) |
+| `CreatedWebhookEndpoint client.webhookEndpoints().endpoints().create(CreateWebhookEndpointRequest createWebhookEndpointRequest)` | `POST /api/v1/webhooks/endpoints` | [`CreatedWebhookEndpoint`](src/main/java/com/meteroid/models/CreatedWebhookEndpoint.java) |
+| `WebhookEndpoint client.webhookEndpoints().endpoints().retrieve(String endpointId)` | `GET /api/v1/webhooks/endpoints/{endpoint_id}` | [`WebhookEndpoint`](src/main/java/com/meteroid/models/WebhookEndpoint.java) |
+| `void client.webhookEndpoints().endpoints().delete(String endpointId)` | `DELETE /api/v1/webhooks/endpoints/{endpoint_id}` | nothing |
+| `WebhookEndpoint client.webhookEndpoints().endpoints().update(String endpointId, UpdateWebhookEndpointRequest updateWebhookEndpointRequest)` | `PATCH /api/v1/webhooks/endpoints/{endpoint_id}` | [`WebhookEndpoint`](src/main/java/com/meteroid/models/WebhookEndpoint.java) |
+| `WebhookEndpointsEndpointsListDeliveriesPage client.webhookEndpoints().endpoints().listDeliveries(String endpointId, [WebhookEndpointsEndpointsListDeliveriesOptions options])` | `GET /api/v1/webhooks/endpoints/{endpoint_id}/deliveries` | [page](src/main/java/com/meteroid/api/WebhookEndpointsEndpointsListDeliveriesPage.java) of [`WebhookDelivery`](src/main/java/com/meteroid/models/WebhookDelivery.java), with the properties of [`WebhookDeliveryListResponse`](src/main/java/com/meteroid/models/WebhookDeliveryListResponse.java) |
+| `WebhookEndpointSecret client.webhookEndpoints().endpoints().rotateSecret(String endpointId)` | `POST /api/v1/webhooks/endpoints/{endpoint_id}/rotate-secret` | [`WebhookEndpointSecret`](src/main/java/com/meteroid/models/WebhookEndpointSecret.java) |
+| `WebhookEndpointSecret client.webhookEndpoints().endpoints().retrieveSecret(String endpointId)` | `GET /api/v1/webhooks/endpoints/{endpoint_id}/secret` | [`WebhookEndpointSecret`](src/main/java/com/meteroid/models/WebhookEndpointSecret.java) |
