@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.1](https://github.com/meteroid-oss/meteroid-java/compare/v0.30.0...v0.30.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **api:** update SDKs to meteroid 0.1.0 ([#13](https://github.com/meteroid-oss/meteroid-java/issues/13)) ([0f3969a](https://github.com/meteroid-oss/meteroid-java/commit/0f3969a45602afde06e17069265bcc47a2a98284))
+
 ## [0.30.0](https://github.com/meteroid-oss/meteroid-java/compare/v0.29.0...v0.30.0) (2026-10-09)
 
 
