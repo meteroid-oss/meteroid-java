@@ -41,8 +41,8 @@ public final class EventsAsync {
      * <p>Ingest usage events for metering and billing purposes.
      *
      * <p>Events are deduplicated by <code>(event_id, customer_id)</code> — re-sending the same pair
-     * will not be double-counted. If timestamps differ across duplicates, the event with the latest
-     * timestamp is used.
+     * will not be double-counted. The first copy received is kept and later copies are ignored,
+     * whatever they change.
      *
      * <p>By default, any invalid event rejects the entire batch. Set <code>allow_partial_failures
      * </code> to <code>true</code> to ingest valid events and receive per-event failure details in
@@ -62,8 +62,8 @@ public final class EventsAsync {
      * <p>Ingest usage events for metering and billing purposes.
      *
      * <p>Events are deduplicated by <code>(event_id, customer_id)</code> — re-sending the same pair
-     * will not be double-counted. If timestamps differ across duplicates, the event with the latest
-     * timestamp is used.
+     * will not be double-counted. The first copy received is kept and later copies are ignored,
+     * whatever they change.
      *
      * <p>By default, any invalid event rejects the entire batch. Set <code>allow_partial_failures
      * </code> to <code>true</code> to ingest valid events and receive per-event failure details in
@@ -88,8 +88,8 @@ public final class EventsAsync {
          * <p>Ingest usage events for metering and billing purposes.
          *
          * <p>Events are deduplicated by <code>(event_id, customer_id)</code> — re-sending the same
-         * pair will not be double-counted. If timestamps differ across duplicates, the event with
-         * the latest timestamp is used.
+         * pair will not be double-counted. The first copy received is kept and later copies are
+         * ignored, whatever they change.
          *
          * <p>By default, any invalid event rejects the entire batch. Set <code>
          * allow_partial_failures</code> to <code>true</code> to ingest valid events and receive
@@ -109,8 +109,8 @@ public final class EventsAsync {
          * <p>Ingest usage events for metering and billing purposes.
          *
          * <p>Events are deduplicated by <code>(event_id, customer_id)</code> — re-sending the same
-         * pair will not be double-counted. If timestamps differ across duplicates, the event with
-         * the latest timestamp is used.
+         * pair will not be double-counted. The first copy received is kept and later copies are
+         * ignored, whatever they change.
          *
          * <p>By default, any invalid event rejects the entire batch. Set <code>
          * allow_partial_failures</code> to <code>true</code> to ingest valid events and receive
