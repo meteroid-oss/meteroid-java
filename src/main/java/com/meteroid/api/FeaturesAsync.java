@@ -173,7 +173,8 @@ public final class FeaturesAsync {
     /**
      * Archive a feature
      *
-     * <p>Keeps the feature and its entitlements but hides them from resolution.
+     * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and frees
+     * its code for a new feature.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      * @return the response body, once received
@@ -185,7 +186,8 @@ public final class FeaturesAsync {
     /**
      * Archive a feature
      *
-     * <p>Keeps the feature and its entitlements but hides them from resolution.
+     * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and frees
+     * its code for a new feature.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -199,6 +201,9 @@ public final class FeaturesAsync {
     /**
      * Unarchive a feature
      *
+     * <p>Makes the feature active again with all its entitlements. Fails while another feature uses
+     * its code.
+     *
      * @param idOrCode the {@code id_or_code} path parameter
      * @return the response body, once received
      */
@@ -208,6 +213,9 @@ public final class FeaturesAsync {
 
     /**
      * Unarchive a feature
+     *
+     * <p>Makes the feature active again with all its entitlements. Fails while another feature uses
+     * its code.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -353,7 +361,8 @@ public final class FeaturesAsync {
         /**
          * Archive a feature
          *
-         * <p>Keeps the feature and its entitlements but hides them from resolution.
+         * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and
+         * frees its code for a new feature.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @return the status, headers and body, once received
@@ -365,7 +374,8 @@ public final class FeaturesAsync {
         /**
          * Archive a feature
          *
-         * <p>Keeps the feature and its entitlements but hides them from resolution.
+         * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and
+         * frees its code for a new feature.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @param requestOptions headers, timeout and retries of this call
@@ -379,6 +389,9 @@ public final class FeaturesAsync {
         /**
          * Unarchive a feature
          *
+         * <p>Makes the feature active again with all its entitlements. Fails while another feature
+         * uses its code.
+         *
          * @param idOrCode the {@code id_or_code} path parameter
          * @return the status, headers and body, once received
          */
@@ -388,6 +401,9 @@ public final class FeaturesAsync {
 
         /**
          * Unarchive a feature
+         *
+         * <p>Makes the feature active again with all its entitlements. Fails while another feature
+         * uses its code.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @param requestOptions headers, timeout and retries of this call

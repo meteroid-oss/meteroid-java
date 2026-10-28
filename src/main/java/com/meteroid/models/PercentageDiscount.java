@@ -27,12 +27,16 @@ public final class PercentageDiscount {
     @JsonProperty("percentage")
     private String percentage;
 
+    @JsonProperty("type")
+    private String type = "PERCENTAGE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private PercentageDiscount() {}
 
     private PercentageDiscount(Builder builder) {
         this.percentage = builder.percentage;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class PercentageDiscount {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.percentage = percentage;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class PercentageDiscount {
      */
     public String percentage() {
         return Utils.required(percentage, "percentage");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class PercentageDiscount {
         }
         PercentageDiscount that = (PercentageDiscount) o;
         return Objects.equals(percentage, that.percentage)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(percentage, additionalProperties);
+        return Objects.hash(percentage, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class PercentageDiscount {
         return "PercentageDiscount{"
                 + "percentage="
                 + percentage
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class PercentageDiscount {
     /** Builds {@link PercentageDiscount}. */
     public static final class Builder {
         private String percentage;
+        private String type = "PERCENTAGE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class PercentageDiscount {
          */
         public Builder percentage(String percentage) {
             this.percentage = percentage;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class PercentageDiscount {
          */
         public PercentageDiscount build() {
             Utils.checkRequired(percentage, "percentage");
+            Utils.checkRequired(type, "type");
             return new PercentageDiscount(this);
         }
     }

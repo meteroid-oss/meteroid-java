@@ -245,7 +245,10 @@ public final class CreateCheckoutSessionRequest {
     }
 
     /**
-     * The {@code coupon_code} property.
+     * Code of the coupon to apply, used only when <code>coupon_ids</code> is empty. It names the
+     * coupon with exactly that code, else the only live coupon equal to it ignoring the case of
+     * ASCII letters. An unknown or ambiguous code is refused with 400. If the code no longer names
+     * a usable coupon when the customer pays, the payment is refused and nothing is charged.
      *
      * @return the value, empty when unset or null
      */
@@ -624,7 +627,11 @@ public final class CreateCheckoutSessionRequest {
         }
 
         /**
-         * The {@code coupon_code} property.
+         * Code of the coupon to apply, used only when <code>coupon_ids</code> is empty. It names
+         * the coupon with exactly that code, else the only live coupon equal to it ignoring the
+         * case of ASCII letters. An unknown or ambiguous code is refused with 400. If the code no
+         * longer names a usable coupon when the customer pays, the payment is refused and nothing
+         * is charged.
          *
          * @param couponCode the value, null to send an explicit {@code null}
          * @return this builder

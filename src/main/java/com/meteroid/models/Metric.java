@@ -74,6 +74,14 @@ public final class Metric {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<UnitConversion> unitConversion = JsonField.missing();
 
+    @JsonProperty("unit_plural")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitPlural = JsonField.missing();
+
+    @JsonProperty("unit_singular")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitSingular = JsonField.missing();
+
     @JsonProperty("usage_group_key")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> usageGroupKey = JsonField.missing();
@@ -96,6 +104,8 @@ public final class Metric {
         this.productId = builder.productId;
         this.segmentationMatrix = builder.segmentationMatrix;
         this.unitConversion = builder.unitConversion;
+        this.unitPlural = builder.unitPlural;
+        this.unitSingular = builder.unitSingular;
         this.usageGroupKey = builder.usageGroupKey;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -129,6 +139,8 @@ public final class Metric {
         builder.productId = productId;
         builder.segmentationMatrix = segmentationMatrix;
         builder.unitConversion = unitConversion;
+        builder.unitPlural = unitPlural;
+        builder.unitSingular = unitSingular;
         builder.usageGroupKey = usageGroupKey;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -252,6 +264,25 @@ public final class Metric {
     }
 
     /**
+     * What several units of the metric are called, e.g. <code>tokens</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitPlural() {
+        return unitPlural.asOptional();
+    }
+
+    /**
+     * What one unit of the metric is called, e.g. <code>token</code>. Set together with <code>
+     * unit_plural</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitSingular() {
+        return unitSingular.asOptional();
+    }
+
+    /**
      * The {@code usage_group_key} property.
      *
      * @return the value, empty when unset or null
@@ -301,6 +332,8 @@ public final class Metric {
                 && Objects.equals(productId, that.productId)
                 && Objects.equals(segmentationMatrix, that.segmentationMatrix)
                 && Objects.equals(unitConversion, that.unitConversion)
+                && Objects.equals(unitPlural, that.unitPlural)
+                && Objects.equals(unitSingular, that.unitSingular)
                 && Objects.equals(usageGroupKey, that.usageGroupKey)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
@@ -321,6 +354,8 @@ public final class Metric {
                 productId,
                 segmentationMatrix,
                 unitConversion,
+                unitPlural,
+                unitSingular,
                 usageGroupKey,
                 additionalProperties);
     }
@@ -354,6 +389,10 @@ public final class Metric {
                 + segmentationMatrix
                 + ", unitConversion="
                 + unitConversion
+                + ", unitPlural="
+                + unitPlural
+                + ", unitSingular="
+                + unitSingular
                 + ", usageGroupKey="
                 + usageGroupKey
                 + ", additionalProperties="
@@ -376,6 +415,8 @@ public final class Metric {
         private JsonField<String> productId = JsonField.missing();
         private JsonField<MetricSegmentationMatrix> segmentationMatrix = JsonField.missing();
         private JsonField<UnitConversion> unitConversion = JsonField.missing();
+        private JsonField<String> unitPlural = JsonField.missing();
+        private JsonField<String> unitSingular = JsonField.missing();
         private JsonField<String> usageGroupKey = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -535,6 +576,29 @@ public final class Metric {
          */
         public Builder unitConversion(UnitConversion unitConversion) {
             this.unitConversion = JsonField.ofNullable(unitConversion);
+            return this;
+        }
+
+        /**
+         * What several units of the metric are called, e.g. <code>tokens</code>.
+         *
+         * @param unitPlural the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitPlural(String unitPlural) {
+            this.unitPlural = JsonField.ofNullable(unitPlural);
+            return this;
+        }
+
+        /**
+         * What one unit of the metric is called, e.g. <code>token</code>. Set together with <code>
+         * unit_plural</code>.
+         *
+         * @param unitSingular the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitSingular(String unitSingular) {
+            this.unitSingular = JsonField.ofNullable(unitSingular);
             return this;
         }
 

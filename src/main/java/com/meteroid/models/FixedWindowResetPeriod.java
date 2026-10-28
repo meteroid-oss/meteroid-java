@@ -31,6 +31,9 @@ public final class FixedWindowResetPeriod {
     @JsonProperty("interval")
     private Integer interval;
 
+    @JsonProperty("type")
+    private String type = "FIXED_WINDOW";
+
     @JsonProperty("unit")
     private CalendarUnit unit;
 
@@ -40,6 +43,7 @@ public final class FixedWindowResetPeriod {
 
     private FixedWindowResetPeriod(Builder builder) {
         this.interval = builder.interval;
+        this.type = builder.type;
         this.unit = builder.unit;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -61,6 +65,7 @@ public final class FixedWindowResetPeriod {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.interval = interval;
+        builder.type = type;
         builder.unit = unit;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -73,6 +78,15 @@ public final class FixedWindowResetPeriod {
      */
     public Integer interval() {
         return Utils.required(interval, "interval");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -113,13 +127,14 @@ public final class FixedWindowResetPeriod {
         }
         FixedWindowResetPeriod that = (FixedWindowResetPeriod) o;
         return Objects.equals(interval, that.interval)
+                && Objects.equals(type, that.type)
                 && Objects.equals(unit, that.unit)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(interval, unit, additionalProperties);
+        return Objects.hash(interval, type, unit, additionalProperties);
     }
 
     @Override
@@ -127,6 +142,8 @@ public final class FixedWindowResetPeriod {
         return "FixedWindowResetPeriod{"
                 + "interval="
                 + interval
+                + ", type="
+                + type
                 + ", unit="
                 + unit
                 + ", additionalProperties="
@@ -137,6 +154,7 @@ public final class FixedWindowResetPeriod {
     /** Builds {@link FixedWindowResetPeriod}. */
     public static final class Builder {
         private Integer interval;
+        private String type = "FIXED_WINDOW";
         private CalendarUnit unit;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -150,6 +168,17 @@ public final class FixedWindowResetPeriod {
          */
         public Builder interval(Integer interval) {
             this.interval = interval;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -206,6 +235,7 @@ public final class FixedWindowResetPeriod {
          */
         public FixedWindowResetPeriod build() {
             Utils.checkRequired(interval, "interval");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(unit, "unit");
             return new FixedWindowResetPeriod(this);
         }

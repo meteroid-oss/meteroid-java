@@ -33,6 +33,10 @@ public final class InvoiceLineItem {
     @JsonProperty("amount_total")
     private Long amountTotal;
 
+    @JsonProperty("credit_unit")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<InvoiceLineCreditUnit> creditUnit = JsonField.missing();
+
     @JsonProperty("description")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> description = JsonField.missing();
@@ -67,6 +71,7 @@ public final class InvoiceLineItem {
 
     private InvoiceLineItem(Builder builder) {
         this.amountTotal = builder.amountTotal;
+        this.creditUnit = builder.creditUnit;
         this.description = builder.description;
         this.endDate = builder.endDate;
         this.name = builder.name;
@@ -96,6 +101,7 @@ public final class InvoiceLineItem {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.amountTotal = amountTotal;
+        builder.creditUnit = creditUnit;
         builder.description = description;
         builder.endDate = endDate;
         builder.name = name;
@@ -116,6 +122,15 @@ public final class InvoiceLineItem {
      */
     public Long amountTotal() {
         return Utils.required(amountTotal, "amount_total");
+    }
+
+    /**
+     * The {@code credit_unit} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<InvoiceLineCreditUnit> creditUnit() {
+        return creditUnit.asOptional();
     }
 
     /**
@@ -229,6 +244,7 @@ public final class InvoiceLineItem {
         }
         InvoiceLineItem that = (InvoiceLineItem) o;
         return Objects.equals(amountTotal, that.amountTotal)
+                && Objects.equals(creditUnit, that.creditUnit)
                 && Objects.equals(description, that.description)
                 && Objects.equals(endDate, that.endDate)
                 && Objects.equals(name, that.name)
@@ -245,6 +261,7 @@ public final class InvoiceLineItem {
     public int hashCode() {
         return Objects.hash(
                 amountTotal,
+                creditUnit,
                 description,
                 endDate,
                 name,
@@ -262,6 +279,8 @@ public final class InvoiceLineItem {
         return "InvoiceLineItem{"
                 + "amountTotal="
                 + amountTotal
+                + ", creditUnit="
+                + creditUnit
                 + ", description="
                 + description
                 + ", endDate="
@@ -288,6 +307,7 @@ public final class InvoiceLineItem {
     /** Builds {@link InvoiceLineItem}. */
     public static final class Builder {
         private Long amountTotal;
+        private JsonField<InvoiceLineCreditUnit> creditUnit = JsonField.missing();
         private JsonField<String> description = JsonField.missing();
         private LocalDate endDate;
         private String name;
@@ -309,6 +329,17 @@ public final class InvoiceLineItem {
          */
         public Builder amountTotal(Long amountTotal) {
             this.amountTotal = amountTotal;
+            return this;
+        }
+
+        /**
+         * The {@code credit_unit} property.
+         *
+         * @param creditUnit the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditUnit(InvoiceLineCreditUnit creditUnit) {
+            this.creditUnit = JsonField.ofNullable(creditUnit);
             return this;
         }
 

@@ -36,11 +36,17 @@ public final class RefundEventData {
     @JsonProperty("amount")
     private Long amount;
 
+    @JsonProperty("amount_disputed")
+    private Long amountDisputed;
+
     @JsonProperty("amount_refunded")
     private Long amountRefunded;
 
     @JsonProperty("amount_reversed")
     private Long amountReversed;
+
+    @JsonProperty("amount_reversed_excess")
+    private Long amountReversedExcess;
 
     @JsonProperty("credit_note_id")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -96,8 +102,10 @@ public final class RefundEventData {
 
     private RefundEventData(Builder builder) {
         this.amount = builder.amount;
+        this.amountDisputed = builder.amountDisputed;
         this.amountRefunded = builder.amountRefunded;
         this.amountReversed = builder.amountReversed;
+        this.amountReversedExcess = builder.amountReversedExcess;
         this.creditNoteId = builder.creditNoteId;
         this.currency = builder.currency;
         this.declineKind = builder.declineKind;
@@ -131,8 +139,10 @@ public final class RefundEventData {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.amount = amount;
+        builder.amountDisputed = amountDisputed;
         builder.amountRefunded = amountRefunded;
         builder.amountReversed = amountReversed;
+        builder.amountReversedExcess = amountReversedExcess;
         builder.creditNoteId = creditNoteId;
         builder.currency = currency;
         builder.declineKind = declineKind;
@@ -160,6 +170,16 @@ public final class RefundEventData {
     }
 
     /**
+     * The part of <code>amount_reversed</code> lost to disputes or chargebacks: the invoice stays
+     * paid.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> amountDisputed() {
+        return Optional.ofNullable(amountDisputed);
+    }
+
+    /**
      * The {@code amount_refunded} property.
      *
      * @return the value, never null
@@ -175,6 +195,16 @@ public final class RefundEventData {
      */
     public Long amountReversed() {
         return Utils.required(amountReversed, "amount_reversed");
+    }
+
+    /**
+     * What the provider withdrew above what the payment still held (refunded before); never applied
+     * to the invoice or credit. Contest it with the provider.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> amountReversedExcess() {
+        return Optional.ofNullable(amountReversedExcess);
     }
 
     /**
@@ -323,8 +353,10 @@ public final class RefundEventData {
         }
         RefundEventData that = (RefundEventData) o;
         return Objects.equals(amount, that.amount)
+                && Objects.equals(amountDisputed, that.amountDisputed)
                 && Objects.equals(amountRefunded, that.amountRefunded)
                 && Objects.equals(amountReversed, that.amountReversed)
+                && Objects.equals(amountReversedExcess, that.amountReversedExcess)
                 && Objects.equals(creditNoteId, that.creditNoteId)
                 && Objects.equals(currency, that.currency)
                 && Objects.equals(declineKind, that.declineKind)
@@ -345,8 +377,10 @@ public final class RefundEventData {
     public int hashCode() {
         return Objects.hash(
                 amount,
+                amountDisputed,
                 amountRefunded,
                 amountReversed,
+                amountReversedExcess,
                 creditNoteId,
                 currency,
                 declineKind,
@@ -368,10 +402,14 @@ public final class RefundEventData {
         return "RefundEventData{"
                 + "amount="
                 + amount
+                + ", amountDisputed="
+                + amountDisputed
                 + ", amountRefunded="
                 + amountRefunded
                 + ", amountReversed="
                 + amountReversed
+                + ", amountReversedExcess="
+                + amountReversedExcess
                 + ", creditNoteId="
                 + creditNoteId
                 + ", currency="
@@ -406,8 +444,10 @@ public final class RefundEventData {
     /** Builds {@link RefundEventData}. */
     public static final class Builder {
         private Long amount;
+        private Long amountDisputed;
         private Long amountRefunded;
         private Long amountReversed;
+        private Long amountReversedExcess;
         private JsonField<String> creditNoteId = JsonField.missing();
         private String currency;
         private JsonField<DeclineKind> declineKind = JsonField.missing();
@@ -437,6 +477,18 @@ public final class RefundEventData {
         }
 
         /**
+         * The part of <code>amount_reversed</code> lost to disputes or chargebacks: the invoice
+         * stays paid.
+         *
+         * @param amountDisputed the value
+         * @return this builder
+         */
+        public Builder amountDisputed(Long amountDisputed) {
+            this.amountDisputed = amountDisputed;
+            return this;
+        }
+
+        /**
          * The {@code amount_refunded} property.
          *
          * @param amountRefunded the value
@@ -455,6 +507,18 @@ public final class RefundEventData {
          */
         public Builder amountReversed(Long amountReversed) {
             this.amountReversed = amountReversed;
+            return this;
+        }
+
+        /**
+         * What the provider withdrew above what the payment still held (refunded before); never
+         * applied to the invoice or credit. Contest it with the provider.
+         *
+         * @param amountReversedExcess the value
+         * @return this builder
+         */
+        public Builder amountReversedExcess(Long amountReversedExcess) {
+            this.amountReversedExcess = amountReversedExcess;
             return this;
         }
 

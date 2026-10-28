@@ -34,6 +34,9 @@ public final class ConfigFeatureType {
     @JsonProperty("options")
     private List<String> options;
 
+    @JsonProperty("type")
+    private String type = "CONFIG";
+
     @JsonProperty("value_type")
     private ConfigValueType valueType;
 
@@ -43,6 +46,7 @@ public final class ConfigFeatureType {
 
     private ConfigFeatureType(Builder builder) {
         this.options = Utils.copyList(builder.options);
+        this.type = builder.type;
         this.valueType = builder.valueType;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -64,6 +68,7 @@ public final class ConfigFeatureType {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.options = Utils.mutableList(options);
+        builder.type = type;
         builder.valueType = valueType;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -76,6 +81,15 @@ public final class ConfigFeatureType {
      */
     public Optional<List<String>> options() {
         return Optional.ofNullable(options);
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -116,13 +130,14 @@ public final class ConfigFeatureType {
         }
         ConfigFeatureType that = (ConfigFeatureType) o;
         return Objects.equals(options, that.options)
+                && Objects.equals(type, that.type)
                 && Objects.equals(valueType, that.valueType)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(options, valueType, additionalProperties);
+        return Objects.hash(options, type, valueType, additionalProperties);
     }
 
     @Override
@@ -130,6 +145,8 @@ public final class ConfigFeatureType {
         return "ConfigFeatureType{"
                 + "options="
                 + options
+                + ", type="
+                + type
                 + ", valueType="
                 + valueType
                 + ", additionalProperties="
@@ -140,6 +157,7 @@ public final class ConfigFeatureType {
     /** Builds {@link ConfigFeatureType}. */
     public static final class Builder {
         private List<String> options;
+        private String type = "CONFIG";
         private ConfigValueType valueType;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -167,6 +185,17 @@ public final class ConfigFeatureType {
                 this.options = new ArrayList<>();
             }
             this.options.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -222,6 +251,7 @@ public final class ConfigFeatureType {
          * @throws IllegalStateException when a required property is not set
          */
         public ConfigFeatureType build() {
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(valueType, "value_type");
             return new ConfigFeatureType(this);
         }

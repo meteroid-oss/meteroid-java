@@ -48,6 +48,14 @@ public final class UpdateMetricRequest {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<UnitConversion> unitConversion = JsonField.missing();
 
+    @JsonProperty("unit_plural")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitPlural = JsonField.missing();
+
+    @JsonProperty("unit_singular")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitSingular = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private UpdateMetricRequest() {}
@@ -58,6 +66,8 @@ public final class UpdateMetricRequest {
         this.name = builder.name;
         this.segmentationMatrix = builder.segmentationMatrix;
         this.unitConversion = builder.unitConversion;
+        this.unitPlural = builder.unitPlural;
+        this.unitSingular = builder.unitSingular;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -82,6 +92,8 @@ public final class UpdateMetricRequest {
         builder.name = name;
         builder.segmentationMatrix = segmentationMatrix;
         builder.unitConversion = unitConversion;
+        builder.unitPlural = unitPlural;
+        builder.unitSingular = unitSingular;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -132,6 +144,27 @@ public final class UpdateMetricRequest {
     }
 
     /**
+     * What several units of the metric are called, e.g. <code>tokens</code>. See <code>
+     * unit_singular</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitPlural() {
+        return unitPlural.asOptional();
+    }
+
+    /**
+     * What one unit of the metric is called, e.g. <code>token</code>. Send <code>unit_singular
+     * </code> and <code>unit_plural</code> together; omit both to leave the label unchanged, or
+     * send both as empty strings to remove it. Trimmed; at most 32 characters.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitSingular() {
+        return unitSingular.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -164,6 +197,8 @@ public final class UpdateMetricRequest {
                 && Objects.equals(name, that.name)
                 && Objects.equals(segmentationMatrix, that.segmentationMatrix)
                 && Objects.equals(unitConversion, that.unitConversion)
+                && Objects.equals(unitPlural, that.unitPlural)
+                && Objects.equals(unitSingular, that.unitSingular)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -175,6 +210,8 @@ public final class UpdateMetricRequest {
                 name,
                 segmentationMatrix,
                 unitConversion,
+                unitPlural,
+                unitSingular,
                 additionalProperties);
     }
 
@@ -191,6 +228,10 @@ public final class UpdateMetricRequest {
                 + segmentationMatrix
                 + ", unitConversion="
                 + unitConversion
+                + ", unitPlural="
+                + unitPlural
+                + ", unitSingular="
+                + unitSingular
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -203,6 +244,8 @@ public final class UpdateMetricRequest {
         private JsonField<String> name = JsonField.missing();
         private JsonField<MetricSegmentationMatrix> segmentationMatrix = JsonField.missing();
         private JsonField<UnitConversion> unitConversion = JsonField.missing();
+        private JsonField<String> unitPlural = JsonField.missing();
+        private JsonField<String> unitSingular = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -275,6 +318,31 @@ public final class UpdateMetricRequest {
          */
         public Builder unitConversion(UnitConversion unitConversion) {
             this.unitConversion = JsonField.ofNullable(unitConversion);
+            return this;
+        }
+
+        /**
+         * What several units of the metric are called, e.g. <code>tokens</code>. See <code>
+         * unit_singular</code>.
+         *
+         * @param unitPlural the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitPlural(String unitPlural) {
+            this.unitPlural = JsonField.ofNullable(unitPlural);
+            return this;
+        }
+
+        /**
+         * What one unit of the metric is called, e.g. <code>token</code>. Send <code>unit_singular
+         * </code> and <code>unit_plural</code> together; omit both to leave the label unchanged, or
+         * send both as empty strings to remove it. Trimmed; at most 32 characters.
+         *
+         * @param unitSingular the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitSingular(String unitSingular) {
+            this.unitSingular = JsonField.ofNullable(unitSingular);
             return this;
         }
 

@@ -32,6 +32,9 @@ public final class CalendarResetPeriod {
     @JsonProperty("interval")
     private Integer interval;
 
+    @JsonProperty("type")
+    private String type = "CALENDAR";
+
     @JsonProperty("unit")
     private CalendarUnit unit;
 
@@ -41,6 +44,7 @@ public final class CalendarResetPeriod {
 
     private CalendarResetPeriod(Builder builder) {
         this.interval = builder.interval;
+        this.type = builder.type;
         this.unit = builder.unit;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -62,6 +66,7 @@ public final class CalendarResetPeriod {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.interval = interval;
+        builder.type = type;
         builder.unit = unit;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -74,6 +79,15 @@ public final class CalendarResetPeriod {
      */
     public Integer interval() {
         return Utils.required(interval, "interval");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -114,13 +128,14 @@ public final class CalendarResetPeriod {
         }
         CalendarResetPeriod that = (CalendarResetPeriod) o;
         return Objects.equals(interval, that.interval)
+                && Objects.equals(type, that.type)
                 && Objects.equals(unit, that.unit)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(interval, unit, additionalProperties);
+        return Objects.hash(interval, type, unit, additionalProperties);
     }
 
     @Override
@@ -128,6 +143,8 @@ public final class CalendarResetPeriod {
         return "CalendarResetPeriod{"
                 + "interval="
                 + interval
+                + ", type="
+                + type
                 + ", unit="
                 + unit
                 + ", additionalProperties="
@@ -138,6 +155,7 @@ public final class CalendarResetPeriod {
     /** Builds {@link CalendarResetPeriod}. */
     public static final class Builder {
         private Integer interval;
+        private String type = "CALENDAR";
         private CalendarUnit unit;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -151,6 +169,17 @@ public final class CalendarResetPeriod {
          */
         public Builder interval(Integer interval) {
             this.interval = interval;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -207,6 +236,7 @@ public final class CalendarResetPeriod {
          */
         public CalendarResetPeriod build() {
             Utils.checkRequired(interval, "interval");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(unit, "unit");
             return new CalendarResetPeriod(this);
         }

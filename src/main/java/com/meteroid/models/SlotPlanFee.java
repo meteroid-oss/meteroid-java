@@ -46,6 +46,9 @@ public final class SlotPlanFee {
     @JsonProperty("slot_unit_name")
     private String slotUnitName;
 
+    @JsonProperty("type")
+    private String type = "SLOT";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private SlotPlanFee() {}
@@ -55,6 +58,7 @@ public final class SlotPlanFee {
         this.quota = builder.quota;
         this.rates = Utils.copyList(builder.rates);
         this.slotUnitName = builder.slotUnitName;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -78,6 +82,7 @@ public final class SlotPlanFee {
         builder.quota = quota;
         builder.rates = Utils.mutableList(rates);
         builder.slotUnitName = slotUnitName;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -119,6 +124,15 @@ public final class SlotPlanFee {
     }
 
     /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -150,12 +164,13 @@ public final class SlotPlanFee {
                 && Objects.equals(quota, that.quota)
                 && Objects.equals(rates, that.rates)
                 && Objects.equals(slotUnitName, that.slotUnitName)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(minimumCount, quota, rates, slotUnitName, additionalProperties);
+        return Objects.hash(minimumCount, quota, rates, slotUnitName, type, additionalProperties);
     }
 
     @Override
@@ -169,6 +184,8 @@ public final class SlotPlanFee {
                 + rates
                 + ", slotUnitName="
                 + slotUnitName
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -180,6 +197,7 @@ public final class SlotPlanFee {
         private JsonField<Integer> quota = JsonField.missing();
         private List<TermRate> rates;
         private String slotUnitName;
+        private String type = "SLOT";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -243,6 +261,17 @@ public final class SlotPlanFee {
         }
 
         /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
+
+        /**
          * A property the SDK does not know, sent along.
          *
          * @param name the property name
@@ -285,6 +314,7 @@ public final class SlotPlanFee {
         public SlotPlanFee build() {
             Utils.checkRequired(rates, "rates");
             Utils.checkRequired(slotUnitName, "slot_unit_name");
+            Utils.checkRequired(type, "type");
             return new SlotPlanFee(this);
         }
     }

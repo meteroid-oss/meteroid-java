@@ -27,6 +27,9 @@ public final class MeteredEffectiveEntitlementValue {
     @JsonProperty("spec")
     private MeteredEntitlementSpec spec;
 
+    @JsonProperty("type")
+    private String type = "METERED";
+
     @JsonProperty("usage")
     private MeteredEntitlementUsage usage;
 
@@ -36,6 +39,7 @@ public final class MeteredEffectiveEntitlementValue {
 
     private MeteredEffectiveEntitlementValue(Builder builder) {
         this.spec = builder.spec;
+        this.type = builder.type;
         this.usage = builder.usage;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -57,6 +61,7 @@ public final class MeteredEffectiveEntitlementValue {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.spec = spec;
+        builder.type = type;
         builder.usage = usage;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -69,6 +74,15 @@ public final class MeteredEffectiveEntitlementValue {
      */
     public MeteredEntitlementSpec spec() {
         return Utils.required(spec, "spec");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -109,13 +123,14 @@ public final class MeteredEffectiveEntitlementValue {
         }
         MeteredEffectiveEntitlementValue that = (MeteredEffectiveEntitlementValue) o;
         return Objects.equals(spec, that.spec)
+                && Objects.equals(type, that.type)
                 && Objects.equals(usage, that.usage)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(spec, usage, additionalProperties);
+        return Objects.hash(spec, type, usage, additionalProperties);
     }
 
     @Override
@@ -123,6 +138,8 @@ public final class MeteredEffectiveEntitlementValue {
         return "MeteredEffectiveEntitlementValue{"
                 + "spec="
                 + spec
+                + ", type="
+                + type
                 + ", usage="
                 + usage
                 + ", additionalProperties="
@@ -133,6 +150,7 @@ public final class MeteredEffectiveEntitlementValue {
     /** Builds {@link MeteredEffectiveEntitlementValue}. */
     public static final class Builder {
         private MeteredEntitlementSpec spec;
+        private String type = "METERED";
         private MeteredEntitlementUsage usage;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -146,6 +164,17 @@ public final class MeteredEffectiveEntitlementValue {
          */
         public Builder spec(MeteredEntitlementSpec spec) {
             this.spec = spec;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -202,6 +231,7 @@ public final class MeteredEffectiveEntitlementValue {
          */
         public MeteredEffectiveEntitlementValue build() {
             Utils.checkRequired(spec, "spec");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(usage, "usage");
             return new MeteredEffectiveEntitlementValue(this);
         }

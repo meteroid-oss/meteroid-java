@@ -30,6 +30,9 @@ public final class UsageFeeStructure {
     @JsonProperty("model")
     private UsageModelEnum model;
 
+    @JsonProperty("type")
+    private String type = "USAGE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private UsageFeeStructure() {}
@@ -37,6 +40,7 @@ public final class UsageFeeStructure {
     private UsageFeeStructure(Builder builder) {
         this.metricId = builder.metricId;
         this.model = builder.model;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -58,6 +62,7 @@ public final class UsageFeeStructure {
         Builder builder = new Builder();
         builder.metricId = metricId;
         builder.model = model;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -78,6 +83,15 @@ public final class UsageFeeStructure {
      */
     public UsageModelEnum model() {
         return Utils.required(model, "model");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -110,12 +124,13 @@ public final class UsageFeeStructure {
         UsageFeeStructure that = (UsageFeeStructure) o;
         return Objects.equals(metricId, that.metricId)
                 && Objects.equals(model, that.model)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metricId, model, additionalProperties);
+        return Objects.hash(metricId, model, type, additionalProperties);
     }
 
     @Override
@@ -125,6 +140,8 @@ public final class UsageFeeStructure {
                 + metricId
                 + ", model="
                 + model
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -134,6 +151,7 @@ public final class UsageFeeStructure {
     public static final class Builder {
         private String metricId;
         private UsageModelEnum model;
+        private String type = "USAGE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -157,6 +175,17 @@ public final class UsageFeeStructure {
          */
         public Builder model(UsageModelEnum model) {
             this.model = model;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -203,6 +232,7 @@ public final class UsageFeeStructure {
         public UsageFeeStructure build() {
             Utils.checkRequired(metricId, "metric_id");
             Utils.checkRequired(model, "model");
+            Utils.checkRequired(type, "type");
             return new UsageFeeStructure(this);
         }
     }

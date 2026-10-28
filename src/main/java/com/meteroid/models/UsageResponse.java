@@ -9,15 +9,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,11 +30,19 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class UsageResponse {
+    @JsonProperty("computed_at")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<OffsetDateTime> computedAt = JsonField.missing();
+
     @JsonProperty("period_end")
     private LocalDate periodEnd;
 
     @JsonProperty("period_start")
     private LocalDate periodStart;
+
+    @JsonProperty("totals")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<List<UsageCost>> totals = JsonField.missing();
 
     @JsonProperty("usage")
     private List<MetricUsage> usage;
@@ -41,8 +52,10 @@ public final class UsageResponse {
     private UsageResponse() {}
 
     private UsageResponse(Builder builder) {
+        this.computedAt = builder.computedAt;
         this.periodEnd = builder.periodEnd;
         this.periodStart = builder.periodStart;
+        this.totals = builder.totals.map(Utils::copyList);
         this.usage = Utils.copyList(builder.usage);
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -63,11 +76,24 @@ public final class UsageResponse {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.computedAt = computedAt;
         builder.periodEnd = periodEnd;
         builder.periodStart = periodStart;
+        builder.totals = totals.map(Utils::mutableList);
         builder.usage = Utils.mutableList(usage);
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * Beta: when <code>totals</code> and the metrics' <code>costs</code> were computed. These are
+     * present only when a subscription's current billing period is read (no <code>start_date</code>
+     * nor <code>end_date</code>) and its usage could be priced.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<OffsetDateTime> computedAt() {
+        return computedAt.asOptional();
     }
 
     /**
@@ -86,6 +112,15 @@ public final class UsageResponse {
      */
     public LocalDate periodStart() {
         return Utils.required(periodStart, "period_start");
+    }
+
+    /**
+     * Beta: the sum of the metrics' <code>costs</code>, per currency or credit unit.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<List<UsageCost>> totals() {
+        return totals.asOptional();
     }
 
     /**
@@ -125,24 +160,31 @@ public final class UsageResponse {
             return false;
         }
         UsageResponse that = (UsageResponse) o;
-        return Objects.equals(periodEnd, that.periodEnd)
+        return Objects.equals(computedAt, that.computedAt)
+                && Objects.equals(periodEnd, that.periodEnd)
                 && Objects.equals(periodStart, that.periodStart)
+                && Objects.equals(totals, that.totals)
                 && Objects.equals(usage, that.usage)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(periodEnd, periodStart, usage, additionalProperties);
+        return Objects.hash(
+                computedAt, periodEnd, periodStart, totals, usage, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "UsageResponse{"
-                + "periodEnd="
+                + "computedAt="
+                + computedAt
+                + ", periodEnd="
                 + periodEnd
                 + ", periodStart="
                 + periodStart
+                + ", totals="
+                + totals
                 + ", usage="
                 + usage
                 + ", additionalProperties="
@@ -152,12 +194,27 @@ public final class UsageResponse {
 
     /** Builds {@link UsageResponse}. */
     public static final class Builder {
+        private JsonField<OffsetDateTime> computedAt = JsonField.missing();
         private LocalDate periodEnd;
         private LocalDate periodStart;
+        private JsonField<List<UsageCost>> totals = JsonField.missing();
         private List<MetricUsage> usage;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * Beta: when <code>totals</code> and the metrics' <code>costs</code> were computed. These
+         * are present only when a subscription's current billing period is read (no <code>
+         * start_date</code> nor <code>end_date</code>) and its usage could be priced.
+         *
+         * @param computedAt the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder computedAt(OffsetDateTime computedAt) {
+            this.computedAt = JsonField.ofNullable(computedAt);
+            return this;
+        }
 
         /**
          * The {@code period_end} property.
@@ -178,6 +235,33 @@ public final class UsageResponse {
          */
         public Builder periodStart(LocalDate periodStart) {
             this.periodStart = periodStart;
+            return this;
+        }
+
+        /**
+         * Beta: the sum of the metrics' <code>costs</code>, per currency or credit unit.
+         *
+         * @param totals the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder totals(List<UsageCost> totals) {
+            this.totals = JsonField.ofNullable(Utils.mutableList(totals));
+            return this;
+        }
+
+        /**
+         * Adds an item to {@code totals}.
+         *
+         * @param item the item
+         * @return this builder
+         */
+        public Builder addTotalsItem(UsageCost item) {
+            List<UsageCost> items = this.totals.orNull();
+            if (items == null) {
+                items = new ArrayList<>();
+                this.totals = JsonField.ofNullable(items);
+            }
+            items.add(item);
             return this;
         }
 

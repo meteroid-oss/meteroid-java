@@ -6,6 +6,7 @@ import com.meteroid.RequestOptions;
 import com.meteroid.models.ConnectedAccount;
 import com.meteroid.models.ConnectedAccountsResponse;
 import com.meteroid.models.CreateConnectedAccountRequest;
+import com.meteroid.models.CreateConnectedAccountResponse;
 import com.meteroid.models.CreateOnboardingLinkRequest;
 import com.meteroid.models.OnboardingLinkResponse;
 
@@ -65,13 +66,13 @@ public final class ConnectAsync {
     /**
      * Create connected account
      *
-     * <p>Create a new connected account (Express flow). Returns the account and an onboarding link
-     * for the user to complete setup.
+     * <p>Create a new pending connected account (Express flow). Returns the account and an
+     * onboarding link for the user to complete setup.
      *
      * @param createConnectedAccountRequest the request body
      * @return the response body, once received
      */
-    public CompletableFuture<ConnectedAccount> createConnectedAccount(
+    public CompletableFuture<CreateConnectedAccountResponse> createConnectedAccount(
             final CreateConnectedAccountRequest createConnectedAccountRequest) {
         return createConnectedAccount(createConnectedAccountRequest, RequestOptions.none());
     }
@@ -79,14 +80,14 @@ public final class ConnectAsync {
     /**
      * Create connected account
      *
-     * <p>Create a new connected account (Express flow). Returns the account and an onboarding link
-     * for the user to complete setup.
+     * <p>Create a new pending connected account (Express flow). Returns the account and an
+     * onboarding link for the user to complete setup.
      *
      * @param createConnectedAccountRequest the request body
      * @param requestOptions headers, timeout and retries of this call
      * @return the response body, once received
      */
-    public CompletableFuture<ConnectedAccount> createConnectedAccount(
+    public CompletableFuture<CreateConnectedAccountResponse> createConnectedAccount(
             final CreateConnectedAccountRequest createConnectedAccountRequest,
             final RequestOptions requestOptions) {
         return sync.exchangeCreateConnectedAccount(createConnectedAccountRequest, requestOptions)
@@ -210,30 +211,32 @@ public final class ConnectAsync {
         /**
          * Create connected account
          *
-         * <p>Create a new connected account (Express flow). Returns the account and an onboarding
-         * link for the user to complete setup.
+         * <p>Create a new pending connected account (Express flow). Returns the account and an
+         * onboarding link for the user to complete setup.
          *
          * @param createConnectedAccountRequest the request body
          * @return the status, headers and body, once received
          */
-        public CompletableFuture<ApiResponse<ConnectedAccount>> createConnectedAccount(
-                final CreateConnectedAccountRequest createConnectedAccountRequest) {
+        public CompletableFuture<ApiResponse<CreateConnectedAccountResponse>>
+                createConnectedAccount(
+                        final CreateConnectedAccountRequest createConnectedAccountRequest) {
             return createConnectedAccount(createConnectedAccountRequest, RequestOptions.none());
         }
 
         /**
          * Create connected account
          *
-         * <p>Create a new connected account (Express flow). Returns the account and an onboarding
-         * link for the user to complete setup.
+         * <p>Create a new pending connected account (Express flow). Returns the account and an
+         * onboarding link for the user to complete setup.
          *
          * @param createConnectedAccountRequest the request body
          * @param requestOptions headers, timeout and retries of this call
          * @return the status, headers and body, once received
          */
-        public CompletableFuture<ApiResponse<ConnectedAccount>> createConnectedAccount(
-                final CreateConnectedAccountRequest createConnectedAccountRequest,
-                final RequestOptions requestOptions) {
+        public CompletableFuture<ApiResponse<CreateConnectedAccountResponse>>
+                createConnectedAccount(
+                        final CreateConnectedAccountRequest createConnectedAccountRequest,
+                        final RequestOptions requestOptions) {
             return sync.exchangeCreateConnectedAccount(
                             createConnectedAccountRequest, requestOptions)
                     .sendRawAsync();

@@ -32,7 +32,8 @@ import java.util.Objects;
         defaultImpl = CouponDiscount.Unrecognized.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = CouponDiscount.Percentage.class, name = "PERCENTAGE"),
-    @JsonSubTypes.Type(value = CouponDiscount.Fixed.class, name = "FIXED")
+    @JsonSubTypes.Type(value = CouponDiscount.Fixed.class, name = "FIXED"),
+    @JsonSubTypes.Type(value = CouponDiscount.Credit.class, name = "CREDIT")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -97,6 +98,28 @@ public abstract class CouponDiscount {
     }
 
     /**
+     * Whether this is the {@code CREDIT} variant.
+     *
+     * @return whether it is
+     */
+    public final boolean isCredit() {
+        return this instanceof Credit;
+    }
+
+    /**
+     * This value as the {@code CREDIT} variant.
+     *
+     * @return the variant
+     * @throws IllegalStateException if this is another variant
+     */
+    public final Credit asCredit() {
+        if (this instanceof Credit) {
+            return (Credit) this;
+        }
+        throw new IllegalStateException("not the CREDIT variant: " + type());
+    }
+
+    /**
      * Whether this is a variant this version of the SDK does not know.
      *
      * @return whether it is
@@ -148,6 +171,14 @@ public abstract class CouponDiscount {
          * @return the result
          */
         R visitFixed(FixedDiscount value);
+
+        /**
+         * Visits the {@code CREDIT} variant.
+         *
+         * @param value the variant
+         * @return the result
+         */
+        R visitCredit(CreditDiscount value);
 
         /**
          * Visits a variant this version of the SDK does not know.
@@ -321,6 +352,77 @@ public abstract class CouponDiscount {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitFixed(data);
+        }
+    }
+
+    /** The {@code CREDIT} variant. */
+    @JsonTypeName("CREDIT")
+    public static final class Credit extends CouponDiscount {
+        @JsonUnwrapped
+        @JsonIgnoreProperties(value = "type", allowSetters = true)
+        private CreditDiscount data;
+
+        private Credit() {}
+
+        /**
+         * The variant holding {@code data}.
+         *
+         * @param data the value of the variant
+         */
+        public Credit(CreditDiscount data) {
+            this.data = Objects.requireNonNull(data, "data");
+        }
+
+        /**
+         * The variant holding {@code data}.
+         *
+         * @param data the value of the variant
+         * @return the variant
+         */
+        public static Credit of(CreditDiscount data) {
+            return new Credit(data);
+        }
+
+        @Override
+        @JsonProperty("type")
+        public String type() {
+            return "CREDIT";
+        }
+
+        /**
+         * The value of the variant.
+         *
+         * @return the value
+         */
+        public CreditDiscount data() {
+            return data;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Credit that = (Credit) o;
+            return Objects.equals(data, that.data);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(data);
+        }
+
+        @Override
+        public String toString() {
+            return "Credit{" + "data=" + data + "}";
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCredit(data);
         }
     }
 

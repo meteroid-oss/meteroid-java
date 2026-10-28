@@ -20,6 +20,8 @@ public final class Usage {
     private final MeteroidHttpClient client;
     private final WithRawResponse withRawResponse;
 
+    private final UsageCustomer customer;
+
     /**
      * The operations, sending through {@code client}.
      *
@@ -28,6 +30,8 @@ public final class Usage {
     public Usage(MeteroidHttpClient client) {
         this.client = client;
         this.withRawResponse = new WithRawResponse();
+
+        this.customer = new UsageCustomer(client);
     }
 
     /**
@@ -40,121 +44,23 @@ public final class Usage {
     }
 
     /**
-     * Get customer usage
+     * The {@code customer} operations.
      *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @return the response body
+     * @return the operations
      */
-    public UsageResponse retrieveCustomer(
-            final String customerId, final LocalDate startDate, final LocalDate endDate) {
-        return retrieveCustomer(
-                customerId,
-                startDate,
-                endDate,
-                UsageRetrieveCustomerOptions.none(),
-                RequestOptions.none());
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param options the optional parameters
-     * @return the response body
-     */
-    public UsageResponse retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final UsageRetrieveCustomerOptions options) {
-        return retrieveCustomer(customerId, startDate, endDate, options, RequestOptions.none());
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public UsageResponse retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final RequestOptions requestOptions) {
-        return retrieveCustomer(
-                customerId,
-                startDate,
-                endDate,
-                UsageRetrieveCustomerOptions.none(),
-                requestOptions);
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param options the optional parameters
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body
-     */
-    public UsageResponse retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final UsageRetrieveCustomerOptions options,
-            final RequestOptions requestOptions) {
-        return exchangeRetrieveCustomer(customerId, startDate, endDate, options, requestOptions)
-                .send();
-    }
-
-    MeteroidHttpClient.Exchange<UsageResponse> exchangeRetrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final UsageRetrieveCustomerOptions options,
-            final RequestOptions requestOptions) {
-        Objects.requireNonNull(customerId, "customer_id");
-        Objects.requireNonNull(startDate, "start_date");
-        Objects.requireNonNull(endDate, "end_date");
-        Objects.requireNonNull(options, "options");
-        HttpUrl.Builder url =
-                client.newUrlBuilder()
-                        .addPathSegments("api/v1/usage/customer")
-                        .addPathSegment(Utils.pathSegment("customer_id", customerId));
-        url.addQueryParameter("start_date", Utils.serializeQueryParam(startDate));
-        url.addQueryParameter("end_date", Utils.serializeQueryParam(endDate));
-        String value3 = options.metricId().orElse(null);
-        if (value3 != null) {
-            url.addQueryParameter("metric_id", value3);
-        }
-        return client.call("GET", url.build())
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429", "500")
-                .options(requestOptions)
-                .returning(UsageResponse.class);
+    public UsageCustomer customer() {
+        return customer;
     }
 
     /**
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @return the response body
@@ -168,7 +74,11 @@ public final class Usage {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param options the optional parameters
@@ -183,7 +93,11 @@ public final class Usage {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -199,7 +113,11 @@ public final class Usage {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param options the optional parameters
@@ -335,97 +253,23 @@ public final class Usage {
         private WithRawResponse() {}
 
         /**
-         * Get customer usage
+         * The {@code customer} operations.
          *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @return the status, headers and body
+         * @return the operations
          */
-        public ApiResponse<UsageResponse> retrieveCustomer(
-                final String customerId, final LocalDate startDate, final LocalDate endDate) {
-            return retrieveCustomer(
-                    customerId,
-                    startDate,
-                    endDate,
-                    UsageRetrieveCustomerOptions.none(),
-                    RequestOptions.none());
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param options the optional parameters
-         * @return the status, headers and body
-         */
-        public ApiResponse<UsageResponse> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final UsageRetrieveCustomerOptions options) {
-            return retrieveCustomer(customerId, startDate, endDate, options, RequestOptions.none());
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<UsageResponse> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final RequestOptions requestOptions) {
-            return retrieveCustomer(
-                    customerId,
-                    startDate,
-                    endDate,
-                    UsageRetrieveCustomerOptions.none(),
-                    requestOptions);
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param options the optional parameters
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body
-         */
-        public ApiResponse<UsageResponse> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final UsageRetrieveCustomerOptions options,
-                final RequestOptions requestOptions) {
-            return Usage.this
-                    .exchangeRetrieveCustomer(
-                            customerId, startDate, endDate, options, requestOptions)
-                    .sendRaw();
+        public UsageCustomer.WithRawResponse customer() {
+            return Usage.this.customer.withRawResponse();
         }
 
         /**
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @return the status, headers and body
@@ -439,7 +283,11 @@ public final class Usage {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param options the optional parameters
@@ -454,7 +302,11 @@ public final class Usage {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
@@ -470,7 +322,11 @@ public final class Usage {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param options the optional parameters

@@ -38,6 +38,9 @@ public final class SubscriptionAddOnParameterization {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<Integer> initialSlotCount = JsonField.missing();
 
+    @JsonProperty("type")
+    private String type = "PARAMETERIZATION";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private SubscriptionAddOnParameterization() {}
@@ -46,6 +49,7 @@ public final class SubscriptionAddOnParameterization {
         this.billingPeriod = builder.billingPeriod;
         this.committedCapacity = builder.committedCapacity;
         this.initialSlotCount = builder.initialSlotCount;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -68,6 +72,7 @@ public final class SubscriptionAddOnParameterization {
         builder.billingPeriod = billingPeriod;
         builder.committedCapacity = committedCapacity;
         builder.initialSlotCount = initialSlotCount;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -97,6 +102,15 @@ public final class SubscriptionAddOnParameterization {
      */
     public Optional<Integer> initialSlotCount() {
         return initialSlotCount.asOptional();
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -130,13 +144,14 @@ public final class SubscriptionAddOnParameterization {
         return Objects.equals(billingPeriod, that.billingPeriod)
                 && Objects.equals(committedCapacity, that.committedCapacity)
                 && Objects.equals(initialSlotCount, that.initialSlotCount)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                billingPeriod, committedCapacity, initialSlotCount, additionalProperties);
+                billingPeriod, committedCapacity, initialSlotCount, type, additionalProperties);
     }
 
     @Override
@@ -148,6 +163,8 @@ public final class SubscriptionAddOnParameterization {
                 + committedCapacity
                 + ", initialSlotCount="
                 + initialSlotCount
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -158,6 +175,7 @@ public final class SubscriptionAddOnParameterization {
         private JsonField<BillingPeriodEnum> billingPeriod = JsonField.missing();
         private JsonField<Long> committedCapacity = JsonField.missing();
         private JsonField<Integer> initialSlotCount = JsonField.missing();
+        private String type = "PARAMETERIZATION";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -192,6 +210,17 @@ public final class SubscriptionAddOnParameterization {
          */
         public Builder initialSlotCount(Integer initialSlotCount) {
             this.initialSlotCount = JsonField.ofNullable(initialSlotCount);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -236,6 +265,7 @@ public final class SubscriptionAddOnParameterization {
          * @throws IllegalStateException when a required property is not set
          */
         public SubscriptionAddOnParameterization build() {
+            Utils.checkRequired(type, "type");
             return new SubscriptionAddOnParameterization(this);
         }
     }

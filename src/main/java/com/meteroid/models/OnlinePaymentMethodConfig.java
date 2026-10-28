@@ -30,12 +30,16 @@ public final class OnlinePaymentMethodConfig {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<OnlineMethodsConfig> config = JsonField.missing();
 
+    @JsonProperty("type")
+    private String type = "online";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private OnlinePaymentMethodConfig() {}
 
     private OnlinePaymentMethodConfig(Builder builder) {
         this.config = builder.config;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -56,6 +60,7 @@ public final class OnlinePaymentMethodConfig {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.config = config;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -67,6 +72,15 @@ public final class OnlinePaymentMethodConfig {
      */
     public Optional<OnlineMethodsConfig> config() {
         return config.asOptional();
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -98,12 +112,13 @@ public final class OnlinePaymentMethodConfig {
         }
         OnlinePaymentMethodConfig that = (OnlinePaymentMethodConfig) o;
         return Objects.equals(config, that.config)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(config, additionalProperties);
+        return Objects.hash(config, type, additionalProperties);
     }
 
     @Override
@@ -111,6 +126,8 @@ public final class OnlinePaymentMethodConfig {
         return "OnlinePaymentMethodConfig{"
                 + "config="
                 + config
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -119,6 +136,7 @@ public final class OnlinePaymentMethodConfig {
     /** Builds {@link OnlinePaymentMethodConfig}. */
     public static final class Builder {
         private JsonField<OnlineMethodsConfig> config = JsonField.missing();
+        private String type = "online";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -131,6 +149,17 @@ public final class OnlinePaymentMethodConfig {
          */
         public Builder config(OnlineMethodsConfig config) {
             this.config = JsonField.ofNullable(config);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -175,6 +204,7 @@ public final class OnlinePaymentMethodConfig {
          * @throws IllegalStateException when a required property is not set
          */
         public OnlinePaymentMethodConfig build() {
+            Utils.checkRequired(type, "type");
             return new OnlinePaymentMethodConfig(this);
         }
     }

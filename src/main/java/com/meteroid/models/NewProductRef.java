@@ -33,6 +33,9 @@ public final class NewProductRef {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("type")
+    private String type = "NEW";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private NewProductRef() {}
@@ -41,6 +44,7 @@ public final class NewProductRef {
         this.feeStructure = builder.feeStructure;
         this.feeType = builder.feeType;
         this.name = builder.name;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -63,6 +67,7 @@ public final class NewProductRef {
         builder.feeStructure = feeStructure;
         builder.feeType = feeType;
         builder.name = name;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -92,6 +97,15 @@ public final class NewProductRef {
      */
     public String name() {
         return Utils.required(name, "name");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -125,12 +139,13 @@ public final class NewProductRef {
         return Objects.equals(feeStructure, that.feeStructure)
                 && Objects.equals(feeType, that.feeType)
                 && Objects.equals(name, that.name)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feeStructure, feeType, name, additionalProperties);
+        return Objects.hash(feeStructure, feeType, name, type, additionalProperties);
     }
 
     @Override
@@ -142,6 +157,8 @@ public final class NewProductRef {
                 + feeType
                 + ", name="
                 + name
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -152,6 +169,7 @@ public final class NewProductRef {
         private ProductFeeStructure feeStructure;
         private ProductFeeTypeEnum feeType;
         private String name;
+        private String type = "NEW";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -186,6 +204,17 @@ public final class NewProductRef {
          */
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -233,6 +262,7 @@ public final class NewProductRef {
             Utils.checkRequired(feeStructure, "fee_structure");
             Utils.checkRequired(feeType, "fee_type");
             Utils.checkRequired(name, "name");
+            Utils.checkRequired(type, "type");
             return new NewProductRef(this);
         }
     }

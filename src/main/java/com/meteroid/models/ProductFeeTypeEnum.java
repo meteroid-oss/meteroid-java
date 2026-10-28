@@ -34,6 +34,9 @@ public final class ProductFeeTypeEnum implements ToQueryParam {
     public static final ProductFeeTypeEnum ONE_TIME =
             new ProductFeeTypeEnum("ONE_TIME", Value.ONE_TIME);
 
+    /** The value {@code "CREDIT"}. */
+    public static final ProductFeeTypeEnum CREDIT = new ProductFeeTypeEnum("CREDIT", Value.CREDIT);
+
     private static final Map<String, ProductFeeTypeEnum> constants =
             Map.ofEntries(
                     Map.entry("RATE", RATE),
@@ -41,7 +44,8 @@ public final class ProductFeeTypeEnum implements ToQueryParam {
                     Map.entry("CAPACITY", CAPACITY),
                     Map.entry("USAGE", USAGE),
                     Map.entry("EXTRA_RECURRING", EXTRA_RECURRING),
-                    Map.entry("ONE_TIME", ONE_TIME));
+                    Map.entry("ONE_TIME", ONE_TIME),
+                    Map.entry("CREDIT", CREDIT));
 
     private final String value;
     private final Value variant;
@@ -140,7 +144,9 @@ public final class ProductFeeTypeEnum implements ToQueryParam {
         /** The {@code EXTRA_RECURRING} constant. */
         EXTRA_RECURRING,
         /** The {@code ONE_TIME} constant. */
-        ONE_TIME
+        ONE_TIME,
+        /** The {@code CREDIT} constant. */
+        CREDIT
     }
 
     /** The values this version of the SDK knows, and {@code _UNKNOWN} for the others. */
@@ -157,6 +163,8 @@ public final class ProductFeeTypeEnum implements ToQueryParam {
         EXTRA_RECURRING,
         /** The {@code ONE_TIME} constant. */
         ONE_TIME,
+        /** The {@code CREDIT} constant. */
+        CREDIT,
         /** A value this version of the SDK does not know. */
         _UNKNOWN
     }

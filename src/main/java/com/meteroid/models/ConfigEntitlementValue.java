@@ -24,6 +24,9 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class ConfigEntitlementValue {
+    @JsonProperty("type")
+    private String type = "CONFIG";
+
     @JsonProperty("value")
     private ConfigValue value;
 
@@ -32,6 +35,7 @@ public final class ConfigEntitlementValue {
     private ConfigEntitlementValue() {}
 
     private ConfigEntitlementValue(Builder builder) {
+        this.type = builder.type;
         this.value = builder.value;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -52,9 +56,19 @@ public final class ConfigEntitlementValue {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.type = type;
         builder.value = value;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -94,19 +108,22 @@ public final class ConfigEntitlementValue {
             return false;
         }
         ConfigEntitlementValue that = (ConfigEntitlementValue) o;
-        return Objects.equals(value, that.value)
+        return Objects.equals(type, that.type)
+                && Objects.equals(value, that.value)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, additionalProperties);
+        return Objects.hash(type, value, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "ConfigEntitlementValue{"
-                + "value="
+                + "type="
+                + type
+                + ", value="
                 + value
                 + ", additionalProperties="
                 + additionalProperties
@@ -115,10 +132,22 @@ public final class ConfigEntitlementValue {
 
     /** Builds {@link ConfigEntitlementValue}. */
     public static final class Builder {
+        private String type = "CONFIG";
         private ConfigValue value;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
 
         /**
          * The {@code value} property.
@@ -172,6 +201,7 @@ public final class ConfigEntitlementValue {
          * @throws IllegalStateException when a required property is not set
          */
         public ConfigEntitlementValue build() {
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(value, "value");
             return new ConfigEntitlementValue(this);
         }

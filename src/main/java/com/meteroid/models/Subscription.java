@@ -128,6 +128,14 @@ public final class Subscription {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<Integer> trialDuration = JsonField.missing();
 
+    @JsonProperty("usage_filter")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<UsageFilter> usageFilter = JsonField.missing();
+
+    @JsonProperty("usage_filter_effective_from")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<OffsetDateTime> usageFilterEffectiveFrom = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private Subscription() {}
@@ -163,6 +171,8 @@ public final class Subscription {
         this.status = builder.status;
         this.taxInclusive = builder.taxInclusive;
         this.trialDuration = builder.trialDuration;
+        this.usageFilter = builder.usageFilter;
+        this.usageFilterEffectiveFrom = builder.usageFilterEffectiveFrom;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -212,6 +222,8 @@ public final class Subscription {
         builder.status = status;
         builder.taxInclusive = taxInclusive;
         builder.trialDuration = trialDuration;
+        builder.usageFilter = usageFilter;
+        builder.usageFilterEffectiveFrom = usageFilterEffectiveFrom;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -487,6 +499,25 @@ public final class Subscription {
     }
 
     /**
+     * The {@code usage_filter} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<UsageFilter> usageFilter() {
+        return usageFilter.asOptional();
+    }
+
+    /**
+     * When the current usage filter, or its removal, started to apply: the start of the usage
+     * neither this subscription nor the customer's others had invoiced when it was set.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<OffsetDateTime> usageFilterEffectiveFrom() {
+        return usageFilterEffectiveFrom.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -544,6 +575,8 @@ public final class Subscription {
                 && Objects.equals(status, that.status)
                 && Objects.equals(taxInclusive, that.taxInclusive)
                 && Objects.equals(trialDuration, that.trialDuration)
+                && Objects.equals(usageFilter, that.usageFilter)
+                && Objects.equals(usageFilterEffectiveFrom, that.usageFilterEffectiveFrom)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -580,6 +613,8 @@ public final class Subscription {
                 status,
                 taxInclusive,
                 trialDuration,
+                usageFilter,
+                usageFilterEffectiveFrom,
                 additionalProperties);
     }
 
@@ -646,6 +681,10 @@ public final class Subscription {
                 + taxInclusive
                 + ", trialDuration="
                 + trialDuration
+                + ", usageFilter="
+                + usageFilter
+                + ", usageFilterEffectiveFrom="
+                + usageFilterEffectiveFrom
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -683,6 +722,8 @@ public final class Subscription {
         private SubscriptionStatusEnum status;
         private Boolean taxInclusive;
         private JsonField<Integer> trialDuration = JsonField.missing();
+        private JsonField<UsageFilter> usageFilter = JsonField.missing();
+        private JsonField<OffsetDateTime> usageFilterEffectiveFrom = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -1015,6 +1056,29 @@ public final class Subscription {
          */
         public Builder trialDuration(Integer trialDuration) {
             this.trialDuration = JsonField.ofNullable(trialDuration);
+            return this;
+        }
+
+        /**
+         * The {@code usage_filter} property.
+         *
+         * @param usageFilter the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageFilter(UsageFilter usageFilter) {
+            this.usageFilter = JsonField.ofNullable(usageFilter);
+            return this;
+        }
+
+        /**
+         * When the current usage filter, or its removal, started to apply: the start of the usage
+         * neither this subscription nor the customer's others had invoiced when it was set.
+         *
+         * @param usageFilterEffectiveFrom the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageFilterEffectiveFrom(OffsetDateTime usageFilterEffectiveFrom) {
+            this.usageFilterEffectiveFrom = JsonField.ofNullable(usageFilterEffectiveFrom);
             return this;
         }
 

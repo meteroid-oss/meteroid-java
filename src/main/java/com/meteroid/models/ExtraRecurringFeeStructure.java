@@ -27,12 +27,16 @@ public final class ExtraRecurringFeeStructure {
     @JsonProperty("billing_type")
     private ExtraRecurringBillingTypeEnum billingType;
 
+    @JsonProperty("type")
+    private String type = "EXTRA_RECURRING";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private ExtraRecurringFeeStructure() {}
 
     private ExtraRecurringFeeStructure(Builder builder) {
         this.billingType = builder.billingType;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class ExtraRecurringFeeStructure {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.billingType = billingType;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class ExtraRecurringFeeStructure {
      */
     public ExtraRecurringBillingTypeEnum billingType() {
         return Utils.required(billingType, "billing_type");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class ExtraRecurringFeeStructure {
         }
         ExtraRecurringFeeStructure that = (ExtraRecurringFeeStructure) o;
         return Objects.equals(billingType, that.billingType)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(billingType, additionalProperties);
+        return Objects.hash(billingType, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class ExtraRecurringFeeStructure {
         return "ExtraRecurringFeeStructure{"
                 + "billingType="
                 + billingType
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class ExtraRecurringFeeStructure {
     /** Builds {@link ExtraRecurringFeeStructure}. */
     public static final class Builder {
         private ExtraRecurringBillingTypeEnum billingType;
+        private String type = "EXTRA_RECURRING";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class ExtraRecurringFeeStructure {
          */
         public Builder billingType(ExtraRecurringBillingTypeEnum billingType) {
             this.billingType = billingType;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class ExtraRecurringFeeStructure {
          */
         public ExtraRecurringFeeStructure build() {
             Utils.checkRequired(billingType, "billing_type");
+            Utils.checkRequired(type, "type");
             return new ExtraRecurringFeeStructure(this);
         }
     }

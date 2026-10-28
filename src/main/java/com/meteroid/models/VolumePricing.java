@@ -35,6 +35,9 @@ public final class VolumePricing {
     @JsonProperty("tiers")
     private List<TierRow> tiers;
 
+    @JsonProperty("type")
+    private String type = "VOLUME";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private VolumePricing() {}
@@ -42,6 +45,7 @@ public final class VolumePricing {
     private VolumePricing(Builder builder) {
         this.blockSize = builder.blockSize;
         this.tiers = Utils.copyList(builder.tiers);
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -63,6 +67,7 @@ public final class VolumePricing {
         Builder builder = new Builder();
         builder.blockSize = blockSize;
         builder.tiers = Utils.mutableList(tiers);
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -83,6 +88,15 @@ public final class VolumePricing {
      */
     public List<TierRow> tiers() {
         return Utils.required(tiers, "tiers");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -115,12 +129,13 @@ public final class VolumePricing {
         VolumePricing that = (VolumePricing) o;
         return Objects.equals(blockSize, that.blockSize)
                 && Objects.equals(tiers, that.tiers)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(blockSize, tiers, additionalProperties);
+        return Objects.hash(blockSize, tiers, type, additionalProperties);
     }
 
     @Override
@@ -130,6 +145,8 @@ public final class VolumePricing {
                 + blockSize
                 + ", tiers="
                 + tiers
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -139,6 +156,7 @@ public final class VolumePricing {
     public static final class Builder {
         private JsonField<Long> blockSize = JsonField.missing();
         private List<TierRow> tiers;
+        private String type = "VOLUME";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -176,6 +194,17 @@ public final class VolumePricing {
                 this.tiers = new ArrayList<>();
             }
             this.tiers.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -221,6 +250,7 @@ public final class VolumePricing {
          */
         public VolumePricing build() {
             Utils.checkRequired(tiers, "tiers");
+            Utils.checkRequired(type, "type");
             return new VolumePricing(this);
         }
     }

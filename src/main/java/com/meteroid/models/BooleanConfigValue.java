@@ -28,6 +28,9 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class BooleanConfigValue {
+    @JsonProperty("kind")
+    private String kind = "BOOLEAN";
+
     @JsonProperty("value")
     private Boolean value;
 
@@ -36,6 +39,7 @@ public final class BooleanConfigValue {
     private BooleanConfigValue() {}
 
     private BooleanConfigValue(Builder builder) {
+        this.kind = builder.kind;
         this.value = builder.value;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -56,9 +60,19 @@ public final class BooleanConfigValue {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.kind = kind;
         builder.value = value;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code kind} property.
+     *
+     * @return the value, never null
+     */
+    public String kind() {
+        return Utils.required(kind, "kind");
     }
 
     /**
@@ -98,19 +112,22 @@ public final class BooleanConfigValue {
             return false;
         }
         BooleanConfigValue that = (BooleanConfigValue) o;
-        return Objects.equals(value, that.value)
+        return Objects.equals(kind, that.kind)
+                && Objects.equals(value, that.value)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, additionalProperties);
+        return Objects.hash(kind, value, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "BooleanConfigValue{"
-                + "value="
+                + "kind="
+                + kind
+                + ", value="
                 + value
                 + ", additionalProperties="
                 + additionalProperties
@@ -119,10 +136,22 @@ public final class BooleanConfigValue {
 
     /** Builds {@link BooleanConfigValue}. */
     public static final class Builder {
+        private String kind = "BOOLEAN";
         private Boolean value;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code kind} property.
+         *
+         * @param kind the value
+         * @return this builder
+         */
+        public Builder kind(String kind) {
+            this.kind = kind;
+            return this;
+        }
 
         /**
          * The {@code value} property.
@@ -176,6 +205,7 @@ public final class BooleanConfigValue {
          * @throws IllegalStateException when a required property is not set
          */
         public BooleanConfigValue build() {
+            Utils.checkRequired(kind, "kind");
             Utils.checkRequired(value, "value");
             return new BooleanConfigValue(this);
         }

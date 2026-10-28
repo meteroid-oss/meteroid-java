@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.meteroid.internal.Utils;
 
@@ -23,11 +24,15 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class OneTimeFeeStructure {
+    @JsonProperty("type")
+    private String type = "ONE_TIME";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private OneTimeFeeStructure() {}
 
     private OneTimeFeeStructure(Builder builder) {
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -47,8 +52,18 @@ public final class OneTimeFeeStructure {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -79,24 +94,42 @@ public final class OneTimeFeeStructure {
             return false;
         }
         OneTimeFeeStructure that = (OneTimeFeeStructure) o;
-        return Objects.equals(additionalProperties, that.additionalProperties);
+        return Objects.equals(type, that.type)
+                && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(additionalProperties);
+        return Objects.hash(type, additionalProperties);
     }
 
     @Override
     public String toString() {
-        return "OneTimeFeeStructure{" + "additionalProperties=" + additionalProperties + "}";
+        return "OneTimeFeeStructure{"
+                + "type="
+                + type
+                + ", additionalProperties="
+                + additionalProperties
+                + "}";
     }
 
     /** Builds {@link OneTimeFeeStructure}. */
     public static final class Builder {
+        private String type = "ONE_TIME";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
 
         /**
          * A property the SDK does not know, sent along.
@@ -139,6 +172,7 @@ public final class OneTimeFeeStructure {
          * @throws IllegalStateException when a required property is not set
          */
         public OneTimeFeeStructure build() {
+            Utils.checkRequired(type, "type");
             return new OneTimeFeeStructure(this);
         }
     }

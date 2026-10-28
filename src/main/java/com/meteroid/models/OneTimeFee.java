@@ -31,6 +31,9 @@ public final class OneTimeFee {
     @JsonProperty("rate")
     private BigDecimal rate;
 
+    @JsonProperty("type")
+    private String type = "ONE_TIME";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private OneTimeFee() {}
@@ -38,6 +41,7 @@ public final class OneTimeFee {
     private OneTimeFee(Builder builder) {
         this.quantity = builder.quantity;
         this.rate = builder.rate;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -59,6 +63,7 @@ public final class OneTimeFee {
         Builder builder = new Builder();
         builder.quantity = quantity;
         builder.rate = rate;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -79,6 +84,15 @@ public final class OneTimeFee {
      */
     public BigDecimal rate() {
         return Utils.required(rate, "rate");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -111,12 +125,13 @@ public final class OneTimeFee {
         OneTimeFee that = (OneTimeFee) o;
         return Objects.equals(quantity, that.quantity)
                 && Objects.equals(rate, that.rate)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quantity, rate, additionalProperties);
+        return Objects.hash(quantity, rate, type, additionalProperties);
     }
 
     @Override
@@ -126,6 +141,8 @@ public final class OneTimeFee {
                 + quantity
                 + ", rate="
                 + rate
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -135,6 +152,7 @@ public final class OneTimeFee {
     public static final class Builder {
         private Integer quantity;
         private BigDecimal rate;
+        private String type = "ONE_TIME";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -158,6 +176,17 @@ public final class OneTimeFee {
          */
         public Builder rate(BigDecimal rate) {
             this.rate = rate;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -204,6 +233,7 @@ public final class OneTimeFee {
         public OneTimeFee build() {
             Utils.checkRequired(quantity, "quantity");
             Utils.checkRequired(rate, "rate");
+            Utils.checkRequired(type, "type");
             return new OneTimeFee(this);
         }
     }

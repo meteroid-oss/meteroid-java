@@ -54,6 +54,14 @@ public final class MetricSummary {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("unit_plural")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitPlural = JsonField.missing();
+
+    @JsonProperty("unit_singular")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> unitSingular = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private MetricSummary() {}
@@ -67,6 +75,8 @@ public final class MetricSummary {
         this.description = builder.description;
         this.id = builder.id;
         this.name = builder.name;
+        this.unitPlural = builder.unitPlural;
+        this.unitSingular = builder.unitSingular;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -94,6 +104,8 @@ public final class MetricSummary {
         builder.description = description;
         builder.id = id;
         builder.name = name;
+        builder.unitPlural = unitPlural;
+        builder.unitSingular = unitSingular;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -171,6 +183,24 @@ public final class MetricSummary {
     }
 
     /**
+     * What several units of the metric are called, e.g. <code>tokens</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitPlural() {
+        return unitPlural.asOptional();
+    }
+
+    /**
+     * What one unit of the metric is called, e.g. <code>token</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> unitSingular() {
+        return unitSingular.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -206,6 +236,8 @@ public final class MetricSummary {
                 && Objects.equals(description, that.description)
                 && Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
+                && Objects.equals(unitPlural, that.unitPlural)
+                && Objects.equals(unitSingular, that.unitSingular)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -220,6 +252,8 @@ public final class MetricSummary {
                 description,
                 id,
                 name,
+                unitPlural,
+                unitSingular,
                 additionalProperties);
     }
 
@@ -242,6 +276,10 @@ public final class MetricSummary {
                 + id
                 + ", name="
                 + name
+                + ", unitPlural="
+                + unitPlural
+                + ", unitSingular="
+                + unitSingular
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -257,6 +295,8 @@ public final class MetricSummary {
         private JsonField<String> description = JsonField.missing();
         private String id;
         private String name;
+        private JsonField<String> unitPlural = JsonField.missing();
+        private JsonField<String> unitSingular = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -346,6 +386,28 @@ public final class MetricSummary {
          */
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        /**
+         * What several units of the metric are called, e.g. <code>tokens</code>.
+         *
+         * @param unitPlural the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitPlural(String unitPlural) {
+            this.unitPlural = JsonField.ofNullable(unitPlural);
+            return this;
+        }
+
+        /**
+         * What one unit of the metric is called, e.g. <code>token</code>.
+         *
+         * @param unitSingular the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder unitSingular(String unitSingular) {
+            this.unitSingular = JsonField.ofNullable(unitSingular);
             return this;
         }
 

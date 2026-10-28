@@ -33,6 +33,9 @@ public final class SubscriptionAddOnPriceOverride {
     @JsonProperty("price_entry")
     private PriceEntry priceEntry;
 
+    @JsonProperty("type")
+    private String type = "PRICE_OVERRIDE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private SubscriptionAddOnPriceOverride() {}
@@ -40,6 +43,7 @@ public final class SubscriptionAddOnPriceOverride {
     private SubscriptionAddOnPriceOverride(Builder builder) {
         this.name = builder.name;
         this.priceEntry = builder.priceEntry;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -61,6 +65,7 @@ public final class SubscriptionAddOnPriceOverride {
         Builder builder = new Builder();
         builder.name = name;
         builder.priceEntry = priceEntry;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -81,6 +86,15 @@ public final class SubscriptionAddOnPriceOverride {
      */
     public PriceEntry priceEntry() {
         return Utils.required(priceEntry, "price_entry");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -113,12 +127,13 @@ public final class SubscriptionAddOnPriceOverride {
         SubscriptionAddOnPriceOverride that = (SubscriptionAddOnPriceOverride) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(priceEntry, that.priceEntry)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, priceEntry, additionalProperties);
+        return Objects.hash(name, priceEntry, type, additionalProperties);
     }
 
     @Override
@@ -128,6 +143,8 @@ public final class SubscriptionAddOnPriceOverride {
                 + name
                 + ", priceEntry="
                 + priceEntry
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -137,6 +154,7 @@ public final class SubscriptionAddOnPriceOverride {
     public static final class Builder {
         private JsonField<String> name = JsonField.missing();
         private PriceEntry priceEntry;
+        private String type = "PRICE_OVERRIDE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -160,6 +178,17 @@ public final class SubscriptionAddOnPriceOverride {
          */
         public Builder priceEntry(PriceEntry priceEntry) {
             this.priceEntry = priceEntry;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -205,6 +234,7 @@ public final class SubscriptionAddOnPriceOverride {
          */
         public SubscriptionAddOnPriceOverride build() {
             Utils.checkRequired(priceEntry, "price_entry");
+            Utils.checkRequired(type, "type");
             return new SubscriptionAddOnPriceOverride(this);
         }
     }

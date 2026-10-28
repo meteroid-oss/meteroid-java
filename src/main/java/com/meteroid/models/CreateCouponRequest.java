@@ -102,7 +102,9 @@ public final class CreateCouponRequest {
     }
 
     /**
-     * The {@code code} property.
+     * 1 to 64 ASCII letters, digits, hyphens or underscores. A promotional-credit (<code>CREDIT
+     * </code>) code is stored upper-case. Codes are matched as described on <code>Coupon.code
+     * </code>.
      *
      * @return the value, never null
      */
@@ -165,7 +167,8 @@ public final class CreateCouponRequest {
     }
 
     /**
-     * The {@code reusable} property.
+     * Whether one customer may redeem the coupon more than once. Must be false for a
+     * promotional-credit (<code>CREDIT</code>) coupon.
      *
      * @return the value, empty when unset
      */
@@ -265,7 +268,9 @@ public final class CreateCouponRequest {
         private Builder() {}
 
         /**
-         * The {@code code} property.
+         * 1 to 64 ASCII letters, digits, hyphens or underscores. A promotional-credit (<code>CREDIT
+         * </code>) code is stored upper-case. Codes are matched as described on <code>Coupon.code
+         * </code>.
          *
          * @param code the value
          * @return this builder
@@ -356,7 +361,8 @@ public final class CreateCouponRequest {
         }
 
         /**
-         * The {@code reusable} property.
+         * Whether one customer may redeem the coupon more than once. Must be false for a
+         * promotional-credit (<code>CREDIT</code>) coupon.
          *
          * @param reusable the value
          * @return this builder

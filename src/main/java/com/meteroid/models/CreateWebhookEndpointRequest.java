@@ -93,7 +93,8 @@ public final class CreateWebhookEndpointRequest {
     }
 
     /**
-     * Event types to subscribe to. Omit or leave empty to receive every event type.
+     * Event types to subscribe to. Omit or leave empty to receive every event type except Beta
+     * ones, which are sent only to endpoints that list them.
      *
      * @return the value, empty when unset
      */
@@ -212,7 +213,8 @@ public final class CreateWebhookEndpointRequest {
         }
 
         /**
-         * Event types to subscribe to. Omit or leave empty to receive every event type.
+         * Event types to subscribe to. Omit or leave empty to receive every event type except Beta
+         * ones, which are sent only to endpoints that list them.
          *
          * @param eventTypes the value
          * @return this builder

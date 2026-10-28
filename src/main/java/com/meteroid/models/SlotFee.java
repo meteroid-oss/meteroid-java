@@ -38,6 +38,9 @@ public final class SlotFee {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<Integer> minSlots = JsonField.missing();
 
+    @JsonProperty("type")
+    private String type = "SLOT";
+
     @JsonProperty("unit")
     private String unit;
 
@@ -52,6 +55,7 @@ public final class SlotFee {
         this.initialSlots = builder.initialSlots;
         this.maxSlots = builder.maxSlots;
         this.minSlots = builder.minSlots;
+        this.type = builder.type;
         this.unit = builder.unit;
         this.unitRate = builder.unitRate;
         this.additionalProperties.putAll(builder.additionalProperties);
@@ -76,6 +80,7 @@ public final class SlotFee {
         builder.initialSlots = initialSlots;
         builder.maxSlots = maxSlots;
         builder.minSlots = minSlots;
+        builder.type = type;
         builder.unit = unit;
         builder.unitRate = unitRate;
         builder.additionalProperties.putAll(additionalProperties);
@@ -107,6 +112,15 @@ public final class SlotFee {
      */
     public Optional<Integer> minSlots() {
         return minSlots.asOptional();
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -158,6 +172,7 @@ public final class SlotFee {
         return Objects.equals(initialSlots, that.initialSlots)
                 && Objects.equals(maxSlots, that.maxSlots)
                 && Objects.equals(minSlots, that.minSlots)
+                && Objects.equals(type, that.type)
                 && Objects.equals(unit, that.unit)
                 && Objects.equals(unitRate, that.unitRate)
                 && Objects.equals(additionalProperties, that.additionalProperties);
@@ -165,7 +180,8 @@ public final class SlotFee {
 
     @Override
     public int hashCode() {
-        return Objects.hash(initialSlots, maxSlots, minSlots, unit, unitRate, additionalProperties);
+        return Objects.hash(
+                initialSlots, maxSlots, minSlots, type, unit, unitRate, additionalProperties);
     }
 
     @Override
@@ -177,6 +193,8 @@ public final class SlotFee {
                 + maxSlots
                 + ", minSlots="
                 + minSlots
+                + ", type="
+                + type
                 + ", unit="
                 + unit
                 + ", unitRate="
@@ -191,6 +209,7 @@ public final class SlotFee {
         private Integer initialSlots;
         private JsonField<Integer> maxSlots = JsonField.missing();
         private JsonField<Integer> minSlots = JsonField.missing();
+        private String type = "SLOT";
         private String unit;
         private BigDecimal unitRate;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
@@ -227,6 +246,17 @@ public final class SlotFee {
          */
         public Builder minSlots(Integer minSlots) {
             this.minSlots = JsonField.ofNullable(minSlots);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -294,6 +324,7 @@ public final class SlotFee {
          */
         public SlotFee build() {
             Utils.checkRequired(initialSlots, "initial_slots");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(unit, "unit");
             Utils.checkRequired(unitRate, "unit_rate");
             return new SlotFee(this);

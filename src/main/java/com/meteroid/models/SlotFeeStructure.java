@@ -30,6 +30,9 @@ public final class SlotFeeStructure {
     @JsonProperty("slot_unit_name")
     private String slotUnitName;
 
+    @JsonProperty("type")
+    private String type = "SLOT";
+
     @JsonProperty("upgrade_policy")
     private SlotUpgradePolicyEnum upgradePolicy;
 
@@ -40,6 +43,7 @@ public final class SlotFeeStructure {
     private SlotFeeStructure(Builder builder) {
         this.downgradePolicy = builder.downgradePolicy;
         this.slotUnitName = builder.slotUnitName;
+        this.type = builder.type;
         this.upgradePolicy = builder.upgradePolicy;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -62,6 +66,7 @@ public final class SlotFeeStructure {
         Builder builder = new Builder();
         builder.downgradePolicy = downgradePolicy;
         builder.slotUnitName = slotUnitName;
+        builder.type = type;
         builder.upgradePolicy = upgradePolicy;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -83,6 +88,15 @@ public final class SlotFeeStructure {
      */
     public String slotUnitName() {
         return Utils.required(slotUnitName, "slot_unit_name");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -124,13 +138,15 @@ public final class SlotFeeStructure {
         SlotFeeStructure that = (SlotFeeStructure) o;
         return Objects.equals(downgradePolicy, that.downgradePolicy)
                 && Objects.equals(slotUnitName, that.slotUnitName)
+                && Objects.equals(type, that.type)
                 && Objects.equals(upgradePolicy, that.upgradePolicy)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(downgradePolicy, slotUnitName, upgradePolicy, additionalProperties);
+        return Objects.hash(
+                downgradePolicy, slotUnitName, type, upgradePolicy, additionalProperties);
     }
 
     @Override
@@ -140,6 +156,8 @@ public final class SlotFeeStructure {
                 + downgradePolicy
                 + ", slotUnitName="
                 + slotUnitName
+                + ", type="
+                + type
                 + ", upgradePolicy="
                 + upgradePolicy
                 + ", additionalProperties="
@@ -151,6 +169,7 @@ public final class SlotFeeStructure {
     public static final class Builder {
         private SlotDowngradePolicyEnum downgradePolicy;
         private String slotUnitName;
+        private String type = "SLOT";
         private SlotUpgradePolicyEnum upgradePolicy;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -175,6 +194,17 @@ public final class SlotFeeStructure {
          */
         public Builder slotUnitName(String slotUnitName) {
             this.slotUnitName = slotUnitName;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -232,6 +262,7 @@ public final class SlotFeeStructure {
         public SlotFeeStructure build() {
             Utils.checkRequired(downgradePolicy, "downgrade_policy");
             Utils.checkRequired(slotUnitName, "slot_unit_name");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(upgradePolicy, "upgrade_policy");
             return new SlotFeeStructure(this);
         }

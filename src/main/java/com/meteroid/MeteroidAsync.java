@@ -3,10 +3,14 @@ package com.meteroid;
 
 import com.meteroid.api.AddOnsAsync;
 import com.meteroid.api.BatchJobsAsync;
+import com.meteroid.api.BudgetsAsync;
 import com.meteroid.api.CheckoutSessionsAsync;
+import com.meteroid.api.ChecksAsync;
 import com.meteroid.api.ConnectAsync;
 import com.meteroid.api.CouponsAsync;
 import com.meteroid.api.CreditNotesAsync;
+import com.meteroid.api.CreditUnitsAsync;
+import com.meteroid.api.CreditsAsync;
 import com.meteroid.api.CustomPropertiesAsync;
 import com.meteroid.api.CustomersAsync;
 import com.meteroid.api.EntitlementsAsync;
@@ -21,6 +25,7 @@ import com.meteroid.api.ProductFamiliesAsync;
 import com.meteroid.api.ProductsAsync;
 import com.meteroid.api.SubscriptionsAsync;
 import com.meteroid.api.UsageAsync;
+import com.meteroid.api.UsageCostsAsync;
 import com.meteroid.api.WebhookEndpointsAsync;
 
 /**
@@ -33,10 +38,14 @@ public final class MeteroidAsync implements AutoCloseable {
     private final WithRawResponse withRawResponse;
     private final AddOnsAsync addOns;
     private final BatchJobsAsync batchJobs;
+    private final BudgetsAsync budgets;
     private final CheckoutSessionsAsync checkoutSessions;
+    private final ChecksAsync checks;
     private final ConnectAsync connect;
     private final CouponsAsync coupons;
     private final CreditNotesAsync creditNotes;
+    private final CreditUnitsAsync creditUnits;
+    private final CreditsAsync credits;
     private final CustomPropertiesAsync customProperties;
     private final CustomersAsync customers;
     private final EntitlementsAsync entitlements;
@@ -51,16 +60,21 @@ public final class MeteroidAsync implements AutoCloseable {
     private final ProductsAsync products;
     private final SubscriptionsAsync subscriptions;
     private final UsageAsync usage;
+    private final UsageCostsAsync usageCosts;
     private final WebhookEndpointsAsync webhookEndpoints;
 
     MeteroidAsync(Meteroid sync) {
         this.sync = sync;
         this.addOns = new AddOnsAsync(sync.addOns());
         this.batchJobs = new BatchJobsAsync(sync.batchJobs());
+        this.budgets = new BudgetsAsync(sync.budgets());
         this.checkoutSessions = new CheckoutSessionsAsync(sync.checkoutSessions());
+        this.checks = new ChecksAsync(sync.checks());
         this.connect = new ConnectAsync(sync.connect());
         this.coupons = new CouponsAsync(sync.coupons());
         this.creditNotes = new CreditNotesAsync(sync.creditNotes());
+        this.creditUnits = new CreditUnitsAsync(sync.creditUnits());
+        this.credits = new CreditsAsync(sync.credits());
         this.customProperties = new CustomPropertiesAsync(sync.customProperties());
         this.customers = new CustomersAsync(sync.customers());
         this.entitlements = new EntitlementsAsync(sync.entitlements());
@@ -75,6 +89,7 @@ public final class MeteroidAsync implements AutoCloseable {
         this.products = new ProductsAsync(sync.products());
         this.subscriptions = new SubscriptionsAsync(sync.subscriptions());
         this.usage = new UsageAsync(sync.usage());
+        this.usageCosts = new UsageCostsAsync(sync.usageCosts());
         this.webhookEndpoints = new WebhookEndpointsAsync(sync.webhookEndpoints());
         this.withRawResponse = new WithRawResponse();
     }
@@ -116,12 +131,30 @@ public final class MeteroidAsync implements AutoCloseable {
     }
 
     /**
+     * The {@code budgets} operations.
+     *
+     * @return the operations
+     */
+    public BudgetsAsync budgets() {
+        return budgets;
+    }
+
+    /**
      * The {@code checkout_sessions} operations.
      *
      * @return the operations
      */
     public CheckoutSessionsAsync checkoutSessions() {
         return checkoutSessions;
+    }
+
+    /**
+     * The {@code checks} operations.
+     *
+     * @return the operations
+     */
+    public ChecksAsync checks() {
+        return checks;
     }
 
     /**
@@ -149,6 +182,24 @@ public final class MeteroidAsync implements AutoCloseable {
      */
     public CreditNotesAsync creditNotes() {
         return creditNotes;
+    }
+
+    /**
+     * The {@code credit_units} operations.
+     *
+     * @return the operations
+     */
+    public CreditUnitsAsync creditUnits() {
+        return creditUnits;
+    }
+
+    /**
+     * The {@code credits} operations.
+     *
+     * @return the operations
+     */
+    public CreditsAsync credits() {
+        return credits;
     }
 
     /**
@@ -278,6 +329,15 @@ public final class MeteroidAsync implements AutoCloseable {
     }
 
     /**
+     * The {@code usage_costs} operations.
+     *
+     * @return the operations
+     */
+    public UsageCostsAsync usageCosts() {
+        return usageCosts;
+    }
+
+    /**
      * The {@code webhook_endpoints} operations.
      *
      * @return the operations
@@ -315,12 +375,30 @@ public final class MeteroidAsync implements AutoCloseable {
         }
 
         /**
+         * The {@code budgets} operations.
+         *
+         * @return the operations
+         */
+        public BudgetsAsync.WithRawResponse budgets() {
+            return budgets.withRawResponse();
+        }
+
+        /**
          * The {@code checkout_sessions} operations.
          *
          * @return the operations
          */
         public CheckoutSessionsAsync.WithRawResponse checkoutSessions() {
             return checkoutSessions.withRawResponse();
+        }
+
+        /**
+         * The {@code checks} operations.
+         *
+         * @return the operations
+         */
+        public ChecksAsync.WithRawResponse checks() {
+            return checks.withRawResponse();
         }
 
         /**
@@ -348,6 +426,24 @@ public final class MeteroidAsync implements AutoCloseable {
          */
         public CreditNotesAsync.WithRawResponse creditNotes() {
             return creditNotes.withRawResponse();
+        }
+
+        /**
+         * The {@code credit_units} operations.
+         *
+         * @return the operations
+         */
+        public CreditUnitsAsync.WithRawResponse creditUnits() {
+            return creditUnits.withRawResponse();
+        }
+
+        /**
+         * The {@code credits} operations.
+         *
+         * @return the operations
+         */
+        public CreditsAsync.WithRawResponse credits() {
+            return credits.withRawResponse();
         }
 
         /**
@@ -474,6 +570,15 @@ public final class MeteroidAsync implements AutoCloseable {
          */
         public UsageAsync.WithRawResponse usage() {
             return usage.withRawResponse();
+        }
+
+        /**
+         * The {@code usage_costs} operations.
+         *
+         * @return the operations
+         */
+        public UsageCostsAsync.WithRawResponse usageCosts() {
+            return usageCosts.withRawResponse();
         }
 
         /**

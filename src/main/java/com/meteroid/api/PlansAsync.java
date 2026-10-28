@@ -263,7 +263,9 @@ public final class PlansAsync {
      *
      * <p>Full replacement of a plan's version. On a draft plan, updates in-place. On a published
      * plan, creates a new version. Set <code>status</code> to <code>DRAFT</code> to stage as a new
-     * draft without publishing.
+     * draft without publishing. A usage or capacity component priced in a credit unit must be sent
+     * with its <code>credit_unit</code>, or the request is refused: omitting it would bill its
+     * credits as money.
      *
      * @param planId the {@code plan_id} path parameter
      * @param replacePlanRequest the request body
@@ -279,7 +281,9 @@ public final class PlansAsync {
      *
      * <p>Full replacement of a plan's version. On a draft plan, updates in-place. On a published
      * plan, creates a new version. Set <code>status</code> to <code>DRAFT</code> to stage as a new
-     * draft without publishing.
+     * draft without publishing. A usage or capacity component priced in a credit unit must be sent
+     * with its <code>credit_unit</code>, or the request is refused: omitting it would bill its
+     * credits as money.
      *
      * @param planId the {@code plan_id} path parameter
      * @param replacePlanRequest the request body
@@ -614,7 +618,9 @@ public final class PlansAsync {
          *
          * <p>Full replacement of a plan's version. On a draft plan, updates in-place. On a
          * published plan, creates a new version. Set <code>status</code> to <code>DRAFT</code> to
-         * stage as a new draft without publishing.
+         * stage as a new draft without publishing. A usage or capacity component priced in a credit
+         * unit must be sent with its <code>credit_unit</code>, or the request is refused: omitting
+         * it would bill its credits as money.
          *
          * @param planId the {@code plan_id} path parameter
          * @param replacePlanRequest the request body
@@ -630,7 +636,9 @@ public final class PlansAsync {
          *
          * <p>Full replacement of a plan's version. On a draft plan, updates in-place. On a
          * published plan, creates a new version. Set <code>status</code> to <code>DRAFT</code> to
-         * stage as a new draft without publishing.
+         * stage as a new draft without publishing. A usage or capacity component priced in a credit
+         * unit must be sent with its <code>credit_unit</code>, or the request is refused: omitting
+         * it would bill its credits as money.
          *
          * @param planId the {@code plan_id} path parameter
          * @param replacePlanRequest the request body

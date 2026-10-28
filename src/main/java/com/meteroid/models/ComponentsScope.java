@@ -33,12 +33,16 @@ public final class ComponentsScope {
     @JsonProperty("component_names")
     private List<String> componentNames;
 
+    @JsonProperty("type")
+    private String type = "components";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private ComponentsScope() {}
 
     private ComponentsScope(Builder builder) {
         this.componentNames = Utils.copyList(builder.componentNames);
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -59,6 +63,7 @@ public final class ComponentsScope {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.componentNames = Utils.mutableList(componentNames);
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -70,6 +75,15 @@ public final class ComponentsScope {
      */
     public List<String> componentNames() {
         return Utils.required(componentNames, "component_names");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -101,12 +115,13 @@ public final class ComponentsScope {
         }
         ComponentsScope that = (ComponentsScope) o;
         return Objects.equals(componentNames, that.componentNames)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(componentNames, additionalProperties);
+        return Objects.hash(componentNames, type, additionalProperties);
     }
 
     @Override
@@ -114,6 +129,8 @@ public final class ComponentsScope {
         return "ComponentsScope{"
                 + "componentNames="
                 + componentNames
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -122,6 +139,7 @@ public final class ComponentsScope {
     /** Builds {@link ComponentsScope}. */
     public static final class Builder {
         private List<String> componentNames;
+        private String type = "components";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -148,6 +166,17 @@ public final class ComponentsScope {
                 this.componentNames = new ArrayList<>();
             }
             this.componentNames.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -193,6 +222,7 @@ public final class ComponentsScope {
          */
         public ComponentsScope build() {
             Utils.checkRequired(componentNames, "component_names");
+            Utils.checkRequired(type, "type");
             return new ComponentsScope(this);
         }
     }

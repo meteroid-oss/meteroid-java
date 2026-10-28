@@ -54,6 +54,9 @@ public final class InvoiceEventData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> parentInvoiceId = JsonField.missing();
 
+    @JsonProperty("settled_by_credit_notes")
+    private Boolean settledByCreditNotes;
+
     @JsonProperty("status")
     private InvoiceStatus status;
 
@@ -76,6 +79,7 @@ public final class InvoiceEventData {
         this.invoiceId = builder.invoiceId;
         this.invoiceNumber = builder.invoiceNumber;
         this.parentInvoiceId = builder.parentInvoiceId;
+        this.settledByCreditNotes = builder.settledByCreditNotes;
         this.status = builder.status;
         this.taxAmount = builder.taxAmount;
         this.total = builder.total;
@@ -106,6 +110,7 @@ public final class InvoiceEventData {
         builder.invoiceId = invoiceId;
         builder.invoiceNumber = invoiceNumber;
         builder.parentInvoiceId = parentInvoiceId;
+        builder.settledByCreditNotes = settledByCreditNotes;
         builder.status = status;
         builder.taxAmount = taxAmount;
         builder.total = total;
@@ -186,6 +191,17 @@ public final class InvoiceEventData {
     }
 
     /**
+     * On <code>invoice.paid</code>: true when finalized credit notes, not a payment, settled the
+     * invoice's whole total. Nothing was collected, so it books no cash. False on every other
+     * event.
+     *
+     * @return the value, never null
+     */
+    public Boolean settledByCreditNotes() {
+        return Utils.required(settledByCreditNotes, "settled_by_credit_notes");
+    }
+
+    /**
      * The {@code status} property.
      *
      * @return the value, never null
@@ -248,6 +264,7 @@ public final class InvoiceEventData {
                 && Objects.equals(invoiceId, that.invoiceId)
                 && Objects.equals(invoiceNumber, that.invoiceNumber)
                 && Objects.equals(parentInvoiceId, that.parentInvoiceId)
+                && Objects.equals(settledByCreditNotes, that.settledByCreditNotes)
                 && Objects.equals(status, that.status)
                 && Objects.equals(taxAmount, that.taxAmount)
                 && Objects.equals(total, that.total)
@@ -265,6 +282,7 @@ public final class InvoiceEventData {
                 invoiceId,
                 invoiceNumber,
                 parentInvoiceId,
+                settledByCreditNotes,
                 status,
                 taxAmount,
                 total,
@@ -290,6 +308,8 @@ public final class InvoiceEventData {
                 + invoiceNumber
                 + ", parentInvoiceId="
                 + parentInvoiceId
+                + ", settledByCreditNotes="
+                + settledByCreditNotes
                 + ", status="
                 + status
                 + ", taxAmount="
@@ -311,6 +331,7 @@ public final class InvoiceEventData {
         private String invoiceId;
         private JsonField<String> invoiceNumber = JsonField.missing();
         private JsonField<String> parentInvoiceId = JsonField.missing();
+        private Boolean settledByCreditNotes;
         private InvoiceStatus status;
         private Long taxAmount;
         private Long total;
@@ -407,6 +428,19 @@ public final class InvoiceEventData {
         }
 
         /**
+         * On <code>invoice.paid</code>: true when finalized credit notes, not a payment, settled
+         * the invoice's whole total. Nothing was collected, so it books no cash. False on every
+         * other event.
+         *
+         * @param settledByCreditNotes the value
+         * @return this builder
+         */
+        public Builder settledByCreditNotes(Boolean settledByCreditNotes) {
+            this.settledByCreditNotes = settledByCreditNotes;
+            return this;
+        }
+
+        /**
          * The {@code status} property.
          *
          * @param status the value
@@ -485,6 +519,7 @@ public final class InvoiceEventData {
             Utils.checkRequired(customProperties, "custom_properties");
             Utils.checkRequired(customerId, "customer_id");
             Utils.checkRequired(invoiceId, "invoice_id");
+            Utils.checkRequired(settledByCreditNotes, "settled_by_credit_notes");
             Utils.checkRequired(status, "status");
             Utils.checkRequired(taxAmount, "tax_amount");
             Utils.checkRequired(total, "total");

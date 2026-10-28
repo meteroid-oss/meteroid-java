@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,6 +27,10 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class CapacityFee {
+    @JsonProperty("credit_unit")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<FeeCreditUnit> creditUnit = JsonField.missing();
+
     @JsonProperty("included")
     private Long included;
 
@@ -37,15 +43,20 @@ public final class CapacityFee {
     @JsonProperty("rate")
     private BigDecimal rate;
 
+    @JsonProperty("type")
+    private String type = "CAPACITY";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private CapacityFee() {}
 
     private CapacityFee(Builder builder) {
+        this.creditUnit = builder.creditUnit;
         this.included = builder.included;
         this.metricId = builder.metricId;
         this.overageRate = builder.overageRate;
         this.rate = builder.rate;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -65,12 +76,23 @@ public final class CapacityFee {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.creditUnit = creditUnit;
         builder.included = included;
         builder.metricId = metricId;
         builder.overageRate = overageRate;
         builder.rate = rate;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code credit_unit} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<FeeCreditUnit> creditUnit() {
+        return creditUnit.asOptional();
     }
 
     /**
@@ -110,6 +132,15 @@ public final class CapacityFee {
     }
 
     /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -137,22 +168,27 @@ public final class CapacityFee {
             return false;
         }
         CapacityFee that = (CapacityFee) o;
-        return Objects.equals(included, that.included)
+        return Objects.equals(creditUnit, that.creditUnit)
+                && Objects.equals(included, that.included)
                 && Objects.equals(metricId, that.metricId)
                 && Objects.equals(overageRate, that.overageRate)
                 && Objects.equals(rate, that.rate)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(included, metricId, overageRate, rate, additionalProperties);
+        return Objects.hash(
+                creditUnit, included, metricId, overageRate, rate, type, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "CapacityFee{"
-                + "included="
+                + "creditUnit="
+                + creditUnit
+                + ", included="
                 + included
                 + ", metricId="
                 + metricId
@@ -160,6 +196,8 @@ public final class CapacityFee {
                 + overageRate
                 + ", rate="
                 + rate
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -167,13 +205,26 @@ public final class CapacityFee {
 
     /** Builds {@link CapacityFee}. */
     public static final class Builder {
+        private JsonField<FeeCreditUnit> creditUnit = JsonField.missing();
         private Long included;
         private String metricId;
         private BigDecimal overageRate;
         private BigDecimal rate;
+        private String type = "CAPACITY";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code credit_unit} property.
+         *
+         * @param creditUnit the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditUnit(FeeCreditUnit creditUnit) {
+            this.creditUnit = JsonField.ofNullable(creditUnit);
+            return this;
+        }
 
         /**
          * The {@code included} property.
@@ -216,6 +267,17 @@ public final class CapacityFee {
          */
         public Builder rate(BigDecimal rate) {
             this.rate = rate;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -264,6 +326,7 @@ public final class CapacityFee {
             Utils.checkRequired(metricId, "metric_id");
             Utils.checkRequired(overageRate, "overage_rate");
             Utils.checkRequired(rate, "rate");
+            Utils.checkRequired(type, "type");
             return new CapacityFee(this);
         }
     }

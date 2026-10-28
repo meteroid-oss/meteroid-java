@@ -194,7 +194,8 @@ public final class WebhookEndpoint {
     }
 
     /**
-     * Subscribed event types. Empty means every event type.
+     * Subscribed event types. Empty means every event type except Beta ones, which are sent only to
+     * endpoints that list them.
      *
      * @return the value, never null
      */
@@ -481,7 +482,8 @@ public final class WebhookEndpoint {
         }
 
         /**
-         * Subscribed event types. Empty means every event type.
+         * Subscribed event types. Empty means every event type except Beta ones, which are sent
+         * only to endpoints that list them.
          *
          * @param eventTypes the value
          * @return this builder

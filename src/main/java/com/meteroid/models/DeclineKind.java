@@ -46,6 +46,10 @@ public final class DeclineKind implements ToQueryParam {
     /** The value {@code "OTHER"}. */
     public static final DeclineKind OTHER = new DeclineKind("OTHER", Value.OTHER);
 
+    /** The value {@code "DO_NOT_RETRY"}. */
+    public static final DeclineKind DO_NOT_RETRY =
+            new DeclineKind("DO_NOT_RETRY", Value.DO_NOT_RETRY);
+
     private static final Map<String, DeclineKind> constants =
             Map.ofEntries(
                     Map.entry("INSUFFICIENT_FUNDS", INSUFFICIENT_FUNDS),
@@ -55,7 +59,8 @@ public final class DeclineKind implements ToQueryParam {
                     Map.entry("MANDATE_INACTIVE", MANDATE_INACTIVE),
                     Map.entry("FRAUD", FRAUD),
                     Map.entry("PROCESSING_ERROR", PROCESSING_ERROR),
-                    Map.entry("OTHER", OTHER));
+                    Map.entry("OTHER", OTHER),
+                    Map.entry("DO_NOT_RETRY", DO_NOT_RETRY));
 
     private final String value;
     private final Value variant;
@@ -156,7 +161,9 @@ public final class DeclineKind implements ToQueryParam {
         /** The {@code PROCESSING_ERROR} constant. */
         PROCESSING_ERROR,
         /** The {@code OTHER} constant. */
-        OTHER
+        OTHER,
+        /** The {@code DO_NOT_RETRY} constant. */
+        DO_NOT_RETRY
     }
 
     /** The values this version of the SDK knows, and {@code _UNKNOWN} for the others. */
@@ -177,6 +184,8 @@ public final class DeclineKind implements ToQueryParam {
         PROCESSING_ERROR,
         /** The {@code OTHER} constant. */
         OTHER,
+        /** The {@code DO_NOT_RETRY} constant. */
+        DO_NOT_RETRY,
         /** A value this version of the SDK does not know. */
         _UNKNOWN
     }

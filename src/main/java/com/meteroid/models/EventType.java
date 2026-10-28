@@ -160,9 +160,62 @@ public final class EventType implements ToQueryParam {
     public static final EventType PAYMENT_REVERSED =
             new EventType("payment.reversed", Value.PAYMENT_REVERSED);
 
+    /** The value {@code "payment.reinstated"}. */
+    public static final EventType PAYMENT_REINSTATED =
+            new EventType("payment.reinstated", Value.PAYMENT_REINSTATED);
+
     /** The value {@code "payment.failed"}. */
     public static final EventType PAYMENT_FAILED =
             new EventType("payment.failed", Value.PAYMENT_FAILED);
+
+    /** The value {@code "wallet.funded"}. */
+    public static final EventType WALLET_FUNDED =
+            new EventType("wallet.funded", Value.WALLET_FUNDED);
+
+    /** The value {@code "wallet.debited"}. */
+    public static final EventType WALLET_DEBITED =
+            new EventType("wallet.debited", Value.WALLET_DEBITED);
+
+    /** The value {@code "wallet.balance_low"}. */
+    public static final EventType WALLET_BALANCE_LOW =
+            new EventType("wallet.balance_low", Value.WALLET_BALANCE_LOW);
+
+    /** The value {@code "wallet.credit_unrecovered"}. */
+    public static final EventType WALLET_CREDIT_UNRECOVERED =
+            new EventType("wallet.credit_unrecovered", Value.WALLET_CREDIT_UNRECOVERED);
+
+    /** The value {@code "wallet.credit_recovered"}. */
+    public static final EventType WALLET_CREDIT_RECOVERED =
+            new EventType("wallet.credit_recovered", Value.WALLET_CREDIT_RECOVERED);
+
+    /** The value {@code "wallet.auto_top_up_failed"}. */
+    public static final EventType WALLET_AUTO_TOP_UP_FAILED =
+            new EventType("wallet.auto_top_up_failed", Value.WALLET_AUTO_TOP_UP_FAILED);
+
+    /** The value {@code "wallet.auto_top_up_suspended"}. */
+    public static final EventType WALLET_AUTO_TOP_UP_SUSPENDED =
+            new EventType("wallet.auto_top_up_suspended", Value.WALLET_AUTO_TOP_UP_SUSPENDED);
+
+    /** The value {@code "wallet.auto_top_up_consent_changed"}. */
+    public static final EventType WALLET_AUTO_TOP_UP_CONSENT_CHANGED =
+            new EventType(
+                    "wallet.auto_top_up_consent_changed", Value.WALLET_AUTO_TOP_UP_CONSENT_CHANGED);
+
+    /** The value {@code "wallet.depleted"}. */
+    public static final EventType WALLET_DEPLETED =
+            new EventType("wallet.depleted", Value.WALLET_DEPLETED);
+
+    /** The value {@code "wallet.recovered"}. */
+    public static final EventType WALLET_RECOVERED =
+            new EventType("wallet.recovered", Value.WALLET_RECOVERED);
+
+    /** The value {@code "wallet.auto_top_up_cap_reached"}. */
+    public static final EventType WALLET_AUTO_TOP_UP_CAP_REACHED =
+            new EventType("wallet.auto_top_up_cap_reached", Value.WALLET_AUTO_TOP_UP_CAP_REACHED);
+
+    /** The value {@code "credit_grant.expired"}. */
+    public static final EventType CREDIT_GRANT_EXPIRED =
+            new EventType("credit_grant.expired", Value.CREDIT_GRANT_EXPIRED);
 
     private static final Map<String, EventType> constants =
             Map.ofEntries(
@@ -203,7 +256,22 @@ public final class EventType implements ToQueryParam {
                     Map.entry("refund.settled", REFUND_SETTLED),
                     Map.entry("refund.failed", REFUND_FAILED),
                     Map.entry("payment.reversed", PAYMENT_REVERSED),
-                    Map.entry("payment.failed", PAYMENT_FAILED));
+                    Map.entry("payment.reinstated", PAYMENT_REINSTATED),
+                    Map.entry("payment.failed", PAYMENT_FAILED),
+                    Map.entry("wallet.funded", WALLET_FUNDED),
+                    Map.entry("wallet.debited", WALLET_DEBITED),
+                    Map.entry("wallet.balance_low", WALLET_BALANCE_LOW),
+                    Map.entry("wallet.credit_unrecovered", WALLET_CREDIT_UNRECOVERED),
+                    Map.entry("wallet.credit_recovered", WALLET_CREDIT_RECOVERED),
+                    Map.entry("wallet.auto_top_up_failed", WALLET_AUTO_TOP_UP_FAILED),
+                    Map.entry("wallet.auto_top_up_suspended", WALLET_AUTO_TOP_UP_SUSPENDED),
+                    Map.entry(
+                            "wallet.auto_top_up_consent_changed",
+                            WALLET_AUTO_TOP_UP_CONSENT_CHANGED),
+                    Map.entry("wallet.depleted", WALLET_DEPLETED),
+                    Map.entry("wallet.recovered", WALLET_RECOVERED),
+                    Map.entry("wallet.auto_top_up_cap_reached", WALLET_AUTO_TOP_UP_CAP_REACHED),
+                    Map.entry("credit_grant.expired", CREDIT_GRANT_EXPIRED));
 
     private final String value;
     private final Value variant;
@@ -363,8 +431,34 @@ public final class EventType implements ToQueryParam {
         REFUND_FAILED,
         /** The {@code PAYMENT_REVERSED} constant. */
         PAYMENT_REVERSED,
+        /** The {@code PAYMENT_REINSTATED} constant. */
+        PAYMENT_REINSTATED,
         /** The {@code PAYMENT_FAILED} constant. */
-        PAYMENT_FAILED
+        PAYMENT_FAILED,
+        /** The {@code WALLET_FUNDED} constant. */
+        WALLET_FUNDED,
+        /** The {@code WALLET_DEBITED} constant. */
+        WALLET_DEBITED,
+        /** The {@code WALLET_BALANCE_LOW} constant. */
+        WALLET_BALANCE_LOW,
+        /** The {@code WALLET_CREDIT_UNRECOVERED} constant. */
+        WALLET_CREDIT_UNRECOVERED,
+        /** The {@code WALLET_CREDIT_RECOVERED} constant. */
+        WALLET_CREDIT_RECOVERED,
+        /** The {@code WALLET_AUTO_TOP_UP_FAILED} constant. */
+        WALLET_AUTO_TOP_UP_FAILED,
+        /** The {@code WALLET_AUTO_TOP_UP_SUSPENDED} constant. */
+        WALLET_AUTO_TOP_UP_SUSPENDED,
+        /** The {@code WALLET_AUTO_TOP_UP_CONSENT_CHANGED} constant. */
+        WALLET_AUTO_TOP_UP_CONSENT_CHANGED,
+        /** The {@code WALLET_DEPLETED} constant. */
+        WALLET_DEPLETED,
+        /** The {@code WALLET_RECOVERED} constant. */
+        WALLET_RECOVERED,
+        /** The {@code WALLET_AUTO_TOP_UP_CAP_REACHED} constant. */
+        WALLET_AUTO_TOP_UP_CAP_REACHED,
+        /** The {@code CREDIT_GRANT_EXPIRED} constant. */
+        CREDIT_GRANT_EXPIRED
     }
 
     /** The values this version of the SDK knows, and {@code _UNKNOWN} for the others. */
@@ -443,8 +537,34 @@ public final class EventType implements ToQueryParam {
         REFUND_FAILED,
         /** The {@code PAYMENT_REVERSED} constant. */
         PAYMENT_REVERSED,
+        /** The {@code PAYMENT_REINSTATED} constant. */
+        PAYMENT_REINSTATED,
         /** The {@code PAYMENT_FAILED} constant. */
         PAYMENT_FAILED,
+        /** The {@code WALLET_FUNDED} constant. */
+        WALLET_FUNDED,
+        /** The {@code WALLET_DEBITED} constant. */
+        WALLET_DEBITED,
+        /** The {@code WALLET_BALANCE_LOW} constant. */
+        WALLET_BALANCE_LOW,
+        /** The {@code WALLET_CREDIT_UNRECOVERED} constant. */
+        WALLET_CREDIT_UNRECOVERED,
+        /** The {@code WALLET_CREDIT_RECOVERED} constant. */
+        WALLET_CREDIT_RECOVERED,
+        /** The {@code WALLET_AUTO_TOP_UP_FAILED} constant. */
+        WALLET_AUTO_TOP_UP_FAILED,
+        /** The {@code WALLET_AUTO_TOP_UP_SUSPENDED} constant. */
+        WALLET_AUTO_TOP_UP_SUSPENDED,
+        /** The {@code WALLET_AUTO_TOP_UP_CONSENT_CHANGED} constant. */
+        WALLET_AUTO_TOP_UP_CONSENT_CHANGED,
+        /** The {@code WALLET_DEPLETED} constant. */
+        WALLET_DEPLETED,
+        /** The {@code WALLET_RECOVERED} constant. */
+        WALLET_RECOVERED,
+        /** The {@code WALLET_AUTO_TOP_UP_CAP_REACHED} constant. */
+        WALLET_AUTO_TOP_UP_CAP_REACHED,
+        /** The {@code CREDIT_GRANT_EXPIRED} constant. */
+        CREDIT_GRANT_EXPIRED,
         /** A value this version of the SDK does not know. */
         _UNKNOWN
     }

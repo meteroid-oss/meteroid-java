@@ -16,7 +16,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
+/**
+ * Converts the aggregated usage into the unit prices are set in, e.g. tokens priced per 1M. The
+ * usage is divided by <code>factor</code>, then rounded. Rounding applies to each priced group's
+ * total for the billing period: each group of a segmented or grouped metric, and each matrix cell,
+ * is rounded on its own, never each event.
+ *
+ * <p>Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(
@@ -63,7 +70,7 @@ public final class UnitConversion {
     }
 
     /**
-     * The {@code factor} property.
+     * Raw units per priced unit, e.g. <code>1000000</code> to price per 1M.
      *
      * @return the value, never null
      */
@@ -139,7 +146,7 @@ public final class UnitConversion {
         private Builder() {}
 
         /**
-         * The {@code factor} property.
+         * Raw units per priced unit, e.g. <code>1000000</code> to price per 1M.
          *
          * @param factor the value
          * @return this builder

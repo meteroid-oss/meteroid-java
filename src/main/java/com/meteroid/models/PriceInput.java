@@ -33,6 +33,9 @@ public final class PriceInput {
     @JsonProperty("pricing")
     private Pricing pricing;
 
+    @JsonProperty("type")
+    private String type = "NEW";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private PriceInput() {}
@@ -41,6 +44,7 @@ public final class PriceInput {
         this.cadence = builder.cadence;
         this.currency = builder.currency;
         this.pricing = builder.pricing;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -63,6 +67,7 @@ public final class PriceInput {
         builder.cadence = cadence;
         builder.currency = currency;
         builder.pricing = pricing;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -92,6 +97,15 @@ public final class PriceInput {
      */
     public Pricing pricing() {
         return Utils.required(pricing, "pricing");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -125,12 +139,13 @@ public final class PriceInput {
         return Objects.equals(cadence, that.cadence)
                 && Objects.equals(currency, that.currency)
                 && Objects.equals(pricing, that.pricing)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cadence, currency, pricing, additionalProperties);
+        return Objects.hash(cadence, currency, pricing, type, additionalProperties);
     }
 
     @Override
@@ -142,6 +157,8 @@ public final class PriceInput {
                 + currency
                 + ", pricing="
                 + pricing
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -152,6 +169,7 @@ public final class PriceInput {
         private BillingPeriodEnum cadence;
         private String currency;
         private Pricing pricing;
+        private String type = "NEW";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -186,6 +204,17 @@ public final class PriceInput {
          */
         public Builder pricing(Pricing pricing) {
             this.pricing = pricing;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -233,6 +262,7 @@ public final class PriceInput {
             Utils.checkRequired(cadence, "cadence");
             Utils.checkRequired(currency, "currency");
             Utils.checkRequired(pricing, "pricing");
+            Utils.checkRequired(type, "type");
             return new PriceInput(this);
         }
     }
