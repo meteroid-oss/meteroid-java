@@ -28,12 +28,16 @@ public final class PerUnitPlanPricing {
     @JsonProperty("rate")
     private BigDecimal rate;
 
+    @JsonProperty("type")
+    private String type = "PER_UNIT";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private PerUnitPlanPricing() {}
 
     private PerUnitPlanPricing(Builder builder) {
         this.rate = builder.rate;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -54,6 +58,7 @@ public final class PerUnitPlanPricing {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.rate = rate;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -65,6 +70,15 @@ public final class PerUnitPlanPricing {
      */
     public BigDecimal rate() {
         return Utils.required(rate, "rate");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -96,12 +110,13 @@ public final class PerUnitPlanPricing {
         }
         PerUnitPlanPricing that = (PerUnitPlanPricing) o;
         return Objects.equals(rate, that.rate)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rate, additionalProperties);
+        return Objects.hash(rate, type, additionalProperties);
     }
 
     @Override
@@ -109,6 +124,8 @@ public final class PerUnitPlanPricing {
         return "PerUnitPlanPricing{"
                 + "rate="
                 + rate
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -117,6 +134,7 @@ public final class PerUnitPlanPricing {
     /** Builds {@link PerUnitPlanPricing}. */
     public static final class Builder {
         private BigDecimal rate;
+        private String type = "PER_UNIT";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -129,6 +147,17 @@ public final class PerUnitPlanPricing {
          */
         public Builder rate(BigDecimal rate) {
             this.rate = rate;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -174,6 +203,7 @@ public final class PerUnitPlanPricing {
          */
         public PerUnitPlanPricing build() {
             Utils.checkRequired(rate, "rate");
+            Utils.checkRequired(type, "type");
             return new PerUnitPlanPricing(this);
         }
     }

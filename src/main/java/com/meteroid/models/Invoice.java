@@ -108,8 +108,15 @@ public final class Invoice {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> parentInvoiceId = JsonField.missing();
 
+    @JsonProperty("payment_disputed_at")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<OffsetDateTime> paymentDisputedAt = JsonField.missing();
+
     @JsonProperty("payment_status")
     private InvoicePaymentStatus paymentStatus;
+
+    @JsonProperty("promotional_credits")
+    private Long promotionalCredits;
 
     @JsonProperty("purchase_order")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -118,6 +125,9 @@ public final class Invoice {
     @JsonProperty("reference")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> reference = JsonField.missing();
+
+    @JsonProperty("settled_by_credit_notes")
+    private Boolean settledByCreditNotes;
 
     @JsonProperty("status")
     private InvoiceStatus status;
@@ -183,9 +193,12 @@ public final class Invoice {
         this.netTerms = builder.netTerms;
         this.paidAt = builder.paidAt;
         this.parentInvoiceId = builder.parentInvoiceId;
+        this.paymentDisputedAt = builder.paymentDisputedAt;
         this.paymentStatus = builder.paymentStatus;
+        this.promotionalCredits = builder.promotionalCredits;
         this.purchaseOrder = builder.purchaseOrder;
         this.reference = builder.reference;
+        this.settledByCreditNotes = builder.settledByCreditNotes;
         this.status = builder.status;
         this.subscriptionId = builder.subscriptionId;
         this.subtotal = builder.subtotal;
@@ -239,9 +252,12 @@ public final class Invoice {
         builder.netTerms = netTerms;
         builder.paidAt = paidAt;
         builder.parentInvoiceId = parentInvoiceId;
+        builder.paymentDisputedAt = paymentDisputedAt;
         builder.paymentStatus = paymentStatus;
+        builder.promotionalCredits = promotionalCredits;
         builder.purchaseOrder = purchaseOrder;
         builder.reference = reference;
+        builder.settledByCreditNotes = settledByCreditNotes;
         builder.status = status;
         builder.subscriptionId = subscriptionId;
         builder.subtotal = subtotal;
@@ -267,7 +283,8 @@ public final class Invoice {
     }
 
     /**
-     * The {@code applied_credits} property.
+     * Paid credit applied after tax, in minor units of the invoice currency: it settles part of
+     * <code>total</code> like a payment, and <code>amount_due</code> is net of it.
      *
      * @return the value, never null
      */
@@ -467,12 +484,35 @@ public final class Invoice {
     }
 
     /**
+     * When a dispute or chargeback first took money still lost on this invoice's payments. The
+     * invoice stays paid; absent when nothing is disputed.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<OffsetDateTime> paymentDisputedAt() {
+        return paymentDisputedAt.asOptional();
+    }
+
+    /**
      * The {@code payment_status} property.
      *
      * @return the value, never null
      */
     public InvoicePaymentStatus paymentStatus() {
         return Utils.required(paymentStatus, "payment_status");
+    }
+
+    /**
+     * Promotional credit applied before tax (credit included with the plan, coupon credit, bonus
+     * credit), in minor units of the invoice currency. Like a discount, it reduces the taxable
+     * amount: <code>tax_amount</code> and <code>total</code> already exclude it, <code>subtotal
+     * </code> does not. Unlike <code>applied_credits</code>, which settles part of the <code>total
+     * </code> after tax.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> promotionalCredits() {
+        return Optional.ofNullable(promotionalCredits);
     }
 
     /**
@@ -491,6 +531,16 @@ public final class Invoice {
      */
     public Optional<String> reference() {
         return reference.asOptional();
+    }
+
+    /**
+     * True when the invoice is <code>PAID</code> without any payment: finalized credit notes
+     * cancelled its whole total. Nothing was collected, so it books no cash.
+     *
+     * @return the value, never null
+     */
+    public Boolean settledByCreditNotes() {
+        return Utils.required(settledByCreditNotes, "settled_by_credit_notes");
     }
 
     /**
@@ -644,9 +694,12 @@ public final class Invoice {
                 && Objects.equals(netTerms, that.netTerms)
                 && Objects.equals(paidAt, that.paidAt)
                 && Objects.equals(parentInvoiceId, that.parentInvoiceId)
+                && Objects.equals(paymentDisputedAt, that.paymentDisputedAt)
                 && Objects.equals(paymentStatus, that.paymentStatus)
+                && Objects.equals(promotionalCredits, that.promotionalCredits)
                 && Objects.equals(purchaseOrder, that.purchaseOrder)
                 && Objects.equals(reference, that.reference)
+                && Objects.equals(settledByCreditNotes, that.settledByCreditNotes)
                 && Objects.equals(status, that.status)
                 && Objects.equals(subscriptionId, that.subscriptionId)
                 && Objects.equals(subtotal, that.subtotal)
@@ -687,9 +740,12 @@ public final class Invoice {
                 netTerms,
                 paidAt,
                 parentInvoiceId,
+                paymentDisputedAt,
                 paymentStatus,
+                promotionalCredits,
                 purchaseOrder,
                 reference,
+                settledByCreditNotes,
                 status,
                 subscriptionId,
                 subtotal,
@@ -753,12 +809,18 @@ public final class Invoice {
                 + paidAt
                 + ", parentInvoiceId="
                 + parentInvoiceId
+                + ", paymentDisputedAt="
+                + paymentDisputedAt
                 + ", paymentStatus="
                 + paymentStatus
+                + ", promotionalCredits="
+                + promotionalCredits
                 + ", purchaseOrder="
                 + purchaseOrder
                 + ", reference="
                 + reference
+                + ", settledByCreditNotes="
+                + settledByCreditNotes
                 + ", status="
                 + status
                 + ", subscriptionId="
@@ -811,9 +873,12 @@ public final class Invoice {
         private Integer netTerms;
         private JsonField<OffsetDateTime> paidAt = JsonField.missing();
         private JsonField<String> parentInvoiceId = JsonField.missing();
+        private JsonField<OffsetDateTime> paymentDisputedAt = JsonField.missing();
         private InvoicePaymentStatus paymentStatus;
+        private Long promotionalCredits;
         private JsonField<String> purchaseOrder = JsonField.missing();
         private JsonField<String> reference = JsonField.missing();
+        private Boolean settledByCreditNotes;
         private InvoiceStatus status;
         private JsonField<String> subscriptionId = JsonField.missing();
         private Long subtotal;
@@ -841,7 +906,8 @@ public final class Invoice {
         }
 
         /**
-         * The {@code applied_credits} property.
+         * Paid credit applied after tax, in minor units of the invoice currency: it settles part of
+         * <code>total</code> like a payment, and <code>amount_due</code> is net of it.
          *
          * @param appliedCredits the value
          * @return this builder
@@ -1113,6 +1179,18 @@ public final class Invoice {
         }
 
         /**
+         * When a dispute or chargeback first took money still lost on this invoice's payments. The
+         * invoice stays paid; absent when nothing is disputed.
+         *
+         * @param paymentDisputedAt the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder paymentDisputedAt(OffsetDateTime paymentDisputedAt) {
+            this.paymentDisputedAt = JsonField.ofNullable(paymentDisputedAt);
+            return this;
+        }
+
+        /**
          * The {@code payment_status} property.
          *
          * @param paymentStatus the value
@@ -1120,6 +1198,21 @@ public final class Invoice {
          */
         public Builder paymentStatus(InvoicePaymentStatus paymentStatus) {
             this.paymentStatus = paymentStatus;
+            return this;
+        }
+
+        /**
+         * Promotional credit applied before tax (credit included with the plan, coupon credit,
+         * bonus credit), in minor units of the invoice currency. Like a discount, it reduces the
+         * taxable amount: <code>tax_amount</code> and <code>total</code> already exclude it, <code>
+         * subtotal</code> does not. Unlike <code>applied_credits</code>, which settles part of the
+         * <code>total</code> after tax.
+         *
+         * @param promotionalCredits the value
+         * @return this builder
+         */
+        public Builder promotionalCredits(Long promotionalCredits) {
+            this.promotionalCredits = promotionalCredits;
             return this;
         }
 
@@ -1142,6 +1235,18 @@ public final class Invoice {
          */
         public Builder reference(String reference) {
             this.reference = JsonField.ofNullable(reference);
+            return this;
+        }
+
+        /**
+         * True when the invoice is <code>PAID</code> without any payment: finalized credit notes
+         * cancelled its whole total. Nothing was collected, so it books no cash.
+         *
+         * @param settledByCreditNotes the value
+         * @return this builder
+         */
+        public Builder settledByCreditNotes(Boolean settledByCreditNotes) {
+            this.settledByCreditNotes = settledByCreditNotes;
             return this;
         }
 
@@ -1351,6 +1456,7 @@ public final class Invoice {
             Utils.checkRequired(lineItems, "line_items");
             Utils.checkRequired(netTerms, "net_terms");
             Utils.checkRequired(paymentStatus, "payment_status");
+            Utils.checkRequired(settledByCreditNotes, "settled_by_credit_notes");
             Utils.checkRequired(status, "status");
             Utils.checkRequired(subtotal, "subtotal");
             Utils.checkRequired(subtotalRecurring, "subtotal_recurring");

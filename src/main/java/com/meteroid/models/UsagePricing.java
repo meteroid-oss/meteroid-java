@@ -27,12 +27,16 @@ public final class UsagePricing {
     @JsonProperty("model")
     private UsagePricingModel model;
 
+    @JsonProperty("type")
+    private String type = "USAGE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private UsagePricing() {}
 
     private UsagePricing(Builder builder) {
         this.model = builder.model;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class UsagePricing {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.model = model;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class UsagePricing {
      */
     public UsagePricingModel model() {
         return Utils.required(model, "model");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class UsagePricing {
         }
         UsagePricing that = (UsagePricing) o;
         return Objects.equals(model, that.model)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(model, additionalProperties);
+        return Objects.hash(model, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class UsagePricing {
         return "UsagePricing{"
                 + "model="
                 + model
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class UsagePricing {
     /** Builds {@link UsagePricing}. */
     public static final class Builder {
         private UsagePricingModel model;
+        private String type = "USAGE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class UsagePricing {
          */
         public Builder model(UsagePricingModel model) {
             this.model = model;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class UsagePricing {
          */
         public UsagePricing build() {
             Utils.checkRequired(model, "model");
+            Utils.checkRequired(type, "type");
             return new UsagePricing(this);
         }
     }

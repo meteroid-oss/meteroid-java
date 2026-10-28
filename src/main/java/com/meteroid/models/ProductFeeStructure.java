@@ -36,7 +36,8 @@ import java.util.Objects;
     @JsonSubTypes.Type(value = ProductFeeStructure.Capacity.class, name = "CAPACITY"),
     @JsonSubTypes.Type(value = ProductFeeStructure.Usage.class, name = "USAGE"),
     @JsonSubTypes.Type(value = ProductFeeStructure.ExtraRecurring.class, name = "EXTRA_RECURRING"),
-    @JsonSubTypes.Type(value = ProductFeeStructure.OneTime.class, name = "ONE_TIME")
+    @JsonSubTypes.Type(value = ProductFeeStructure.OneTime.class, name = "ONE_TIME"),
+    @JsonSubTypes.Type(value = ProductFeeStructure.Credit.class, name = "CREDIT")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -189,6 +190,28 @@ public abstract class ProductFeeStructure {
     }
 
     /**
+     * Whether this is the {@code CREDIT} variant.
+     *
+     * @return whether it is
+     */
+    public final boolean isCredit() {
+        return this instanceof Credit;
+    }
+
+    /**
+     * This value as the {@code CREDIT} variant.
+     *
+     * @return the variant
+     * @throws IllegalStateException if this is another variant
+     */
+    public final Credit asCredit() {
+        if (this instanceof Credit) {
+            return (Credit) this;
+        }
+        throw new IllegalStateException("not the CREDIT variant: " + type());
+    }
+
+    /**
      * Whether this is a variant this version of the SDK does not know.
      *
      * @return whether it is
@@ -272,6 +295,14 @@ public abstract class ProductFeeStructure {
          * @return the result
          */
         R visitOneTime(OneTimeFeeStructure value);
+
+        /**
+         * Visits the {@code CREDIT} variant.
+         *
+         * @param value the variant
+         * @return the result
+         */
+        R visitCredit(CreditFeeStructure value);
 
         /**
          * Visits a variant this version of the SDK does not know.
@@ -729,6 +760,77 @@ public abstract class ProductFeeStructure {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitOneTime(data);
+        }
+    }
+
+    /** The {@code CREDIT} variant. */
+    @JsonTypeName("CREDIT")
+    public static final class Credit extends ProductFeeStructure {
+        @JsonUnwrapped
+        @JsonIgnoreProperties(value = "type", allowSetters = true)
+        private CreditFeeStructure data;
+
+        private Credit() {}
+
+        /**
+         * The variant holding {@code data}.
+         *
+         * @param data the value of the variant
+         */
+        public Credit(CreditFeeStructure data) {
+            this.data = Objects.requireNonNull(data, "data");
+        }
+
+        /**
+         * The variant holding {@code data}.
+         *
+         * @param data the value of the variant
+         * @return the variant
+         */
+        public static Credit of(CreditFeeStructure data) {
+            return new Credit(data);
+        }
+
+        @Override
+        @JsonProperty("type")
+        public String type() {
+            return "CREDIT";
+        }
+
+        /**
+         * The value of the variant.
+         *
+         * @return the value
+         */
+        public CreditFeeStructure data() {
+            return data;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Credit that = (Credit) o;
+            return Objects.equals(data, that.data);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(data);
+        }
+
+        @Override
+        public String toString() {
+            return "Credit{" + "data=" + data + "}";
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCredit(data);
         }
     }
 

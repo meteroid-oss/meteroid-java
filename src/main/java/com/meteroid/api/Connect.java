@@ -8,6 +8,7 @@ import com.meteroid.internal.Utils;
 import com.meteroid.models.ConnectedAccount;
 import com.meteroid.models.ConnectedAccountsResponse;
 import com.meteroid.models.CreateConnectedAccountRequest;
+import com.meteroid.models.CreateConnectedAccountResponse;
 import com.meteroid.models.CreateOnboardingLinkRequest;
 import com.meteroid.models.OnboardingLinkResponse;
 
@@ -77,13 +78,13 @@ public final class Connect {
     /**
      * Create connected account
      *
-     * <p>Create a new connected account (Express flow). Returns the account and an onboarding link
-     * for the user to complete setup.
+     * <p>Create a new pending connected account (Express flow). Returns the account and an
+     * onboarding link for the user to complete setup.
      *
      * @param createConnectedAccountRequest the request body
      * @return the response body
      */
-    public ConnectedAccount createConnectedAccount(
+    public CreateConnectedAccountResponse createConnectedAccount(
             final CreateConnectedAccountRequest createConnectedAccountRequest) {
         return createConnectedAccount(createConnectedAccountRequest, RequestOptions.none());
     }
@@ -91,20 +92,20 @@ public final class Connect {
     /**
      * Create connected account
      *
-     * <p>Create a new connected account (Express flow). Returns the account and an onboarding link
-     * for the user to complete setup.
+     * <p>Create a new pending connected account (Express flow). Returns the account and an
+     * onboarding link for the user to complete setup.
      *
      * @param createConnectedAccountRequest the request body
      * @param requestOptions headers, timeout and retries of this call
      * @return the response body
      */
-    public ConnectedAccount createConnectedAccount(
+    public CreateConnectedAccountResponse createConnectedAccount(
             final CreateConnectedAccountRequest createConnectedAccountRequest,
             final RequestOptions requestOptions) {
         return exchangeCreateConnectedAccount(createConnectedAccountRequest, requestOptions).send();
     }
 
-    MeteroidHttpClient.Exchange<ConnectedAccount> exchangeCreateConnectedAccount(
+    MeteroidHttpClient.Exchange<CreateConnectedAccountResponse> exchangeCreateConnectedAccount(
             final CreateConnectedAccountRequest createConnectedAccountRequest,
             final RequestOptions requestOptions) {
         Objects.requireNonNull(createConnectedAccountRequest, "body");
@@ -113,7 +114,7 @@ public final class Connect {
                 .json(createConnectedAccountRequest)
                 .errors(com.meteroid.models.RestErrorResponse.class, "429")
                 .options(requestOptions)
-                .returning(ConnectedAccount.class);
+                .returning(CreateConnectedAccountResponse.class);
     }
 
     /**
@@ -276,13 +277,13 @@ public final class Connect {
         /**
          * Create connected account
          *
-         * <p>Create a new connected account (Express flow). Returns the account and an onboarding
-         * link for the user to complete setup.
+         * <p>Create a new pending connected account (Express flow). Returns the account and an
+         * onboarding link for the user to complete setup.
          *
          * @param createConnectedAccountRequest the request body
          * @return the status, headers and body
          */
-        public ApiResponse<ConnectedAccount> createConnectedAccount(
+        public ApiResponse<CreateConnectedAccountResponse> createConnectedAccount(
                 final CreateConnectedAccountRequest createConnectedAccountRequest) {
             return createConnectedAccount(createConnectedAccountRequest, RequestOptions.none());
         }
@@ -290,14 +291,14 @@ public final class Connect {
         /**
          * Create connected account
          *
-         * <p>Create a new connected account (Express flow). Returns the account and an onboarding
-         * link for the user to complete setup.
+         * <p>Create a new pending connected account (Express flow). Returns the account and an
+         * onboarding link for the user to complete setup.
          *
          * @param createConnectedAccountRequest the request body
          * @param requestOptions headers, timeout and retries of this call
          * @return the status, headers and body
          */
-        public ApiResponse<ConnectedAccount> createConnectedAccount(
+        public ApiResponse<CreateConnectedAccountResponse> createConnectedAccount(
                 final CreateConnectedAccountRequest createConnectedAccountRequest,
                 final RequestOptions requestOptions) {
             return Connect.this

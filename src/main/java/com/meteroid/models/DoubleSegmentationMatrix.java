@@ -30,6 +30,9 @@ public final class DoubleSegmentationMatrix {
     @JsonProperty("dimension2")
     private MetricDimension dimension2;
 
+    @JsonProperty("type")
+    private String type = "DOUBLE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private DoubleSegmentationMatrix() {}
@@ -37,6 +40,7 @@ public final class DoubleSegmentationMatrix {
     private DoubleSegmentationMatrix(Builder builder) {
         this.dimension1 = builder.dimension1;
         this.dimension2 = builder.dimension2;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -58,6 +62,7 @@ public final class DoubleSegmentationMatrix {
         Builder builder = new Builder();
         builder.dimension1 = dimension1;
         builder.dimension2 = dimension2;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -78,6 +83,15 @@ public final class DoubleSegmentationMatrix {
      */
     public MetricDimension dimension2() {
         return Utils.required(dimension2, "dimension2");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -110,12 +124,13 @@ public final class DoubleSegmentationMatrix {
         DoubleSegmentationMatrix that = (DoubleSegmentationMatrix) o;
         return Objects.equals(dimension1, that.dimension1)
                 && Objects.equals(dimension2, that.dimension2)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dimension1, dimension2, additionalProperties);
+        return Objects.hash(dimension1, dimension2, type, additionalProperties);
     }
 
     @Override
@@ -125,6 +140,8 @@ public final class DoubleSegmentationMatrix {
                 + dimension1
                 + ", dimension2="
                 + dimension2
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -134,6 +151,7 @@ public final class DoubleSegmentationMatrix {
     public static final class Builder {
         private MetricDimension dimension1;
         private MetricDimension dimension2;
+        private String type = "DOUBLE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -157,6 +175,17 @@ public final class DoubleSegmentationMatrix {
          */
         public Builder dimension2(MetricDimension dimension2) {
             this.dimension2 = dimension2;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -203,6 +232,7 @@ public final class DoubleSegmentationMatrix {
         public DoubleSegmentationMatrix build() {
             Utils.checkRequired(dimension1, "dimension1");
             Utils.checkRequired(dimension2, "dimension2");
+            Utils.checkRequired(type, "type");
             return new DoubleSegmentationMatrix(this);
         }
     }

@@ -30,12 +30,16 @@ public final class BankTransferPaymentMethodConfig {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> accountId = JsonField.missing();
 
+    @JsonProperty("type")
+    private String type = "bank_transfer";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private BankTransferPaymentMethodConfig() {}
 
     private BankTransferPaymentMethodConfig(Builder builder) {
         this.accountId = builder.accountId;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -56,6 +60,7 @@ public final class BankTransferPaymentMethodConfig {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.accountId = accountId;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -67,6 +72,15 @@ public final class BankTransferPaymentMethodConfig {
      */
     public Optional<String> accountId() {
         return accountId.asOptional();
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -98,12 +112,13 @@ public final class BankTransferPaymentMethodConfig {
         }
         BankTransferPaymentMethodConfig that = (BankTransferPaymentMethodConfig) o;
         return Objects.equals(accountId, that.accountId)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, additionalProperties);
+        return Objects.hash(accountId, type, additionalProperties);
     }
 
     @Override
@@ -111,6 +126,8 @@ public final class BankTransferPaymentMethodConfig {
         return "BankTransferPaymentMethodConfig{"
                 + "accountId="
                 + accountId
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -119,6 +136,7 @@ public final class BankTransferPaymentMethodConfig {
     /** Builds {@link BankTransferPaymentMethodConfig}. */
     public static final class Builder {
         private JsonField<String> accountId = JsonField.missing();
+        private String type = "bank_transfer";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -131,6 +149,17 @@ public final class BankTransferPaymentMethodConfig {
          */
         public Builder accountId(String accountId) {
             this.accountId = JsonField.ofNullable(accountId);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -175,6 +204,7 @@ public final class BankTransferPaymentMethodConfig {
          * @throws IllegalStateException when a required property is not set
          */
         public BankTransferPaymentMethodConfig build() {
+            Utils.checkRequired(type, "type");
             return new BankTransferPaymentMethodConfig(this);
         }
     }

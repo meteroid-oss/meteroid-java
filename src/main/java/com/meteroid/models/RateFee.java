@@ -28,12 +28,16 @@ public final class RateFee {
     @JsonProperty("rate")
     private BigDecimal rate;
 
+    @JsonProperty("type")
+    private String type = "RATE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private RateFee() {}
 
     private RateFee(Builder builder) {
         this.rate = builder.rate;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -54,6 +58,7 @@ public final class RateFee {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.rate = rate;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -65,6 +70,15 @@ public final class RateFee {
      */
     public BigDecimal rate() {
         return Utils.required(rate, "rate");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -96,22 +110,31 @@ public final class RateFee {
         }
         RateFee that = (RateFee) o;
         return Objects.equals(rate, that.rate)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rate, additionalProperties);
+        return Objects.hash(rate, type, additionalProperties);
     }
 
     @Override
     public String toString() {
-        return "RateFee{" + "rate=" + rate + ", additionalProperties=" + additionalProperties + "}";
+        return "RateFee{"
+                + "rate="
+                + rate
+                + ", type="
+                + type
+                + ", additionalProperties="
+                + additionalProperties
+                + "}";
     }
 
     /** Builds {@link RateFee}. */
     public static final class Builder {
         private BigDecimal rate;
+        private String type = "RATE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -124,6 +147,17 @@ public final class RateFee {
          */
         public Builder rate(BigDecimal rate) {
             this.rate = rate;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -169,6 +203,7 @@ public final class RateFee {
          */
         public RateFee build() {
             Utils.checkRequired(rate, "rate");
+            Utils.checkRequired(type, "type");
             return new RateFee(this);
         }
     }

@@ -111,7 +111,8 @@ public final class UpdateWebhookEndpointRequest {
     }
 
     /**
-     * Replaces the subscription list. An empty array subscribes to every event type.
+     * Replaces the subscription list. An empty array subscribes to every event type except Beta
+     * ones, which are sent only to endpoints that list them.
      *
      * @return the value, empty when unset or null
      */
@@ -250,7 +251,8 @@ public final class UpdateWebhookEndpointRequest {
         }
 
         /**
-         * Replaces the subscription list. An empty array subscribes to every event type.
+         * Replaces the subscription list. An empty array subscribes to every event type except Beta
+         * ones, which are sent only to endpoints that list them.
          *
          * @param eventTypes the value, null to send an explicit {@code null}
          * @return this builder

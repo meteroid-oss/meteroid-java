@@ -3,10 +3,14 @@ package com.meteroid;
 
 import com.meteroid.api.AddOns;
 import com.meteroid.api.BatchJobs;
+import com.meteroid.api.Budgets;
 import com.meteroid.api.CheckoutSessions;
+import com.meteroid.api.Checks;
 import com.meteroid.api.Connect;
 import com.meteroid.api.Coupons;
 import com.meteroid.api.CreditNotes;
+import com.meteroid.api.CreditUnits;
+import com.meteroid.api.Credits;
 import com.meteroid.api.CustomProperties;
 import com.meteroid.api.Customers;
 import com.meteroid.api.Entitlements;
@@ -21,6 +25,7 @@ import com.meteroid.api.ProductFamilies;
 import com.meteroid.api.Products;
 import com.meteroid.api.Subscriptions;
 import com.meteroid.api.Usage;
+import com.meteroid.api.UsageCosts;
 import com.meteroid.api.WebhookEndpoints;
 import com.meteroid.internal.MeteroidAuth;
 import com.meteroid.internal.MeteroidHttpClient;
@@ -58,10 +63,14 @@ public final class Meteroid implements AutoCloseable {
     private final MeteroidAsync async;
     private final AddOns addOns;
     private final BatchJobs batchJobs;
+    private final Budgets budgets;
     private final CheckoutSessions checkoutSessions;
+    private final Checks checks;
     private final Connect connect;
     private final Coupons coupons;
     private final CreditNotes creditNotes;
+    private final CreditUnits creditUnits;
+    private final Credits credits;
     private final CustomProperties customProperties;
     private final Customers customers;
     private final Entitlements entitlements;
@@ -76,6 +85,7 @@ public final class Meteroid implements AutoCloseable {
     private final Products products;
     private final Subscriptions subscriptions;
     private final Usage usage;
+    private final UsageCosts usageCosts;
     private final WebhookEndpoints webhookEndpoints;
 
     /**
@@ -131,10 +141,14 @@ public final class Meteroid implements AutoCloseable {
         this.httpClient = new MeteroidHttpClient(parsedUrl, defaultHeaders, options, auth);
         this.addOns = new AddOns(httpClient);
         this.batchJobs = new BatchJobs(httpClient);
+        this.budgets = new Budgets(httpClient);
         this.checkoutSessions = new CheckoutSessions(httpClient);
+        this.checks = new Checks(httpClient);
         this.connect = new Connect(httpClient);
         this.coupons = new Coupons(httpClient);
         this.creditNotes = new CreditNotes(httpClient);
+        this.creditUnits = new CreditUnits(httpClient);
+        this.credits = new Credits(httpClient);
         this.customProperties = new CustomProperties(httpClient);
         this.customers = new Customers(httpClient);
         this.entitlements = new Entitlements(httpClient);
@@ -149,6 +163,7 @@ public final class Meteroid implements AutoCloseable {
         this.products = new Products(httpClient);
         this.subscriptions = new Subscriptions(httpClient);
         this.usage = new Usage(httpClient);
+        this.usageCosts = new UsageCosts(httpClient);
         this.webhookEndpoints = new WebhookEndpoints(httpClient);
         this.withRawResponse = new WithRawResponse();
         this.async = new MeteroidAsync(this);
@@ -214,12 +229,30 @@ public final class Meteroid implements AutoCloseable {
     }
 
     /**
+     * The {@code budgets} operations.
+     *
+     * @return the operations
+     */
+    public Budgets budgets() {
+        return budgets;
+    }
+
+    /**
      * The {@code checkout_sessions} operations.
      *
      * @return the operations
      */
     public CheckoutSessions checkoutSessions() {
         return checkoutSessions;
+    }
+
+    /**
+     * The {@code checks} operations.
+     *
+     * @return the operations
+     */
+    public Checks checks() {
+        return checks;
     }
 
     /**
@@ -247,6 +280,24 @@ public final class Meteroid implements AutoCloseable {
      */
     public CreditNotes creditNotes() {
         return creditNotes;
+    }
+
+    /**
+     * The {@code credit_units} operations.
+     *
+     * @return the operations
+     */
+    public CreditUnits creditUnits() {
+        return creditUnits;
+    }
+
+    /**
+     * The {@code credits} operations.
+     *
+     * @return the operations
+     */
+    public Credits credits() {
+        return credits;
     }
 
     /**
@@ -376,6 +427,15 @@ public final class Meteroid implements AutoCloseable {
     }
 
     /**
+     * The {@code usage_costs} operations.
+     *
+     * @return the operations
+     */
+    public UsageCosts usageCosts() {
+        return usageCosts;
+    }
+
+    /**
      * The {@code webhook_endpoints} operations.
      *
      * @return the operations
@@ -407,12 +467,30 @@ public final class Meteroid implements AutoCloseable {
         }
 
         /**
+         * The {@code budgets} operations.
+         *
+         * @return the operations
+         */
+        public Budgets.WithRawResponse budgets() {
+            return budgets.withRawResponse();
+        }
+
+        /**
          * The {@code checkout_sessions} operations.
          *
          * @return the operations
          */
         public CheckoutSessions.WithRawResponse checkoutSessions() {
             return checkoutSessions.withRawResponse();
+        }
+
+        /**
+         * The {@code checks} operations.
+         *
+         * @return the operations
+         */
+        public Checks.WithRawResponse checks() {
+            return checks.withRawResponse();
         }
 
         /**
@@ -440,6 +518,24 @@ public final class Meteroid implements AutoCloseable {
          */
         public CreditNotes.WithRawResponse creditNotes() {
             return creditNotes.withRawResponse();
+        }
+
+        /**
+         * The {@code credit_units} operations.
+         *
+         * @return the operations
+         */
+        public CreditUnits.WithRawResponse creditUnits() {
+            return creditUnits.withRawResponse();
+        }
+
+        /**
+         * The {@code credits} operations.
+         *
+         * @return the operations
+         */
+        public Credits.WithRawResponse credits() {
+            return credits.withRawResponse();
         }
 
         /**
@@ -566,6 +662,15 @@ public final class Meteroid implements AutoCloseable {
          */
         public Usage.WithRawResponse usage() {
             return usage.withRawResponse();
+        }
+
+        /**
+         * The {@code usage_costs} operations.
+         *
+         * @return the operations
+         */
+        public UsageCosts.WithRawResponse usageCosts() {
+            return usageCosts.withRawResponse();
         }
 
         /**

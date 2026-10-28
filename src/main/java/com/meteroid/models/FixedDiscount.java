@@ -30,6 +30,9 @@ public final class FixedDiscount {
     @JsonProperty("currency")
     private String currency;
 
+    @JsonProperty("type")
+    private String type = "FIXED";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private FixedDiscount() {}
@@ -37,6 +40,7 @@ public final class FixedDiscount {
     private FixedDiscount(Builder builder) {
         this.amount = builder.amount;
         this.currency = builder.currency;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -58,6 +62,7 @@ public final class FixedDiscount {
         Builder builder = new Builder();
         builder.amount = amount;
         builder.currency = currency;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -78,6 +83,15 @@ public final class FixedDiscount {
      */
     public String currency() {
         return Utils.required(currency, "currency");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -110,12 +124,13 @@ public final class FixedDiscount {
         FixedDiscount that = (FixedDiscount) o;
         return Objects.equals(amount, that.amount)
                 && Objects.equals(currency, that.currency)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount, currency, additionalProperties);
+        return Objects.hash(amount, currency, type, additionalProperties);
     }
 
     @Override
@@ -125,6 +140,8 @@ public final class FixedDiscount {
                 + amount
                 + ", currency="
                 + currency
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -134,6 +151,7 @@ public final class FixedDiscount {
     public static final class Builder {
         private String amount;
         private String currency;
+        private String type = "FIXED";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -157,6 +175,17 @@ public final class FixedDiscount {
          */
         public Builder currency(String currency) {
             this.currency = currency;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -203,6 +232,7 @@ public final class FixedDiscount {
         public FixedDiscount build() {
             Utils.checkRequired(amount, "amount");
             Utils.checkRequired(currency, "currency");
+            Utils.checkRequired(type, "type");
             return new FixedDiscount(this);
         }
     }

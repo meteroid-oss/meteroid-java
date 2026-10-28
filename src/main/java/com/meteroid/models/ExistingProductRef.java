@@ -27,12 +27,16 @@ public final class ExistingProductRef {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("type")
+    private String type = "EXISTING";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private ExistingProductRef() {}
 
     private ExistingProductRef(Builder builder) {
         this.id = builder.id;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class ExistingProductRef {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.id = id;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class ExistingProductRef {
      */
     public String id() {
         return Utils.required(id, "id");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class ExistingProductRef {
         }
         ExistingProductRef that = (ExistingProductRef) o;
         return Objects.equals(id, that.id)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, additionalProperties);
+        return Objects.hash(id, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class ExistingProductRef {
         return "ExistingProductRef{"
                 + "id="
                 + id
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class ExistingProductRef {
     /** Builds {@link ExistingProductRef}. */
     public static final class Builder {
         private String id;
+        private String type = "EXISTING";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class ExistingProductRef {
          */
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class ExistingProductRef {
          */
         public ExistingProductRef build() {
             Utils.checkRequired(id, "id");
+            Utils.checkRequired(type, "type");
             return new ExistingProductRef(this);
         }
     }

@@ -9,12 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Usage-based fee
@@ -31,11 +33,18 @@ public final class UsagePlanFee {
     @JsonProperty("cadence")
     private BillingPeriodEnum cadence;
 
+    @JsonProperty("credit_unit")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<PlanFeeCreditUnit> creditUnit = JsonField.missing();
+
     @JsonProperty("metric_id")
     private String metricId;
 
     @JsonProperty("pricing")
     private PlanUsagePricingModel pricing;
+
+    @JsonProperty("type")
+    private String type = "USAGE";
 
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -43,8 +52,10 @@ public final class UsagePlanFee {
 
     private UsagePlanFee(Builder builder) {
         this.cadence = builder.cadence;
+        this.creditUnit = builder.creditUnit;
         this.metricId = builder.metricId;
         this.pricing = builder.pricing;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -65,8 +76,10 @@ public final class UsagePlanFee {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.cadence = cadence;
+        builder.creditUnit = creditUnit;
         builder.metricId = metricId;
         builder.pricing = pricing;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -78,6 +91,15 @@ public final class UsagePlanFee {
      */
     public BillingPeriodEnum cadence() {
         return Utils.required(cadence, "cadence");
+    }
+
+    /**
+     * The {@code credit_unit} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<PlanFeeCreditUnit> creditUnit() {
+        return creditUnit.asOptional();
     }
 
     /**
@@ -96,6 +118,15 @@ public final class UsagePlanFee {
      */
     public PlanUsagePricingModel pricing() {
         return Utils.required(pricing, "pricing");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -127,14 +158,16 @@ public final class UsagePlanFee {
         }
         UsagePlanFee that = (UsagePlanFee) o;
         return Objects.equals(cadence, that.cadence)
+                && Objects.equals(creditUnit, that.creditUnit)
                 && Objects.equals(metricId, that.metricId)
                 && Objects.equals(pricing, that.pricing)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cadence, metricId, pricing, additionalProperties);
+        return Objects.hash(cadence, creditUnit, metricId, pricing, type, additionalProperties);
     }
 
     @Override
@@ -142,10 +175,14 @@ public final class UsagePlanFee {
         return "UsagePlanFee{"
                 + "cadence="
                 + cadence
+                + ", creditUnit="
+                + creditUnit
                 + ", metricId="
                 + metricId
                 + ", pricing="
                 + pricing
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -154,8 +191,10 @@ public final class UsagePlanFee {
     /** Builds {@link UsagePlanFee}. */
     public static final class Builder {
         private BillingPeriodEnum cadence;
+        private JsonField<PlanFeeCreditUnit> creditUnit = JsonField.missing();
         private String metricId;
         private PlanUsagePricingModel pricing;
+        private String type = "USAGE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -168,6 +207,17 @@ public final class UsagePlanFee {
          */
         public Builder cadence(BillingPeriodEnum cadence) {
             this.cadence = cadence;
+            return this;
+        }
+
+        /**
+         * The {@code credit_unit} property.
+         *
+         * @param creditUnit the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditUnit(PlanFeeCreditUnit creditUnit) {
+            this.creditUnit = JsonField.ofNullable(creditUnit);
             return this;
         }
 
@@ -190,6 +240,17 @@ public final class UsagePlanFee {
          */
         public Builder pricing(PlanUsagePricingModel pricing) {
             this.pricing = pricing;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -237,6 +298,7 @@ public final class UsagePlanFee {
             Utils.checkRequired(cadence, "cadence");
             Utils.checkRequired(metricId, "metric_id");
             Utils.checkRequired(pricing, "pricing");
+            Utils.checkRequired(type, "type");
             return new UsagePlanFee(this);
         }
     }

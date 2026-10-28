@@ -39,6 +39,10 @@ public final class Plan {
     @JsonProperty("created_at")
     private OffsetDateTime createdAt;
 
+    @JsonProperty("credit_exhausted_rule")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<CreditExhaustedRule> creditExhaustedRule = JsonField.missing();
+
     @JsonProperty("currency")
     private Currency currency;
 
@@ -103,6 +107,7 @@ public final class Plan {
         this.availableParameters = builder.availableParameters;
         this.billingCycles = builder.billingCycles;
         this.createdAt = builder.createdAt;
+        this.creditExhaustedRule = builder.creditExhaustedRule;
         this.currency = builder.currency;
         this.description = builder.description;
         this.entitlements = Utils.copyList(builder.entitlements);
@@ -142,6 +147,7 @@ public final class Plan {
         builder.availableParameters = availableParameters;
         builder.billingCycles = billingCycles;
         builder.createdAt = createdAt;
+        builder.creditExhaustedRule = creditExhaustedRule;
         builder.currency = currency;
         builder.description = description;
         builder.entitlements = Utils.mutableList(entitlements);
@@ -188,6 +194,15 @@ public final class Plan {
      */
     public OffsetDateTime createdAt() {
         return Utils.required(createdAt, "created_at");
+    }
+
+    /**
+     * The {@code credit_exhausted_rule} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<CreditExhaustedRule> creditExhaustedRule() {
+        return creditExhaustedRule.asOptional();
     }
 
     /**
@@ -377,6 +392,7 @@ public final class Plan {
         return Objects.equals(availableParameters, that.availableParameters)
                 && Objects.equals(billingCycles, that.billingCycles)
                 && Objects.equals(createdAt, that.createdAt)
+                && Objects.equals(creditExhaustedRule, that.creditExhaustedRule)
                 && Objects.equals(currency, that.currency)
                 && Objects.equals(description, that.description)
                 && Objects.equals(entitlements, that.entitlements)
@@ -403,6 +419,7 @@ public final class Plan {
                 availableParameters,
                 billingCycles,
                 createdAt,
+                creditExhaustedRule,
                 currency,
                 description,
                 entitlements,
@@ -432,6 +449,8 @@ public final class Plan {
                 + billingCycles
                 + ", createdAt="
                 + createdAt
+                + ", creditExhaustedRule="
+                + creditExhaustedRule
                 + ", currency="
                 + currency
                 + ", description="
@@ -476,6 +495,7 @@ public final class Plan {
         private AvailableParameters availableParameters;
         private JsonField<Integer> billingCycles = JsonField.missing();
         private OffsetDateTime createdAt;
+        private JsonField<CreditExhaustedRule> creditExhaustedRule = JsonField.missing();
         private Currency currency;
         private JsonField<String> description = JsonField.missing();
         private List<Entitlement> entitlements;
@@ -527,6 +547,17 @@ public final class Plan {
          */
         public Builder createdAt(OffsetDateTime createdAt) {
             this.createdAt = createdAt;
+            return this;
+        }
+
+        /**
+         * The {@code credit_exhausted_rule} property.
+         *
+         * @param creditExhaustedRule the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditExhaustedRule(CreditExhaustedRule creditExhaustedRule) {
+            this.creditExhaustedRule = JsonField.ofNullable(creditExhaustedRule);
             return this;
         }
 

@@ -16,6 +16,8 @@ public final class UsageAsync {
     private final Usage sync;
     private final WithRawResponse withRawResponse;
 
+    private final UsageCustomerAsync customer;
+
     /**
      * The operations, sending through {@code sync}.
      *
@@ -24,6 +26,8 @@ public final class UsageAsync {
     public UsageAsync(Usage sync) {
         this.sync = sync;
         this.withRawResponse = new WithRawResponse();
+
+        this.customer = new UsageCustomerAsync(sync.customer());
     }
 
     /**
@@ -36,96 +40,23 @@ public final class UsageAsync {
     }
 
     /**
-     * Get customer usage
+     * The {@code customer} operations.
      *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @return the response body, once received
+     * @return the operations
      */
-    public CompletableFuture<UsageResponse> retrieveCustomer(
-            final String customerId, final LocalDate startDate, final LocalDate endDate) {
-        return retrieveCustomer(
-                customerId,
-                startDate,
-                endDate,
-                UsageRetrieveCustomerOptions.none(),
-                RequestOptions.none());
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param options the optional parameters
-     * @return the response body, once received
-     */
-    public CompletableFuture<UsageResponse> retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final UsageRetrieveCustomerOptions options) {
-        return retrieveCustomer(customerId, startDate, endDate, options, RequestOptions.none());
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<UsageResponse> retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final RequestOptions requestOptions) {
-        return retrieveCustomer(
-                customerId,
-                startDate,
-                endDate,
-                UsageRetrieveCustomerOptions.none(),
-                requestOptions);
-    }
-
-    /**
-     * Get customer usage
-     *
-     * <p>Retrieve aggregated usage data for a customer over a specified period.
-     *
-     * @param customerId the {@code customer_id} path parameter
-     * @param startDate the {@code start_date} required parameter
-     * @param endDate the {@code end_date} required parameter
-     * @param options the optional parameters
-     * @param requestOptions headers, timeout and retries of this call
-     * @return the response body, once received
-     */
-    public CompletableFuture<UsageResponse> retrieveCustomer(
-            final String customerId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final UsageRetrieveCustomerOptions options,
-            final RequestOptions requestOptions) {
-        return sync.exchangeRetrieveCustomer(
-                        customerId, startDate, endDate, options, requestOptions)
-                .sendAsync();
+    public UsageCustomerAsync customer() {
+        return customer;
     }
 
     /**
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @return the response body, once received
@@ -139,7 +70,11 @@ public final class UsageAsync {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param options the optional parameters
@@ -154,7 +89,11 @@ public final class UsageAsync {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -170,7 +109,11 @@ public final class UsageAsync {
      * Get subscription usage
      *
      * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-     * start_date/end_date are omitted, defaults to the current billing period.
+     * start_date/end_date are omitted, defaults to the current billing period, and the response
+     * then carries the running total (beta): what each metric's usage adds so far to the next
+     * invoice, and what they add up to, before discounts and credits. That reading is shared for up
+     * to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads' rate
+     * limit.
      *
      * @param subscriptionId the {@code subscription_id} path parameter
      * @param options the optional parameters
@@ -260,96 +203,23 @@ public final class UsageAsync {
         private WithRawResponse() {}
 
         /**
-         * Get customer usage
+         * The {@code customer} operations.
          *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @return the status, headers and body, once received
+         * @return the operations
          */
-        public CompletableFuture<ApiResponse<UsageResponse>> retrieveCustomer(
-                final String customerId, final LocalDate startDate, final LocalDate endDate) {
-            return retrieveCustomer(
-                    customerId,
-                    startDate,
-                    endDate,
-                    UsageRetrieveCustomerOptions.none(),
-                    RequestOptions.none());
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param options the optional parameters
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<UsageResponse>> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final UsageRetrieveCustomerOptions options) {
-            return retrieveCustomer(customerId, startDate, endDate, options, RequestOptions.none());
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<UsageResponse>> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final RequestOptions requestOptions) {
-            return retrieveCustomer(
-                    customerId,
-                    startDate,
-                    endDate,
-                    UsageRetrieveCustomerOptions.none(),
-                    requestOptions);
-        }
-
-        /**
-         * Get customer usage
-         *
-         * <p>Retrieve aggregated usage data for a customer over a specified period.
-         *
-         * @param customerId the {@code customer_id} path parameter
-         * @param startDate the {@code start_date} required parameter
-         * @param endDate the {@code end_date} required parameter
-         * @param options the optional parameters
-         * @param requestOptions headers, timeout and retries of this call
-         * @return the status, headers and body, once received
-         */
-        public CompletableFuture<ApiResponse<UsageResponse>> retrieveCustomer(
-                final String customerId,
-                final LocalDate startDate,
-                final LocalDate endDate,
-                final UsageRetrieveCustomerOptions options,
-                final RequestOptions requestOptions) {
-            return sync.exchangeRetrieveCustomer(
-                            customerId, startDate, endDate, options, requestOptions)
-                    .sendRawAsync();
+        public UsageCustomerAsync.WithRawResponse customer() {
+            return UsageAsync.this.customer.withRawResponse();
         }
 
         /**
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @return the status, headers and body, once received
@@ -364,7 +234,11 @@ public final class UsageAsync {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param options the optional parameters
@@ -379,7 +253,11 @@ public final class UsageAsync {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
@@ -395,7 +273,11 @@ public final class UsageAsync {
          * Get subscription usage
          *
          * <p>Retrieve aggregated usage data for a subscription's usage-based components. If
-         * start_date/end_date are omitted, defaults to the current billing period.
+         * start_date/end_date are omitted, defaults to the current billing period, and the response
+         * then carries the running total (beta): what each metric's usage adds so far to the next
+         * invoice, and what they add up to, before discounts and credits. That reading is shared
+         * for up to 30 seconds (see <code>computed_at</code>). Counts towards the usage cost reads'
+         * rate limit.
          *
          * @param subscriptionId the {@code subscription_id} path parameter
          * @param options the optional parameters

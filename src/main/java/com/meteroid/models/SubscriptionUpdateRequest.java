@@ -53,6 +53,10 @@ public final class SubscriptionUpdateRequest {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> purchaseOrder = JsonField.missing();
 
+    @JsonProperty("usage_filter")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<UsageFilter> usageFilter = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private SubscriptionUpdateRequest() {}
@@ -65,6 +69,7 @@ public final class SubscriptionUpdateRequest {
         this.netTerms = builder.netTerms;
         this.paymentMethodsConfig = builder.paymentMethodsConfig;
         this.purchaseOrder = builder.purchaseOrder;
+        this.usageFilter = builder.usageFilter;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -91,6 +96,7 @@ public final class SubscriptionUpdateRequest {
         builder.netTerms = netTerms;
         builder.paymentMethodsConfig = paymentMethodsConfig;
         builder.purchaseOrder = purchaseOrder;
+        builder.usageFilter = usageFilter;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -161,6 +167,15 @@ public final class SubscriptionUpdateRequest {
     }
 
     /**
+     * The {@code usage_filter} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<UsageFilter> usageFilter() {
+        return usageFilter.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -195,6 +210,7 @@ public final class SubscriptionUpdateRequest {
                 && Objects.equals(netTerms, that.netTerms)
                 && Objects.equals(paymentMethodsConfig, that.paymentMethodsConfig)
                 && Objects.equals(purchaseOrder, that.purchaseOrder)
+                && Objects.equals(usageFilter, that.usageFilter)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -208,6 +224,7 @@ public final class SubscriptionUpdateRequest {
                 netTerms,
                 paymentMethodsConfig,
                 purchaseOrder,
+                usageFilter,
                 additionalProperties);
     }
 
@@ -228,6 +245,8 @@ public final class SubscriptionUpdateRequest {
                 + paymentMethodsConfig
                 + ", purchaseOrder="
                 + purchaseOrder
+                + ", usageFilter="
+                + usageFilter
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -242,6 +261,7 @@ public final class SubscriptionUpdateRequest {
         private JsonField<Integer> netTerms = JsonField.missing();
         private JsonField<PaymentMethodsConfig> paymentMethodsConfig = JsonField.missing();
         private JsonField<String> purchaseOrder = JsonField.missing();
+        private JsonField<UsageFilter> usageFilter = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -322,6 +342,17 @@ public final class SubscriptionUpdateRequest {
          */
         public Builder purchaseOrder(String purchaseOrder) {
             this.purchaseOrder = JsonField.ofNullable(purchaseOrder);
+            return this;
+        }
+
+        /**
+         * The {@code usage_filter} property.
+         *
+         * @param usageFilter the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageFilter(UsageFilter usageFilter) {
+            this.usageFilter = JsonField.ofNullable(usageFilter);
             return this;
         }
 

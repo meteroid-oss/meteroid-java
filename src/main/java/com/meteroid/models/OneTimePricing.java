@@ -28,6 +28,9 @@ public final class OneTimePricing {
     @JsonProperty("quantity")
     private Integer quantity;
 
+    @JsonProperty("type")
+    private String type = "ONE_TIME";
+
     @JsonProperty("unit_price")
     private BigDecimal unitPrice;
 
@@ -37,6 +40,7 @@ public final class OneTimePricing {
 
     private OneTimePricing(Builder builder) {
         this.quantity = builder.quantity;
+        this.type = builder.type;
         this.unitPrice = builder.unitPrice;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -58,6 +62,7 @@ public final class OneTimePricing {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.quantity = quantity;
+        builder.type = type;
         builder.unitPrice = unitPrice;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -70,6 +75,15 @@ public final class OneTimePricing {
      */
     public Integer quantity() {
         return Utils.required(quantity, "quantity");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -110,13 +124,14 @@ public final class OneTimePricing {
         }
         OneTimePricing that = (OneTimePricing) o;
         return Objects.equals(quantity, that.quantity)
+                && Objects.equals(type, that.type)
                 && Objects.equals(unitPrice, that.unitPrice)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quantity, unitPrice, additionalProperties);
+        return Objects.hash(quantity, type, unitPrice, additionalProperties);
     }
 
     @Override
@@ -124,6 +139,8 @@ public final class OneTimePricing {
         return "OneTimePricing{"
                 + "quantity="
                 + quantity
+                + ", type="
+                + type
                 + ", unitPrice="
                 + unitPrice
                 + ", additionalProperties="
@@ -134,6 +151,7 @@ public final class OneTimePricing {
     /** Builds {@link OneTimePricing}. */
     public static final class Builder {
         private Integer quantity;
+        private String type = "ONE_TIME";
         private BigDecimal unitPrice;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -147,6 +165,17 @@ public final class OneTimePricing {
          */
         public Builder quantity(Integer quantity) {
             this.quantity = quantity;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -203,6 +232,7 @@ public final class OneTimePricing {
          */
         public OneTimePricing build() {
             Utils.checkRequired(quantity, "quantity");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(unitPrice, "unit_price");
             return new OneTimePricing(this);
         }

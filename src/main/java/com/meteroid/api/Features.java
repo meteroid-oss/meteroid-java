@@ -267,7 +267,8 @@ public final class Features {
     /**
      * Archive a feature
      *
-     * <p>Keeps the feature and its entitlements but hides them from resolution.
+     * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and frees
+     * its code for a new feature.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      */
@@ -278,7 +279,8 @@ public final class Features {
     /**
      * Archive a feature
      *
-     * <p>Keeps the feature and its entitlements but hides them from resolution.
+     * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and frees
+     * its code for a new feature.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -305,6 +307,9 @@ public final class Features {
     /**
      * Unarchive a feature
      *
+     * <p>Makes the feature active again with all its entitlements. Fails while another feature uses
+     * its code.
+     *
      * @param idOrCode the {@code id_or_code} path parameter
      */
     public void unarchive(final String idOrCode) {
@@ -313,6 +318,9 @@ public final class Features {
 
     /**
      * Unarchive a feature
+     *
+     * <p>Makes the feature active again with all its entitlements. Fails while another feature uses
+     * its code.
      *
      * @param idOrCode the {@code id_or_code} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -331,7 +339,7 @@ public final class Features {
                         .addPathSegments("unarchive")
                         .build();
         return client.call("POST", url)
-                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "429")
+                .errors(com.meteroid.models.RestErrorResponse.class, "401", "404", "409", "429")
                 .options(requestOptions)
                 .returningNothing();
     }
@@ -467,7 +475,8 @@ public final class Features {
         /**
          * Archive a feature
          *
-         * <p>Keeps the feature and its entitlements but hides them from resolution.
+         * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and
+         * frees its code for a new feature.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @return the status, headers and body
@@ -479,7 +488,8 @@ public final class Features {
         /**
          * Archive a feature
          *
-         * <p>Keeps the feature and its entitlements but hides them from resolution.
+         * <p>Turns the feature off and hides it and its entitlements until it is unarchived, and
+         * frees its code for a new feature.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @param requestOptions headers, timeout and retries of this call
@@ -493,6 +503,9 @@ public final class Features {
         /**
          * Unarchive a feature
          *
+         * <p>Makes the feature active again with all its entitlements. Fails while another feature
+         * uses its code.
+         *
          * @param idOrCode the {@code id_or_code} path parameter
          * @return the status, headers and body
          */
@@ -502,6 +515,9 @@ public final class Features {
 
         /**
          * Unarchive a feature
+         *
+         * <p>Makes the feature active again with all its entitlements. Fails while another feature
+         * uses its code.
          *
          * @param idOrCode the {@code id_or_code} path parameter
          * @param requestOptions headers, timeout and retries of this call

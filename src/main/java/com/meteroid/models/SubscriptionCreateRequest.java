@@ -88,6 +88,9 @@ public final class SubscriptionCreateRequest {
     @JsonProperty("trial_days")
     private Integer trialDays;
 
+    @JsonProperty("usage_filter")
+    private UsageFilter usageFilter;
+
     @JsonProperty("version")
     private Integer version;
 
@@ -115,6 +118,7 @@ public final class SubscriptionCreateRequest {
         this.skipPastInvoices = builder.skipPastInvoices;
         this.startDate = builder.startDate;
         this.trialDays = builder.trialDays;
+        this.usageFilter = builder.usageFilter;
         this.version = builder.version;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -154,6 +158,7 @@ public final class SubscriptionCreateRequest {
         builder.skipPastInvoices = skipPastInvoices;
         builder.startDate = startDate;
         builder.trialDays = trialDays;
+        builder.usageFilter = usageFilter;
         builder.version = version;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -215,7 +220,10 @@ public final class SubscriptionCreateRequest {
     }
 
     /**
-     * The {@code coupon_codes} property.
+     * Codes of the coupons to apply. A code matches whatever the case of its ASCII letters; when
+     * several coupons differ from it only in that case, the one with exactly that code applies. A
+     * code that names no live coupon, or several differing only in case, refuses the request with
+     * 400 listing the codes (unknown codes used to be ignored silently).
      *
      * @return the value, empty when unset
      */
@@ -334,6 +342,16 @@ public final class SubscriptionCreateRequest {
     }
 
     /**
+     * Bill only the customer's events whose property has this value. Omit to bill the events no
+     * usage filter of the customer's other subscriptions matches.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<UsageFilter> usageFilter() {
+        return Optional.ofNullable(usageFilter);
+    }
+
+    /**
      * The {@code version} property.
      *
      * @return the value, empty when unset
@@ -389,6 +407,7 @@ public final class SubscriptionCreateRequest {
                 && Objects.equals(skipPastInvoices, that.skipPastInvoices)
                 && Objects.equals(startDate, that.startDate)
                 && Objects.equals(trialDays, that.trialDays)
+                && Objects.equals(usageFilter, that.usageFilter)
                 && Objects.equals(version, that.version)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
@@ -415,6 +434,7 @@ public final class SubscriptionCreateRequest {
                 skipPastInvoices,
                 startDate,
                 trialDays,
+                usageFilter,
                 version,
                 additionalProperties);
     }
@@ -460,6 +480,8 @@ public final class SubscriptionCreateRequest {
                 + startDate
                 + ", trialDays="
                 + trialDays
+                + ", usageFilter="
+                + usageFilter
                 + ", version="
                 + version
                 + ", additionalProperties="
@@ -488,6 +510,7 @@ public final class SubscriptionCreateRequest {
         private Boolean skipPastInvoices;
         private LocalDate startDate;
         private Integer trialDays;
+        private UsageFilter usageFilter;
         private Integer version;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -576,7 +599,10 @@ public final class SubscriptionCreateRequest {
         }
 
         /**
-         * The {@code coupon_codes} property.
+         * Codes of the coupons to apply. A code matches whatever the case of its ASCII letters;
+         * when several coupons differ from it only in that case, the one with exactly that code
+         * applies. A code that names no live coupon, or several differing only in case, refuses the
+         * request with 400 listing the codes (unknown codes used to be ignored silently).
          *
          * @param couponCodes the value
          * @return this builder
@@ -731,6 +757,18 @@ public final class SubscriptionCreateRequest {
          */
         public Builder trialDays(Integer trialDays) {
             this.trialDays = trialDays;
+            return this;
+        }
+
+        /**
+         * Bill only the customer's events whose property has this value. Omit to bill the events no
+         * usage filter of the customer's other subscriptions matches.
+         *
+         * @param usageFilter the value
+         * @return this builder
+         */
+        public Builder usageFilter(UsageFilter usageFilter) {
+            this.usageFilter = usageFilter;
             return this;
         }
 

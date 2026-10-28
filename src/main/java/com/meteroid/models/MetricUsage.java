@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,6 +29,10 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class MetricUsage {
+    @JsonProperty("costs")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<List<UsageCost>> costs = JsonField.missing();
+
     @JsonProperty("grouped_usage")
     private List<GroupedUsage> groupedUsage;
 
@@ -47,6 +53,7 @@ public final class MetricUsage {
     private MetricUsage() {}
 
     private MetricUsage(Builder builder) {
+        this.costs = builder.costs.map(Utils::copyList);
         this.groupedUsage = Utils.copyList(builder.groupedUsage);
         this.metricCode = builder.metricCode;
         this.metricId = builder.metricId;
@@ -71,6 +78,7 @@ public final class MetricUsage {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.costs = costs.map(Utils::mutableList);
         builder.groupedUsage = Utils.mutableList(groupedUsage);
         builder.metricCode = metricCode;
         builder.metricId = metricId;
@@ -78,6 +86,16 @@ public final class MetricUsage {
         builder.totalValue = totalValue;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * Beta: what the metric's usage adds so far to the subscription's next invoice, per currency or
+     * credit unit; empty while it bills nothing, as during a free trial or once cancelled.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<List<UsageCost>> costs() {
+        return costs.asOptional();
     }
 
     /**
@@ -153,7 +171,8 @@ public final class MetricUsage {
             return false;
         }
         MetricUsage that = (MetricUsage) o;
-        return Objects.equals(groupedUsage, that.groupedUsage)
+        return Objects.equals(costs, that.costs)
+                && Objects.equals(groupedUsage, that.groupedUsage)
                 && Objects.equals(metricCode, that.metricCode)
                 && Objects.equals(metricId, that.metricId)
                 && Objects.equals(metricName, that.metricName)
@@ -164,13 +183,21 @@ public final class MetricUsage {
     @Override
     public int hashCode() {
         return Objects.hash(
-                groupedUsage, metricCode, metricId, metricName, totalValue, additionalProperties);
+                costs,
+                groupedUsage,
+                metricCode,
+                metricId,
+                metricName,
+                totalValue,
+                additionalProperties);
     }
 
     @Override
     public String toString() {
         return "MetricUsage{"
-                + "groupedUsage="
+                + "costs="
+                + costs
+                + ", groupedUsage="
                 + groupedUsage
                 + ", metricCode="
                 + metricCode
@@ -187,6 +214,7 @@ public final class MetricUsage {
 
     /** Builds {@link MetricUsage}. */
     public static final class Builder {
+        private JsonField<List<UsageCost>> costs = JsonField.missing();
         private List<GroupedUsage> groupedUsage;
         private String metricCode;
         private String metricId;
@@ -195,6 +223,35 @@ public final class MetricUsage {
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * Beta: what the metric's usage adds so far to the subscription's next invoice, per
+         * currency or credit unit; empty while it bills nothing, as during a free trial or once
+         * cancelled.
+         *
+         * @param costs the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder costs(List<UsageCost> costs) {
+            this.costs = JsonField.ofNullable(Utils.mutableList(costs));
+            return this;
+        }
+
+        /**
+         * Adds an item to {@code costs}.
+         *
+         * @param item the item
+         * @return this builder
+         */
+        public Builder addCostsItem(UsageCost item) {
+            List<UsageCost> items = this.costs.orNull();
+            if (items == null) {
+                items = new ArrayList<>();
+                this.costs = JsonField.ofNullable(items);
+            }
+            items.add(item);
+            return this;
+        }
 
         /**
          * The {@code grouped_usage} property.

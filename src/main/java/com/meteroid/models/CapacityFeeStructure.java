@@ -27,12 +27,16 @@ public final class CapacityFeeStructure {
     @JsonProperty("metric_id")
     private String metricId;
 
+    @JsonProperty("type")
+    private String type = "CAPACITY";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private CapacityFeeStructure() {}
 
     private CapacityFeeStructure(Builder builder) {
         this.metricId = builder.metricId;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class CapacityFeeStructure {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.metricId = metricId;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class CapacityFeeStructure {
      */
     public String metricId() {
         return Utils.required(metricId, "metric_id");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class CapacityFeeStructure {
         }
         CapacityFeeStructure that = (CapacityFeeStructure) o;
         return Objects.equals(metricId, that.metricId)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metricId, additionalProperties);
+        return Objects.hash(metricId, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class CapacityFeeStructure {
         return "CapacityFeeStructure{"
                 + "metricId="
                 + metricId
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class CapacityFeeStructure {
     /** Builds {@link CapacityFeeStructure}. */
     public static final class Builder {
         private String metricId;
+        private String type = "CAPACITY";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class CapacityFeeStructure {
          */
         public Builder metricId(String metricId) {
             this.metricId = metricId;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class CapacityFeeStructure {
          */
         public CapacityFeeStructure build() {
             Utils.checkRequired(metricId, "metric_id");
+            Utils.checkRequired(type, "type");
             return new CapacityFeeStructure(this);
         }
     }

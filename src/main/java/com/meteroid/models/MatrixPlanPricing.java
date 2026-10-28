@@ -29,12 +29,16 @@ public final class MatrixPlanPricing {
     @JsonProperty("rates")
     private List<MatrixRow> rates;
 
+    @JsonProperty("type")
+    private String type = "MATRIX";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private MatrixPlanPricing() {}
 
     private MatrixPlanPricing(Builder builder) {
         this.rates = Utils.copyList(builder.rates);
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -55,6 +59,7 @@ public final class MatrixPlanPricing {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.rates = Utils.mutableList(rates);
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -66,6 +71,15 @@ public final class MatrixPlanPricing {
      */
     public List<MatrixRow> rates() {
         return Utils.required(rates, "rates");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -97,12 +111,13 @@ public final class MatrixPlanPricing {
         }
         MatrixPlanPricing that = (MatrixPlanPricing) o;
         return Objects.equals(rates, that.rates)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rates, additionalProperties);
+        return Objects.hash(rates, type, additionalProperties);
     }
 
     @Override
@@ -110,6 +125,8 @@ public final class MatrixPlanPricing {
         return "MatrixPlanPricing{"
                 + "rates="
                 + rates
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -118,6 +135,7 @@ public final class MatrixPlanPricing {
     /** Builds {@link MatrixPlanPricing}. */
     public static final class Builder {
         private List<MatrixRow> rates;
+        private String type = "MATRIX";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -144,6 +162,17 @@ public final class MatrixPlanPricing {
                 this.rates = new ArrayList<>();
             }
             this.rates.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -189,6 +218,7 @@ public final class MatrixPlanPricing {
          */
         public MatrixPlanPricing build() {
             Utils.checkRequired(rates, "rates");
+            Utils.checkRequired(type, "type");
             return new MatrixPlanPricing(this);
         }
     }

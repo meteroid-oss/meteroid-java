@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,29 +26,38 @@ import java.util.UUID;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class CreateConnectedAccountRequest {
-    @JsonProperty("connected_organization_id")
-    private UUID connectedOrganizationId;
-
-    @JsonProperty("connection_type")
+    @JsonProperty("country")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private JsonField<ConnectionType> connectionType = JsonField.missing();
+    private JsonField<String> country = JsonField.missing();
+
+    @JsonProperty("email")
+    private String email;
 
     @JsonProperty("metadata")
     private Object metadata;
 
-    @JsonProperty("platform_customer_id")
+    @JsonProperty("mode")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private JsonField<String> platformCustomerId = JsonField.missing();
+    private JsonField<OnboardingMode> mode = JsonField.missing();
+
+    @JsonProperty("organization_name")
+    private String organizationName;
+
+    @JsonProperty("redirect_url")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> redirectUrl = JsonField.missing();
 
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private CreateConnectedAccountRequest() {}
 
     private CreateConnectedAccountRequest(Builder builder) {
-        this.connectedOrganizationId = builder.connectedOrganizationId;
-        this.connectionType = builder.connectionType;
+        this.country = builder.country;
+        this.email = builder.email;
         this.metadata = builder.metadata;
-        this.platformCustomerId = builder.platformCustomerId;
+        this.mode = builder.mode;
+        this.organizationName = builder.organizationName;
+        this.redirectUrl = builder.redirectUrl;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -69,30 +77,32 @@ public final class CreateConnectedAccountRequest {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
-        builder.connectedOrganizationId = connectedOrganizationId;
-        builder.connectionType = connectionType;
+        builder.country = country;
+        builder.email = email;
         builder.metadata = metadata;
-        builder.platformCustomerId = platformCustomerId;
+        builder.mode = mode;
+        builder.organizationName = organizationName;
+        builder.redirectUrl = redirectUrl;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
 
     /**
-     * The {@code connected_organization_id} property.
-     *
-     * @return the value, never null
-     */
-    public UUID connectedOrganizationId() {
-        return Utils.required(connectedOrganizationId, "connected_organization_id");
-    }
-
-    /**
-     * The {@code connection_type} property.
+     * The {@code country} property.
      *
      * @return the value, empty when unset or null
      */
-    public Optional<ConnectionType> connectionType() {
-        return connectionType.asOptional();
+    public Optional<String> country() {
+        return country.asOptional();
+    }
+
+    /**
+     * The {@code email} property.
+     *
+     * @return the value, never null
+     */
+    public String email() {
+        return Utils.required(email, "email");
     }
 
     /**
@@ -105,12 +115,30 @@ public final class CreateConnectedAccountRequest {
     }
 
     /**
-     * The {@code platform_customer_id} property.
+     * The {@code mode} property.
      *
      * @return the value, empty when unset or null
      */
-    public Optional<String> platformCustomerId() {
-        return platformCustomerId.asOptional();
+    public Optional<OnboardingMode> mode() {
+        return mode.asOptional();
+    }
+
+    /**
+     * The {@code organization_name} property.
+     *
+     * @return the value, never null
+     */
+    public String organizationName() {
+        return Utils.required(organizationName, "organization_name");
+    }
+
+    /**
+     * The {@code redirect_url} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> redirectUrl() {
+        return redirectUrl.asOptional();
     }
 
     /**
@@ -141,34 +169,42 @@ public final class CreateConnectedAccountRequest {
             return false;
         }
         CreateConnectedAccountRequest that = (CreateConnectedAccountRequest) o;
-        return Objects.equals(connectedOrganizationId, that.connectedOrganizationId)
-                && Objects.equals(connectionType, that.connectionType)
+        return Objects.equals(country, that.country)
+                && Objects.equals(email, that.email)
                 && Objects.equals(metadata, that.metadata)
-                && Objects.equals(platformCustomerId, that.platformCustomerId)
+                && Objects.equals(mode, that.mode)
+                && Objects.equals(organizationName, that.organizationName)
+                && Objects.equals(redirectUrl, that.redirectUrl)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                connectedOrganizationId,
-                connectionType,
+                country,
+                email,
                 metadata,
-                platformCustomerId,
+                mode,
+                organizationName,
+                redirectUrl,
                 additionalProperties);
     }
 
     @Override
     public String toString() {
         return "CreateConnectedAccountRequest{"
-                + "connectedOrganizationId="
-                + connectedOrganizationId
-                + ", connectionType="
-                + connectionType
+                + "country="
+                + country
+                + ", email="
+                + email
                 + ", metadata="
                 + metadata
-                + ", platformCustomerId="
-                + platformCustomerId
+                + ", mode="
+                + mode
+                + ", organizationName="
+                + organizationName
+                + ", redirectUrl="
+                + redirectUrl
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -176,33 +212,35 @@ public final class CreateConnectedAccountRequest {
 
     /** Builds {@link CreateConnectedAccountRequest}. */
     public static final class Builder {
-        private UUID connectedOrganizationId;
-        private JsonField<ConnectionType> connectionType = JsonField.missing();
+        private JsonField<String> country = JsonField.missing();
+        private String email;
         private Object metadata;
-        private JsonField<String> platformCustomerId = JsonField.missing();
+        private JsonField<OnboardingMode> mode = JsonField.missing();
+        private String organizationName;
+        private JsonField<String> redirectUrl = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
 
         /**
-         * The {@code connected_organization_id} property.
+         * The {@code country} property.
          *
-         * @param connectedOrganizationId the value
+         * @param country the value, null to send an explicit {@code null}
          * @return this builder
          */
-        public Builder connectedOrganizationId(UUID connectedOrganizationId) {
-            this.connectedOrganizationId = connectedOrganizationId;
+        public Builder country(String country) {
+            this.country = JsonField.ofNullable(country);
             return this;
         }
 
         /**
-         * The {@code connection_type} property.
+         * The {@code email} property.
          *
-         * @param connectionType the value, null to send an explicit {@code null}
+         * @param email the value
          * @return this builder
          */
-        public Builder connectionType(ConnectionType connectionType) {
-            this.connectionType = JsonField.ofNullable(connectionType);
+        public Builder email(String email) {
+            this.email = email;
             return this;
         }
 
@@ -218,13 +256,35 @@ public final class CreateConnectedAccountRequest {
         }
 
         /**
-         * The {@code platform_customer_id} property.
+         * The {@code mode} property.
          *
-         * @param platformCustomerId the value, null to send an explicit {@code null}
+         * @param mode the value, null to send an explicit {@code null}
          * @return this builder
          */
-        public Builder platformCustomerId(String platformCustomerId) {
-            this.platformCustomerId = JsonField.ofNullable(platformCustomerId);
+        public Builder mode(OnboardingMode mode) {
+            this.mode = JsonField.ofNullable(mode);
+            return this;
+        }
+
+        /**
+         * The {@code organization_name} property.
+         *
+         * @param organizationName the value
+         * @return this builder
+         */
+        public Builder organizationName(String organizationName) {
+            this.organizationName = organizationName;
+            return this;
+        }
+
+        /**
+         * The {@code redirect_url} property.
+         *
+         * @param redirectUrl the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder redirectUrl(String redirectUrl) {
+            this.redirectUrl = JsonField.ofNullable(redirectUrl);
             return this;
         }
 
@@ -269,7 +329,8 @@ public final class CreateConnectedAccountRequest {
          * @throws IllegalStateException when a required property is not set
          */
         public CreateConnectedAccountRequest build() {
-            Utils.checkRequired(connectedOrganizationId, "connected_organization_id");
+            Utils.checkRequired(email, "email");
+            Utils.checkRequired(organizationName, "organization_name");
             return new CreateConnectedAccountRequest(this);
         }
     }

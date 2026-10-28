@@ -32,6 +32,10 @@ public final class MeteredEntitlementUsage {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<BigDecimal> consumed = JsonField.missing();
 
+    @JsonProperty("limit_reached")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<Boolean> limitReached = JsonField.missing();
+
     @JsonProperty("remaining")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<BigDecimal> remaining = JsonField.missing();
@@ -46,6 +50,7 @@ public final class MeteredEntitlementUsage {
 
     private MeteredEntitlementUsage(Builder builder) {
         this.consumed = builder.consumed;
+        this.limitReached = builder.limitReached;
         this.remaining = builder.remaining;
         this.resetAt = builder.resetAt;
         this.additionalProperties.putAll(builder.additionalProperties);
@@ -68,6 +73,7 @@ public final class MeteredEntitlementUsage {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.consumed = consumed;
+        builder.limitReached = limitReached;
         builder.remaining = remaining;
         builder.resetAt = resetAt;
         builder.additionalProperties.putAll(additionalProperties);
@@ -81,6 +87,16 @@ public final class MeteredEntitlementUsage {
      */
     public Optional<BigDecimal> consumed() {
         return consumed.asOptional();
+    }
+
+    /**
+     * Switched on, but refused: the <code>BLOCK</code> limit (plus its grace) is reached, so <code>
+     * enabled</code> is false until the window resets. Never set for a limit grouped by a property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<Boolean> limitReached() {
+        return limitReached.asOptional();
     }
 
     /**
@@ -130,6 +146,7 @@ public final class MeteredEntitlementUsage {
         }
         MeteredEntitlementUsage that = (MeteredEntitlementUsage) o;
         return Objects.equals(consumed, that.consumed)
+                && Objects.equals(limitReached, that.limitReached)
                 && Objects.equals(remaining, that.remaining)
                 && Objects.equals(resetAt, that.resetAt)
                 && Objects.equals(additionalProperties, that.additionalProperties);
@@ -137,7 +154,7 @@ public final class MeteredEntitlementUsage {
 
     @Override
     public int hashCode() {
-        return Objects.hash(consumed, remaining, resetAt, additionalProperties);
+        return Objects.hash(consumed, limitReached, remaining, resetAt, additionalProperties);
     }
 
     @Override
@@ -145,6 +162,8 @@ public final class MeteredEntitlementUsage {
         return "MeteredEntitlementUsage{"
                 + "consumed="
                 + consumed
+                + ", limitReached="
+                + limitReached
                 + ", remaining="
                 + remaining
                 + ", resetAt="
@@ -157,6 +176,7 @@ public final class MeteredEntitlementUsage {
     /** Builds {@link MeteredEntitlementUsage}. */
     public static final class Builder {
         private JsonField<BigDecimal> consumed = JsonField.missing();
+        private JsonField<Boolean> limitReached = JsonField.missing();
         private JsonField<BigDecimal> remaining = JsonField.missing();
         private JsonField<OffsetDateTime> resetAt = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
@@ -171,6 +191,19 @@ public final class MeteredEntitlementUsage {
          */
         public Builder consumed(BigDecimal consumed) {
             this.consumed = JsonField.ofNullable(consumed);
+            return this;
+        }
+
+        /**
+         * Switched on, but refused: the <code>BLOCK</code> limit (plus its grace) is reached, so
+         * <code>enabled</code> is false until the window resets. Never set for a limit grouped by a
+         * property.
+         *
+         * @param limitReached the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder limitReached(Boolean limitReached) {
+            this.limitReached = JsonField.ofNullable(limitReached);
             return this;
         }
 

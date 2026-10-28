@@ -4,14 +4,12 @@ package com.meteroid.api;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Optional parameters of {@code retrieveCustomer}, immutable: build them with {@link #builder()}.
- */
-public final class UsageRetrieveCustomerOptions {
-    private final String metricId;
+/** Optional parameters of {@code listCosts}, immutable: build them with {@link #builder()}. */
+public final class UsageCostsSubscriptionListCostsOptions {
+    private final String groupBy;
 
-    private UsageRetrieveCustomerOptions(Builder builder) {
-        this.metricId = builder.metricId;
+    private UsageCostsSubscriptionListCostsOptions(Builder builder) {
+        this.groupBy = builder.groupBy;
     }
 
     /**
@@ -28,7 +26,7 @@ public final class UsageRetrieveCustomerOptions {
      *
      * @return empty parameters
      */
-    public static UsageRetrieveCustomerOptions none() {
+    public static UsageCostsSubscriptionListCostsOptions none() {
         return builder().build();
     }
 
@@ -39,17 +37,17 @@ public final class UsageRetrieveCustomerOptions {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
-        builder.metricId = metricId;
+        builder.groupBy = groupBy;
         return builder;
     }
 
     /**
-     * The {@code metric_id} parameter.
+     * Event property to split the usage by.
      *
      * @return the value, empty when unset
      */
-    public Optional<String> metricId() {
-        return Optional.ofNullable(metricId);
+    public Optional<String> groupBy() {
+        return Optional.ofNullable(groupBy);
     }
 
     @Override
@@ -60,34 +58,34 @@ public final class UsageRetrieveCustomerOptions {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        UsageRetrieveCustomerOptions that = (UsageRetrieveCustomerOptions) o;
-        return Objects.equals(metricId, that.metricId);
+        UsageCostsSubscriptionListCostsOptions that = (UsageCostsSubscriptionListCostsOptions) o;
+        return Objects.equals(groupBy, that.groupBy);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metricId);
+        return Objects.hash(groupBy);
     }
 
     @Override
     public String toString() {
-        return "UsageRetrieveCustomerOptions{" + "metricId=" + metricId + "}";
+        return "UsageCostsSubscriptionListCostsOptions{" + "groupBy=" + groupBy + "}";
     }
 
-    /** Builds {@link UsageRetrieveCustomerOptions}. */
+    /** Builds {@link UsageCostsSubscriptionListCostsOptions}. */
     public static final class Builder {
-        private String metricId;
+        private String groupBy;
 
         private Builder() {}
 
         /**
-         * The {@code metric_id} parameter.
+         * Event property to split the usage by.
          *
-         * @param metricId the value, null to leave it out
+         * @param groupBy the value, null to leave it out
          * @return this builder
          */
-        public Builder metricId(String metricId) {
-            this.metricId = metricId;
+        public Builder groupBy(String groupBy) {
+            this.groupBy = groupBy;
             return this;
         }
 
@@ -96,8 +94,8 @@ public final class UsageRetrieveCustomerOptions {
          *
          * @return immutable parameters
          */
-        public UsageRetrieveCustomerOptions build() {
-            return new UsageRetrieveCustomerOptions(this);
+        public UsageCostsSubscriptionListCostsOptions build() {
+            return new UsageCostsSubscriptionListCostsOptions(this);
         }
     }
 }

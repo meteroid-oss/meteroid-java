@@ -14,7 +14,7 @@ item from that page on, and `pages()` every page, fetching the next ones on dema
 the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
 `forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
 
-[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Checkout sessions](#checkout-sessions) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
+[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Budgets](#budgets) · [Checkout sessions](#checkout-sessions) · [Checks](#checks) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Credit units](#credit-units) · [Credit units prices](#credit-units-prices) · [Credits](#credits) · [Credits grants](#credits-grants) · [Credits wallets](#credits-wallets) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Usage customer](#usage-customer) · [Usage costs](#usage-costs) · [Usage costs customer](#usage-costs-customer) · [Usage costs subscription](#usage-costs-subscription) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
 
 ## Add ons
 
@@ -48,6 +48,17 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `BatchJobDetailResponse client.batchJobs().retrieve(String batchJobId)` | `GET /api/v1/batch-jobs/{batch_job_id}` | [`BatchJobDetailResponse`](src/main/java/com/meteroid/models/BatchJobDetailResponse.java) |
 | `BatchJobsListFailuresPage client.batchJobs().listFailures(String batchJobId, [BatchJobsListFailuresOptions options])` | `GET /api/v1/batch-jobs/{batch_job_id}/failures` | [page](src/main/java/com/meteroid/api/BatchJobsListFailuresPage.java) of [`BatchJobItemFailureResponse`](src/main/java/com/meteroid/models/BatchJobItemFailureResponse.java), with the properties of [`BatchJobFailuresResponse`](src/main/java/com/meteroid/models/BatchJobFailuresResponse.java) |
 
+## Budgets
+
+[`client.budgets()`](src/main/java/com/meteroid/api/Budgets.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `BudgetsListPage client.budgets().list(String idOrAlias, [BudgetsListOptions options])` | `GET /api/v1/customers/{id_or_alias}/budgets` | [page](src/main/java/com/meteroid/api/BudgetsListPage.java) of [`Budget`](src/main/java/com/meteroid/models/Budget.java), with the properties of [`BudgetListResponse`](src/main/java/com/meteroid/models/BudgetListResponse.java) |
+| `Budget client.budgets().create(String idOrAlias, String idempotencyKey, CreateBudgetRequest createBudgetRequest)` | `POST /api/v1/customers/{id_or_alias}/budgets` | [`Budget`](src/main/java/com/meteroid/models/Budget.java) |
+| `Budget client.budgets().update(String idOrAlias, String budgetId, String idempotencyKey, PatchBudgetRequest patchBudgetRequest)` | `PATCH /api/v1/customers/{id_or_alias}/budgets/{budget_id}` | [`Budget`](src/main/java/com/meteroid/models/Budget.java) |
+| `Budget client.budgets().archive(String idOrAlias, String budgetId, String idempotencyKey)` | `POST /api/v1/customers/{id_or_alias}/budgets/{budget_id}/archive` | [`Budget`](src/main/java/com/meteroid/models/Budget.java) |
+
 ## Checkout sessions
 
 [`client.checkoutSessions()`](src/main/java/com/meteroid/api/CheckoutSessions.java)
@@ -59,6 +70,14 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `GetCheckoutSessionResponse client.checkoutSessions().retrieve(String id)` | `GET /api/v1/checkout-sessions/{id}` | [`GetCheckoutSessionResponse`](src/main/java/com/meteroid/models/GetCheckoutSessionResponse.java) |
 | `CancelCheckoutSessionResponse client.checkoutSessions().cancel(String id)` | `POST /api/v1/checkout-sessions/{id}/cancel` | [`CancelCheckoutSessionResponse`](src/main/java/com/meteroid/models/CancelCheckoutSessionResponse.java) |
 
+## Checks
+
+[`client.checks()`](src/main/java/com/meteroid/api/Checks.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `EntitlementCheck client.checks().checkEntitlement(String idOrAlias, String featureIdOrCode, [ChecksCheckEntitlementOptions options])` | `GET /api/v1/customers/{id_or_alias}/entitlements/{feature_id_or_code}/check` | [`EntitlementCheck`](src/main/java/com/meteroid/models/EntitlementCheck.java) |
+
 ## Connect
 
 [`client.connect()`](src/main/java/com/meteroid/api/Connect.java)
@@ -66,7 +85,7 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | Method | Request | Returns |
 | --- | --- | --- |
 | `ConnectedAccountsResponse client.connect().listConnectedAccounts()` | `GET /api/v1/connected-accounts` | [`ConnectedAccountsResponse`](src/main/java/com/meteroid/models/ConnectedAccountsResponse.java) |
-| `ConnectedAccount client.connect().createConnectedAccount(CreateConnectedAccountRequest createConnectedAccountRequest)` | `POST /api/v1/connected-accounts` | [`ConnectedAccount`](src/main/java/com/meteroid/models/ConnectedAccount.java) |
+| `CreateConnectedAccountResponse client.connect().createConnectedAccount(CreateConnectedAccountRequest createConnectedAccountRequest)` | `POST /api/v1/connected-accounts` | [`CreateConnectedAccountResponse`](src/main/java/com/meteroid/models/CreateConnectedAccountResponse.java) |
 | `ConnectedAccount client.connect().retrieveConnectedAccount(String id)` | `GET /api/v1/connected-accounts/{id}` | [`ConnectedAccount`](src/main/java/com/meteroid/models/ConnectedAccount.java) |
 | `void client.connect().disconnectAccount(String id)` | `DELETE /api/v1/connected-accounts/{id}` | nothing |
 | `OnboardingLinkResponse client.connect().createOnboardingLink(String id, CreateOnboardingLinkRequest createOnboardingLinkRequest)` | `POST /api/v1/connected-accounts/{id}/onboarding` | [`OnboardingLinkResponse`](src/main/java/com/meteroid/models/OnboardingLinkResponse.java) |
@@ -97,6 +116,55 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `CreditNote client.creditNotes().updateCustomProperties(String creditNoteId, CreditNoteCustomPropertiesRequest creditNoteCustomPropertiesRequest)` | `PATCH /api/v1/credit-notes/{credit_note_id}/custom-properties` | [`CreditNote`](src/main/java/com/meteroid/models/CreditNote.java) |
 | `byte[] client.creditNotes().download(String creditNoteId)` | `GET /api/v1/credit-notes/{credit_note_id}/download` | bytes |
 | `byte[] client.creditNotes().downloadXml(String creditNoteId)` | `GET /api/v1/credit-notes/{credit_note_id}/xml` | bytes |
+
+## Credit units
+
+[`client.creditUnits()`](src/main/java/com/meteroid/api/CreditUnits.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `CreditUnitListResponse client.creditUnits().list([CreditUnitsListOptions options])` | `GET /api/v1/credit-units` | [`CreditUnitListResponse`](src/main/java/com/meteroid/models/CreditUnitListResponse.java) |
+| `CreditUnit client.creditUnits().create(CreditUnitCreateRequest creditUnitCreateRequest)` | `POST /api/v1/credit-units` | [`CreditUnit`](src/main/java/com/meteroid/models/CreditUnit.java) |
+| `CreditUnit client.creditUnits().retrieve(String id)` | `GET /api/v1/credit-units/{id}` | [`CreditUnit`](src/main/java/com/meteroid/models/CreditUnit.java) |
+| `CreditUnit client.creditUnits().update(String id, CreditUnitUpdateRequest creditUnitUpdateRequest)` | `PATCH /api/v1/credit-units/{id}` | [`CreditUnit`](src/main/java/com/meteroid/models/CreditUnit.java) |
+
+### Credit units prices
+
+[`client.creditUnits().prices()`](src/main/java/com/meteroid/api/CreditUnitsPrices.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `CreditUnitPriceListResponse client.creditUnits().prices().list(String id, [CreditUnitsPricesListOptions options])` | `GET /api/v1/credit-units/{id}/prices` | [`CreditUnitPriceListResponse`](src/main/java/com/meteroid/models/CreditUnitPriceListResponse.java) |
+| `CreditUnitPrice client.creditUnits().prices().update(String id, String currency, CreditUnitPriceSetRequest creditUnitPriceSetRequest)` | `PUT /api/v1/credit-units/{id}/prices/{currency}` | [`CreditUnitPrice`](src/main/java/com/meteroid/models/CreditUnitPrice.java) |
+| `CreditUnitPrice client.creditUnits().prices().archive(String id, String currency)` | `DELETE /api/v1/credit-units/{id}/prices/{currency}` | [`CreditUnitPrice`](src/main/java/com/meteroid/models/CreditUnitPrice.java) |
+
+## Credits
+
+[`client.credits()`](src/main/java/com/meteroid/api/Credits.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `CreditsListCustomerCreditLedgerPage client.credits().listCustomerCreditLedger(String idOrAlias, [CreditsListCustomerCreditLedgerOptions options])` | `GET /api/v1/customers/{id_or_alias}/credit-ledger` | [page](src/main/java/com/meteroid/api/CreditsListCustomerCreditLedgerPage.java) of [`LedgerEntry`](src/main/java/com/meteroid/models/LedgerEntry.java), with the properties of [`LedgerListResponse`](src/main/java/com/meteroid/models/LedgerListResponse.java) |
+| `TopUpResponse client.credits().createCustomerTopUp(String idOrAlias, String idempotencyKey, CreateTopUpRequest createTopUpRequest)` | `POST /api/v1/customers/{id_or_alias}/top-ups` | [`TopUpResponse`](src/main/java/com/meteroid/models/TopUpResponse.java) |
+
+### Credits grants
+
+[`client.credits().grants()`](src/main/java/com/meteroid/api/CreditsGrants.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `CreditsGrantsListPage client.credits().grants().list(String idOrAlias, [CreditsGrantsListOptions options])` | `GET /api/v1/customers/{id_or_alias}/credit-grants` | [page](src/main/java/com/meteroid/api/CreditsGrantsListPage.java) of [`CreditGrant`](src/main/java/com/meteroid/models/CreditGrant.java), with the properties of [`CreditGrantListResponse`](src/main/java/com/meteroid/models/CreditGrantListResponse.java) |
+| `CreditGrant client.credits().grants().create(String idOrAlias, String idempotencyKey, CreateCreditGrantRequest createCreditGrantRequest)` | `POST /api/v1/customers/{id_or_alias}/credit-grants` | [`CreditGrant`](src/main/java/com/meteroid/models/CreditGrant.java) |
+
+### Credits wallets
+
+[`client.credits().wallets()`](src/main/java/com/meteroid/api/CreditsWallets.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `WalletListResponse client.credits().wallets().list(String idOrAlias, [CreditsWalletsListOptions options])` | `GET /api/v1/customers/{id_or_alias}/wallets` | [`WalletListResponse`](src/main/java/com/meteroid/models/WalletListResponse.java) |
+| `WalletCheck client.credits().wallets().check(String idOrAlias, [CreditsWalletsCheckOptions options])` | `GET /api/v1/customers/{id_or_alias}/wallets/check` | [`WalletCheck`](src/main/java/com/meteroid/models/WalletCheck.java) |
+| `Wallet client.credits().wallets().update(String idOrAlias, String currency, String idempotencyKey, PatchWalletRequest patchWalletRequest)` | `PATCH /api/v1/customers/{id_or_alias}/wallets/{currency}` | [`Wallet`](src/main/java/com/meteroid/models/Wallet.java) |
 
 ## Custom properties
 
@@ -284,9 +352,42 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 
 | Method | Request | Returns |
 | --- | --- | --- |
-| `UsageResponse client.usage().retrieveCustomer(String customerId, LocalDate startDate, LocalDate endDate, [UsageRetrieveCustomerOptions options])` | `GET /api/v1/usage/customer/{customer_id}` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
 | `UsageResponse client.usage().retrieveSubscription(String subscriptionId, [UsageRetrieveSubscriptionOptions options])` | `GET /api/v1/usage/subscription/{subscription_id}` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
 | `UsageResponse client.usage().retrieveSummary(LocalDate startDate, LocalDate endDate, [UsageRetrieveSummaryOptions options])` | `GET /api/v1/usage/summary` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
+
+### Usage customer
+
+[`client.usage().customer()`](src/main/java/com/meteroid/api/UsageCustomer.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `UsageResponse client.usage().customer().retrieve(String customerId, LocalDate startDate, LocalDate endDate, [UsageCustomerRetrieveOptions options])` | `GET /api/v1/usage/customer/{customer_id}` | [`UsageResponse`](src/main/java/com/meteroid/models/UsageResponse.java) |
+| `UnattributedUsageResponse client.usage().customer().retrieveUnattributed(String customerId, [UsageCustomerRetrieveUnattributedOptions options])` | `GET /api/v1/usage/customer/{customer_id}/unattributed` | [`UnattributedUsageResponse`](src/main/java/com/meteroid/models/UnattributedUsageResponse.java) |
+
+## Usage costs
+
+[`client.usageCosts()`](src/main/java/com/meteroid/api/UsageCosts.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+
+### Usage costs customer
+
+[`client.usageCosts().customer()`](src/main/java/com/meteroid/api/UsageCostsCustomer.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `UsageCostListResponse client.usageCosts().customer().listCosts(String customerId, String metric, ListCustomerUsageCostsGranularity granularity, OffsetDateTime from, OffsetDateTime to, [UsageCostsCustomerListCostsOptions options])` | `GET /api/v1/usage/customer/{customer_id}/costs` | [`UsageCostListResponse`](src/main/java/com/meteroid/models/UsageCostListResponse.java) |
+| `UsageEventListResponse client.usageCosts().customer().listEvents(String customerId, String metric, OffsetDateTime from, OffsetDateTime to, [UsageCostsCustomerListEventsOptions options])` | `GET /api/v1/usage/customer/{customer_id}/events` | [`UsageEventListResponse`](src/main/java/com/meteroid/models/UsageEventListResponse.java) |
+
+### Usage costs subscription
+
+[`client.usageCosts().subscription()`](src/main/java/com/meteroid/api/UsageCostsSubscription.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `UsageCostListResponse client.usageCosts().subscription().listCosts(String subscriptionId, String metric, ListSubscriptionUsageCostsGranularity granularity, OffsetDateTime from, OffsetDateTime to, [UsageCostsSubscriptionListCostsOptions options])` | `GET /api/v1/usage/subscription/{subscription_id}/costs` | [`UsageCostListResponse`](src/main/java/com/meteroid/models/UsageCostListResponse.java) |
+| `UsageEventListResponse client.usageCosts().subscription().listEvents(String subscriptionId, String metric, OffsetDateTime from, OffsetDateTime to, [UsageCostsSubscriptionListEventsOptions options])` | `GET /api/v1/usage/subscription/{subscription_id}/events` | [`UsageEventListResponse`](src/main/java/com/meteroid/models/UsageEventListResponse.java) |
 
 ## Webhook endpoints
 

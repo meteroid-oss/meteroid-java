@@ -27,12 +27,16 @@ public final class BooleanEffectiveEntitlementValue {
     @JsonProperty("enabled")
     private Boolean enabled;
 
+    @JsonProperty("type")
+    private String type = "BOOLEAN";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private BooleanEffectiveEntitlementValue() {}
 
     private BooleanEffectiveEntitlementValue(Builder builder) {
         this.enabled = builder.enabled;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -53,6 +57,7 @@ public final class BooleanEffectiveEntitlementValue {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.enabled = enabled;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -64,6 +69,15 @@ public final class BooleanEffectiveEntitlementValue {
      */
     public Boolean enabled() {
         return Utils.required(enabled, "enabled");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -95,12 +109,13 @@ public final class BooleanEffectiveEntitlementValue {
         }
         BooleanEffectiveEntitlementValue that = (BooleanEffectiveEntitlementValue) o;
         return Objects.equals(enabled, that.enabled)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, additionalProperties);
+        return Objects.hash(enabled, type, additionalProperties);
     }
 
     @Override
@@ -108,6 +123,8 @@ public final class BooleanEffectiveEntitlementValue {
         return "BooleanEffectiveEntitlementValue{"
                 + "enabled="
                 + enabled
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -116,6 +133,7 @@ public final class BooleanEffectiveEntitlementValue {
     /** Builds {@link BooleanEffectiveEntitlementValue}. */
     public static final class Builder {
         private Boolean enabled;
+        private String type = "BOOLEAN";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -128,6 +146,17 @@ public final class BooleanEffectiveEntitlementValue {
          */
         public Builder enabled(Boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -173,6 +202,7 @@ public final class BooleanEffectiveEntitlementValue {
          */
         public BooleanEffectiveEntitlementValue build() {
             Utils.checkRequired(enabled, "enabled");
+            Utils.checkRequired(type, "type");
             return new BooleanEffectiveEntitlementValue(this);
         }
     }

@@ -38,6 +38,10 @@ public final class ReplacePlanRequest {
     @JsonProperty("components")
     private List<PriceComponentInput> components;
 
+    @JsonProperty("credit_exhausted_rule")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<CreditExhaustedRule> creditExhaustedRule = JsonField.missing();
+
     @JsonProperty("currency")
     private String currency;
 
@@ -74,6 +78,7 @@ public final class ReplacePlanRequest {
         this.addOns = Utils.copyList(builder.addOns);
         this.billing = builder.billing;
         this.components = Utils.copyList(builder.components);
+        this.creditExhaustedRule = builder.creditExhaustedRule;
         this.currency = builder.currency;
         this.description = builder.description;
         this.entitlements = Utils.copyList(builder.entitlements);
@@ -104,6 +109,7 @@ public final class ReplacePlanRequest {
         builder.addOns = Utils.mutableList(addOns);
         builder.billing = billing;
         builder.components = Utils.mutableList(components);
+        builder.creditExhaustedRule = creditExhaustedRule;
         builder.currency = currency;
         builder.description = description;
         builder.entitlements = Utils.mutableList(entitlements);
@@ -141,6 +147,15 @@ public final class ReplacePlanRequest {
      */
     public List<PriceComponentInput> components() {
         return Utils.required(components, "components");
+    }
+
+    /**
+     * The {@code credit_exhausted_rule} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<CreditExhaustedRule> creditExhaustedRule() {
+        return creditExhaustedRule.asOptional();
     }
 
     /**
@@ -251,6 +266,7 @@ public final class ReplacePlanRequest {
         return Objects.equals(addOns, that.addOns)
                 && Objects.equals(billing, that.billing)
                 && Objects.equals(components, that.components)
+                && Objects.equals(creditExhaustedRule, that.creditExhaustedRule)
                 && Objects.equals(currency, that.currency)
                 && Objects.equals(description, that.description)
                 && Objects.equals(entitlements, that.entitlements)
@@ -268,6 +284,7 @@ public final class ReplacePlanRequest {
                 addOns,
                 billing,
                 components,
+                creditExhaustedRule,
                 currency,
                 description,
                 entitlements,
@@ -288,6 +305,8 @@ public final class ReplacePlanRequest {
                 + billing
                 + ", components="
                 + components
+                + ", creditExhaustedRule="
+                + creditExhaustedRule
                 + ", currency="
                 + currency
                 + ", description="
@@ -314,6 +333,7 @@ public final class ReplacePlanRequest {
         private List<PlanAddOnInput> addOns;
         private JsonField<BillingConfig> billing = JsonField.missing();
         private List<PriceComponentInput> components;
+        private JsonField<CreditExhaustedRule> creditExhaustedRule = JsonField.missing();
         private String currency;
         private JsonField<String> description = JsonField.missing();
         private List<EntitlementSpecRequest> entitlements;
@@ -384,6 +404,17 @@ public final class ReplacePlanRequest {
                 this.components = new ArrayList<>();
             }
             this.components.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code credit_exhausted_rule} property.
+         *
+         * @param creditExhaustedRule the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditExhaustedRule(CreditExhaustedRule creditExhaustedRule) {
+            this.creditExhaustedRule = JsonField.ofNullable(creditExhaustedRule);
             return this;
         }
 

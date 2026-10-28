@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.meteroid.internal.Utils;
 
@@ -27,11 +28,15 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class AllComponentsScope {
+    @JsonProperty("type")
+    private String type = "all_components";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private AllComponentsScope() {}
 
     private AllComponentsScope(Builder builder) {
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -51,8 +56,18 @@ public final class AllComponentsScope {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -83,24 +98,42 @@ public final class AllComponentsScope {
             return false;
         }
         AllComponentsScope that = (AllComponentsScope) o;
-        return Objects.equals(additionalProperties, that.additionalProperties);
+        return Objects.equals(type, that.type)
+                && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(additionalProperties);
+        return Objects.hash(type, additionalProperties);
     }
 
     @Override
     public String toString() {
-        return "AllComponentsScope{" + "additionalProperties=" + additionalProperties + "}";
+        return "AllComponentsScope{"
+                + "type="
+                + type
+                + ", additionalProperties="
+                + additionalProperties
+                + "}";
     }
 
     /** Builds {@link AllComponentsScope}. */
     public static final class Builder {
+        private String type = "all_components";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
+            return this;
+        }
 
         /**
          * A property the SDK does not know, sent along.
@@ -143,6 +176,7 @@ public final class AllComponentsScope {
          * @throws IllegalStateException when a required property is not set
          */
         public AllComponentsScope build() {
+            Utils.checkRequired(type, "type");
             return new AllComponentsScope(this);
         }
     }

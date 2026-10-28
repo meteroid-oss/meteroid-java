@@ -30,11 +30,17 @@ public final class Transaction {
     @JsonProperty("amount")
     private Long amount;
 
+    @JsonProperty("amount_disputed")
+    private Long amountDisputed;
+
     @JsonProperty("amount_refunded")
     private Long amountRefunded;
 
     @JsonProperty("amount_reversed")
     private Long amountReversed;
+
+    @JsonProperty("amount_reversed_excess")
+    private Long amountReversedExcess;
 
     @JsonProperty("credit_note_id")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -94,8 +100,10 @@ public final class Transaction {
 
     private Transaction(Builder builder) {
         this.amount = builder.amount;
+        this.amountDisputed = builder.amountDisputed;
         this.amountRefunded = builder.amountRefunded;
         this.amountReversed = builder.amountReversed;
+        this.amountReversedExcess = builder.amountReversedExcess;
         this.creditNoteId = builder.creditNoteId;
         this.currency = builder.currency;
         this.error = builder.error;
@@ -130,8 +138,10 @@ public final class Transaction {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.amount = amount;
+        builder.amountDisputed = amountDisputed;
         builder.amountRefunded = amountRefunded;
         builder.amountReversed = amountReversed;
+        builder.amountReversedExcess = amountReversedExcess;
         builder.creditNoteId = creditNoteId;
         builder.currency = currency;
         builder.error = error;
@@ -160,6 +170,17 @@ public final class Transaction {
     }
 
     /**
+     * On a PAYMENT: the part of <code>amount_reversed</code> lost to disputes or chargebacks. The
+     * invoice stays paid; only the rest of <code>amount_reversed</code> (a failed collection)
+     * reopens it.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> amountDisputed() {
+        return Optional.ofNullable(amountDisputed);
+    }
+
+    /**
      * On a PAYMENT: how much was voluntarily given back (the sum of its settled REFUND children).
      * The invoice stays paid — the Refund credit note is what reduces it.
      *
@@ -177,6 +198,16 @@ public final class Transaction {
      */
     public Long amountReversed() {
         return Utils.required(amountReversed, "amount_reversed");
+    }
+
+    /**
+     * On a PAYMENT: what the provider withdrew above what the payment still held (refunded before).
+     * Never applied to the invoice or credit: contest it with the provider.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> amountReversedExcess() {
+        return Optional.ofNullable(amountReversedExcess);
     }
 
     /**
@@ -334,8 +365,10 @@ public final class Transaction {
         }
         Transaction that = (Transaction) o;
         return Objects.equals(amount, that.amount)
+                && Objects.equals(amountDisputed, that.amountDisputed)
                 && Objects.equals(amountRefunded, that.amountRefunded)
                 && Objects.equals(amountReversed, that.amountReversed)
+                && Objects.equals(amountReversedExcess, that.amountReversedExcess)
                 && Objects.equals(creditNoteId, that.creditNoteId)
                 && Objects.equals(currency, that.currency)
                 && Objects.equals(error, that.error)
@@ -357,8 +390,10 @@ public final class Transaction {
     public int hashCode() {
         return Objects.hash(
                 amount,
+                amountDisputed,
                 amountRefunded,
                 amountReversed,
+                amountReversedExcess,
                 creditNoteId,
                 currency,
                 error,
@@ -381,10 +416,14 @@ public final class Transaction {
         return "Transaction{"
                 + "amount="
                 + amount
+                + ", amountDisputed="
+                + amountDisputed
                 + ", amountRefunded="
                 + amountRefunded
                 + ", amountReversed="
                 + amountReversed
+                + ", amountReversedExcess="
+                + amountReversedExcess
                 + ", creditNoteId="
                 + creditNoteId
                 + ", currency="
@@ -421,8 +460,10 @@ public final class Transaction {
     /** Builds {@link Transaction}. */
     public static final class Builder {
         private Long amount;
+        private Long amountDisputed;
         private Long amountRefunded;
         private Long amountReversed;
+        private Long amountReversedExcess;
         private JsonField<String> creditNoteId = JsonField.missing();
         private String currency;
         private JsonField<String> error = JsonField.missing();
@@ -453,6 +494,19 @@ public final class Transaction {
         }
 
         /**
+         * On a PAYMENT: the part of <code>amount_reversed</code> lost to disputes or chargebacks.
+         * The invoice stays paid; only the rest of <code>amount_reversed</code> (a failed
+         * collection) reopens it.
+         *
+         * @param amountDisputed the value
+         * @return this builder
+         */
+        public Builder amountDisputed(Long amountDisputed) {
+            this.amountDisputed = amountDisputed;
+            return this;
+        }
+
+        /**
          * On a PAYMENT: how much was voluntarily given back (the sum of its settled REFUND
          * children). The invoice stays paid — the Refund credit note is what reduces it.
          *
@@ -473,6 +527,18 @@ public final class Transaction {
          */
         public Builder amountReversed(Long amountReversed) {
             this.amountReversed = amountReversed;
+            return this;
+        }
+
+        /**
+         * On a PAYMENT: what the provider withdrew above what the payment still held (refunded
+         * before). Never applied to the invoice or credit: contest it with the provider.
+         *
+         * @param amountReversedExcess the value
+         * @return this builder
+         */
+        public Builder amountReversedExcess(Long amountReversedExcess) {
+            this.amountReversedExcess = amountReversedExcess;
             return this;
         }
 

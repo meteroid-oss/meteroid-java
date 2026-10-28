@@ -34,6 +34,9 @@ public final class CapacityPricing {
     @JsonProperty("rate")
     private BigDecimal rate;
 
+    @JsonProperty("type")
+    private String type = "CAPACITY";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private CapacityPricing() {}
@@ -42,6 +45,7 @@ public final class CapacityPricing {
         this.included = builder.included;
         this.overageRate = builder.overageRate;
         this.rate = builder.rate;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -64,6 +68,7 @@ public final class CapacityPricing {
         builder.included = included;
         builder.overageRate = overageRate;
         builder.rate = rate;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -93,6 +98,15 @@ public final class CapacityPricing {
      */
     public BigDecimal rate() {
         return Utils.required(rate, "rate");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -126,12 +140,13 @@ public final class CapacityPricing {
         return Objects.equals(included, that.included)
                 && Objects.equals(overageRate, that.overageRate)
                 && Objects.equals(rate, that.rate)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(included, overageRate, rate, additionalProperties);
+        return Objects.hash(included, overageRate, rate, type, additionalProperties);
     }
 
     @Override
@@ -143,6 +158,8 @@ public final class CapacityPricing {
                 + overageRate
                 + ", rate="
                 + rate
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -153,6 +170,7 @@ public final class CapacityPricing {
         private Long included;
         private BigDecimal overageRate;
         private BigDecimal rate;
+        private String type = "CAPACITY";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -187,6 +205,17 @@ public final class CapacityPricing {
          */
         public Builder rate(BigDecimal rate) {
             this.rate = rate;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -234,6 +263,7 @@ public final class CapacityPricing {
             Utils.checkRequired(included, "included");
             Utils.checkRequired(overageRate, "overage_rate");
             Utils.checkRequired(rate, "rate");
+            Utils.checkRequired(type, "type");
             return new CapacityPricing(this);
         }
     }

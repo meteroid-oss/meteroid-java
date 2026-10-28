@@ -31,6 +31,9 @@ public final class LinkedSegmentationMatrix {
     @JsonProperty("dimension2_key")
     private String dimension2Key;
 
+    @JsonProperty("type")
+    private String type = "LINKED";
+
     @JsonProperty("values")
     private Map<String, List<String>> values;
 
@@ -41,6 +44,7 @@ public final class LinkedSegmentationMatrix {
     private LinkedSegmentationMatrix(Builder builder) {
         this.dimension1Key = builder.dimension1Key;
         this.dimension2Key = builder.dimension2Key;
+        this.type = builder.type;
         this.values = Utils.copyMap(builder.values);
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -63,6 +67,7 @@ public final class LinkedSegmentationMatrix {
         Builder builder = new Builder();
         builder.dimension1Key = dimension1Key;
         builder.dimension2Key = dimension2Key;
+        builder.type = type;
         builder.values = Utils.mutableMap(values);
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -84,6 +89,15 @@ public final class LinkedSegmentationMatrix {
      */
     public String dimension2Key() {
         return Utils.required(dimension2Key, "dimension2_key");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -125,13 +139,14 @@ public final class LinkedSegmentationMatrix {
         LinkedSegmentationMatrix that = (LinkedSegmentationMatrix) o;
         return Objects.equals(dimension1Key, that.dimension1Key)
                 && Objects.equals(dimension2Key, that.dimension2Key)
+                && Objects.equals(type, that.type)
                 && Objects.equals(values, that.values)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dimension1Key, dimension2Key, values, additionalProperties);
+        return Objects.hash(dimension1Key, dimension2Key, type, values, additionalProperties);
     }
 
     @Override
@@ -141,6 +156,8 @@ public final class LinkedSegmentationMatrix {
                 + dimension1Key
                 + ", dimension2Key="
                 + dimension2Key
+                + ", type="
+                + type
                 + ", values="
                 + values
                 + ", additionalProperties="
@@ -152,6 +169,7 @@ public final class LinkedSegmentationMatrix {
     public static final class Builder {
         private String dimension1Key;
         private String dimension2Key;
+        private String type = "LINKED";
         private Map<String, List<String>> values;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -176,6 +194,17 @@ public final class LinkedSegmentationMatrix {
          */
         public Builder dimension2Key(String dimension2Key) {
             this.dimension2Key = dimension2Key;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -248,6 +277,7 @@ public final class LinkedSegmentationMatrix {
         public LinkedSegmentationMatrix build() {
             Utils.checkRequired(dimension1Key, "dimension1_key");
             Utils.checkRequired(dimension2Key, "dimension2_key");
+            Utils.checkRequired(type, "type");
             Utils.checkRequired(values, "values");
             return new LinkedSegmentationMatrix(this);
         }

@@ -33,12 +33,16 @@ public final class RatePlanFee {
     @JsonProperty("rates")
     private List<TermRate> rates;
 
+    @JsonProperty("type")
+    private String type = "RATE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private RatePlanFee() {}
 
     private RatePlanFee(Builder builder) {
         this.rates = Utils.copyList(builder.rates);
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -59,6 +63,7 @@ public final class RatePlanFee {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.rates = Utils.mutableList(rates);
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -70,6 +75,15 @@ public final class RatePlanFee {
      */
     public List<TermRate> rates() {
         return Utils.required(rates, "rates");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -101,12 +115,13 @@ public final class RatePlanFee {
         }
         RatePlanFee that = (RatePlanFee) o;
         return Objects.equals(rates, that.rates)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rates, additionalProperties);
+        return Objects.hash(rates, type, additionalProperties);
     }
 
     @Override
@@ -114,6 +129,8 @@ public final class RatePlanFee {
         return "RatePlanFee{"
                 + "rates="
                 + rates
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -122,6 +139,7 @@ public final class RatePlanFee {
     /** Builds {@link RatePlanFee}. */
     public static final class Builder {
         private List<TermRate> rates;
+        private String type = "RATE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -148,6 +166,17 @@ public final class RatePlanFee {
                 this.rates = new ArrayList<>();
             }
             this.rates.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -193,6 +222,7 @@ public final class RatePlanFee {
          */
         public RatePlanFee build() {
             Utils.checkRequired(rates, "rates");
+            Utils.checkRequired(type, "type");
             return new RatePlanFee(this);
         }
     }

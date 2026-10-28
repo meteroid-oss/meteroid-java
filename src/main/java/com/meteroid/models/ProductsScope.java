@@ -34,12 +34,16 @@ public final class ProductsScope {
     @JsonProperty("product_ids")
     private List<String> productIds;
 
+    @JsonProperty("type")
+    private String type = "products";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private ProductsScope() {}
 
     private ProductsScope(Builder builder) {
         this.productIds = Utils.copyList(builder.productIds);
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -60,6 +64,7 @@ public final class ProductsScope {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.productIds = Utils.mutableList(productIds);
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -71,6 +76,15 @@ public final class ProductsScope {
      */
     public List<String> productIds() {
         return Utils.required(productIds, "product_ids");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -102,12 +116,13 @@ public final class ProductsScope {
         }
         ProductsScope that = (ProductsScope) o;
         return Objects.equals(productIds, that.productIds)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productIds, additionalProperties);
+        return Objects.hash(productIds, type, additionalProperties);
     }
 
     @Override
@@ -115,6 +130,8 @@ public final class ProductsScope {
         return "ProductsScope{"
                 + "productIds="
                 + productIds
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -123,6 +140,7 @@ public final class ProductsScope {
     /** Builds {@link ProductsScope}. */
     public static final class Builder {
         private List<String> productIds;
+        private String type = "products";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -149,6 +167,17 @@ public final class ProductsScope {
                 this.productIds = new ArrayList<>();
             }
             this.productIds.add(item);
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -194,6 +223,7 @@ public final class ProductsScope {
          */
         public ProductsScope build() {
             Utils.checkRequired(productIds, "product_ids");
+            Utils.checkRequired(type, "type");
             return new ProductsScope(this);
         }
     }

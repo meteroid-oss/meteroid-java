@@ -9,12 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,19 +26,28 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class UsageFee {
+    @JsonProperty("credit_unit")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<FeeCreditUnit> creditUnit = JsonField.missing();
+
     @JsonProperty("metric_id")
     private String metricId;
 
     @JsonProperty("model")
     private UsagePricingModel model;
 
+    @JsonProperty("type")
+    private String type = "USAGE";
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private UsageFee() {}
 
     private UsageFee(Builder builder) {
+        this.creditUnit = builder.creditUnit;
         this.metricId = builder.metricId;
         this.model = builder.model;
+        this.type = builder.type;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -56,10 +67,21 @@ public final class UsageFee {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.creditUnit = creditUnit;
         builder.metricId = metricId;
         builder.model = model;
+        builder.type = type;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * The {@code credit_unit} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<FeeCreditUnit> creditUnit() {
+        return creditUnit.asOptional();
     }
 
     /**
@@ -78,6 +100,15 @@ public final class UsageFee {
      */
     public UsagePricingModel model() {
         return Utils.required(model, "model");
+    }
+
+    /**
+     * The {@code type} property.
+     *
+     * @return the value, never null
+     */
+    public String type() {
+        return Utils.required(type, "type");
     }
 
     /**
@@ -108,23 +139,29 @@ public final class UsageFee {
             return false;
         }
         UsageFee that = (UsageFee) o;
-        return Objects.equals(metricId, that.metricId)
+        return Objects.equals(creditUnit, that.creditUnit)
+                && Objects.equals(metricId, that.metricId)
                 && Objects.equals(model, that.model)
+                && Objects.equals(type, that.type)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(metricId, model, additionalProperties);
+        return Objects.hash(creditUnit, metricId, model, type, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "UsageFee{"
-                + "metricId="
+                + "creditUnit="
+                + creditUnit
+                + ", metricId="
                 + metricId
                 + ", model="
                 + model
+                + ", type="
+                + type
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -132,11 +169,24 @@ public final class UsageFee {
 
     /** Builds {@link UsageFee}. */
     public static final class Builder {
+        private JsonField<FeeCreditUnit> creditUnit = JsonField.missing();
         private String metricId;
         private UsagePricingModel model;
+        private String type = "USAGE";
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * The {@code credit_unit} property.
+         *
+         * @param creditUnit the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder creditUnit(FeeCreditUnit creditUnit) {
+            this.creditUnit = JsonField.ofNullable(creditUnit);
+            return this;
+        }
 
         /**
          * The {@code metric_id} property.
@@ -157,6 +207,17 @@ public final class UsageFee {
          */
         public Builder model(UsagePricingModel model) {
             this.model = model;
+            return this;
+        }
+
+        /**
+         * The {@code type} property.
+         *
+         * @param type the value
+         * @return this builder
+         */
+        public Builder type(String type) {
+            this.type = type;
             return this;
         }
 
@@ -203,6 +264,7 @@ public final class UsageFee {
         public UsageFee build() {
             Utils.checkRequired(metricId, "metric_id");
             Utils.checkRequired(model, "model");
+            Utils.checkRequired(type, "type");
             return new UsageFee(this);
         }
     }

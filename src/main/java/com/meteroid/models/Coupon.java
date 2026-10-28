@@ -137,7 +137,10 @@ public final class Coupon {
     }
 
     /**
-     * The {@code code} property.
+     * A promotional-credit (<code>CREDIT</code>) code is stored upper-case; other codes as written.
+     * A code is redeemed by the coupon with exactly that code, else by the only live coupon equal
+     * to it ignoring the case of ASCII letters; several such coupons and no exact match make it
+     * ambiguous.
      *
      * @return the value, never null
      */
@@ -372,7 +375,10 @@ public final class Coupon {
         }
 
         /**
-         * The {@code code} property.
+         * A promotional-credit (<code>CREDIT</code>) code is stored upper-case; other codes as
+         * written. A code is redeemed by the coupon with exactly that code, else by the only live
+         * coupon equal to it ignoring the case of ASCII letters; several such coupons and no exact
+         * match make it ambiguous.
          *
          * @param code the value
          * @return this builder
