@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.31.1](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.0...v0.31.1) (2026-10-30)
+
+
+### Features
+
+* **api:** add `GET /api/v1/licenses`, `GET /api/v1/licenses/{license_id}`, `GET /api/v1/licenses/{license_id}/activation-code`, `GET /api/v1/licensing/signing-keys`, `POST /api/v1/licenses` and 2 more ([a15284b](https://github.com/meteroid-oss/meteroid-java/commit/a15284b1705fb97ed0fd58b4be3696d87baf3025))
+* **api:** update `GET /api/v1/plans`, `GET /api/v1/plans/{plan_id}`, `PATCH /api/v1/plans/{plan_id}`, `POST /api/v1/custom-property-definitions`, `POST /api/v1/plans` and 3 more ([a15284b](https://github.com/meteroid-oss/meteroid-java/commit/a15284b1705fb97ed0fd58b4be3696d87baf3025))
+* **api:** update SDKs to meteroid 0.1.0 ([#17](https://github.com/meteroid-oss/meteroid-java/issues/17)) ([a15284b](https://github.com/meteroid-oss/meteroid-java/commit/a15284b1705fb97ed0fd58b4be3696d87baf3025))
+
 ## [0.31.0](https://github.com/meteroid-oss/meteroid-java/compare/v0.30.1...v0.31.0) (2026-10-28)
 
 
