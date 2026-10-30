@@ -14,7 +14,7 @@ item from that page on, and `pages()` every page, fetching the next ones on dema
 the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
 `forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
 
-[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Budgets](#budgets) · [Checkout sessions](#checkout-sessions) · [Checks](#checks) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Credit units](#credit-units) · [Credit units prices](#credit-units-prices) · [Credits](#credits) · [Credits grants](#credits-grants) · [Credits wallets](#credits-wallets) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Usage customer](#usage-customer) · [Usage costs](#usage-costs) · [Usage costs customer](#usage-costs-customer) · [Usage costs subscription](#usage-costs-subscription) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
+[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Budgets](#budgets) · [Checkout sessions](#checkout-sessions) · [Checks](#checks) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Credit units](#credit-units) · [Credit units prices](#credit-units-prices) · [Credits](#credits) · [Credits grants](#credits-grants) · [Credits wallets](#credits-wallets) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Licenses](#licenses) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Usage customer](#usage-customer) · [Usage costs](#usage-costs) · [Usage costs customer](#usage-costs-customer) · [Usage costs subscription](#usage-costs-subscription) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
 
 ## Add ons
 
@@ -237,6 +237,20 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `byte[] client.invoices().download(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}/download` | bytes |
 | `Invoice client.invoices().refresh(String invoiceId)` | `POST /api/v1/invoices/{invoice_id}/refresh` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `byte[] client.invoices().downloadXml(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}/xml` | bytes |
+
+## Licenses
+
+[`client.licenses()`](src/main/java/com/meteroid/api/Licenses.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `LicenseListResponse client.licenses().list([LicensesListOptions options])` | `GET /api/v1/licenses` | [`LicenseListResponse`](src/main/java/com/meteroid/models/LicenseListResponse.java) |
+| `IssueLicenseResponse client.licenses().create(IssueLicenseRequest issueLicenseRequest)` | `POST /api/v1/licenses` | [`IssueLicenseResponse`](src/main/java/com/meteroid/models/IssueLicenseResponse.java) |
+| `License client.licenses().retrieve(String licenseId)` | `GET /api/v1/licenses/{license_id}` | [`License`](src/main/java/com/meteroid/models/License.java) |
+| `LicenseActivationCode client.licenses().retrieveActivationCode(String licenseId)` | `GET /api/v1/licenses/{license_id}/activation-code` | [`LicenseActivationCode`](src/main/java/com/meteroid/models/LicenseActivationCode.java) |
+| `OfflineLicense client.licenses().offline(String licenseId, IssueOfflineLicenseRequest issueOfflineLicenseRequest)` | `POST /api/v1/licenses/{license_id}/offline` | [`OfflineLicense`](src/main/java/com/meteroid/models/OfflineLicense.java) |
+| `License client.licenses().revoke(String licenseId, RevokeLicenseRequest revokeLicenseRequest)` | `POST /api/v1/licenses/{license_id}/revoke` | [`License`](src/main/java/com/meteroid/models/License.java) |
+| `LicenseSigningKeysResponse client.licenses().listLicensingSigningKeys()` | `GET /api/v1/licensing/signing-keys` | [`LicenseSigningKeysResponse`](src/main/java/com/meteroid/models/LicenseSigningKeysResponse.java) |
 
 ## Metrics
 

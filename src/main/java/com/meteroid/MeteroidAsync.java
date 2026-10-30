@@ -17,6 +17,7 @@ import com.meteroid.api.EntitlementsAsync;
 import com.meteroid.api.EventsAsync;
 import com.meteroid.api.FeaturesAsync;
 import com.meteroid.api.InvoicesAsync;
+import com.meteroid.api.LicensesAsync;
 import com.meteroid.api.MetricsAsync;
 import com.meteroid.api.OauthAppsAsync;
 import com.meteroid.api.OauthAsync;
@@ -52,6 +53,7 @@ public final class MeteroidAsync implements AutoCloseable {
     private final EventsAsync events;
     private final FeaturesAsync features;
     private final InvoicesAsync invoices;
+    private final LicensesAsync licenses;
     private final MetricsAsync metrics;
     private final OauthAsync oauth;
     private final OauthAppsAsync oauthApps;
@@ -81,6 +83,7 @@ public final class MeteroidAsync implements AutoCloseable {
         this.events = new EventsAsync(sync.events());
         this.features = new FeaturesAsync(sync.features());
         this.invoices = new InvoicesAsync(sync.invoices());
+        this.licenses = new LicensesAsync(sync.licenses());
         this.metrics = new MetricsAsync(sync.metrics());
         this.oauth = new OauthAsync(sync.oauth());
         this.oauthApps = new OauthAppsAsync(sync.oauthApps());
@@ -254,6 +257,15 @@ public final class MeteroidAsync implements AutoCloseable {
      */
     public InvoicesAsync invoices() {
         return invoices;
+    }
+
+    /**
+     * The {@code licenses} operations.
+     *
+     * @return the operations
+     */
+    public LicensesAsync licenses() {
+        return licenses;
     }
 
     /**
@@ -498,6 +510,15 @@ public final class MeteroidAsync implements AutoCloseable {
          */
         public InvoicesAsync.WithRawResponse invoices() {
             return invoices.withRawResponse();
+        }
+
+        /**
+         * The {@code licenses} operations.
+         *
+         * @return the operations
+         */
+        public LicensesAsync.WithRawResponse licenses() {
+            return licenses.withRawResponse();
         }
 
         /**

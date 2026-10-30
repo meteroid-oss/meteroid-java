@@ -199,7 +199,13 @@ public final class CustomProperties {
                         .build();
         return client.call("POST", url)
                 .json(customPropertyDefinitionCreateRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "409", "429", "500")
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "403",
+                        "409",
+                        "429",
+                        "500")
                 .options(requestOptions)
                 .returning(CustomPropertyDefinition.class);
     }
@@ -284,7 +290,7 @@ public final class CustomProperties {
                         .build();
         return client.call("PUT", url)
                 .json(customPropertyDefinitionUpdateRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "404", "429", "500")
+                .errors(com.meteroid.models.RestErrorResponse.class, "403", "404", "429", "500")
                 .options(requestOptions)
                 .returning(CustomPropertyDefinition.class);
     }

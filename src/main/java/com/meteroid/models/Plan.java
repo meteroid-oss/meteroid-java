@@ -56,6 +56,9 @@ public final class Plan {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("issues_license")
+    private Boolean issuesLicense;
+
     @JsonProperty("minimum_commitment")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<MinimumCommitment> minimumCommitment = JsonField.missing();
@@ -112,6 +115,7 @@ public final class Plan {
         this.description = builder.description;
         this.entitlements = Utils.copyList(builder.entitlements);
         this.id = builder.id;
+        this.issuesLicense = builder.issuesLicense;
         this.minimumCommitment = builder.minimumCommitment;
         this.name = builder.name;
         this.netTerms = builder.netTerms;
@@ -152,6 +156,7 @@ public final class Plan {
         builder.description = description;
         builder.entitlements = Utils.mutableList(entitlements);
         builder.id = id;
+        builder.issuesLicense = issuesLicense;
         builder.minimumCommitment = minimumCommitment;
         builder.name = name;
         builder.netTerms = netTerms;
@@ -239,6 +244,15 @@ public final class Plan {
      */
     public String id() {
         return Utils.required(id, "id");
+    }
+
+    /**
+     * Subscriptions to this plan are issued a software license automatically.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Boolean> issuesLicense() {
+        return Optional.ofNullable(issuesLicense);
     }
 
     /**
@@ -397,6 +411,7 @@ public final class Plan {
                 && Objects.equals(description, that.description)
                 && Objects.equals(entitlements, that.entitlements)
                 && Objects.equals(id, that.id)
+                && Objects.equals(issuesLicense, that.issuesLicense)
                 && Objects.equals(minimumCommitment, that.minimumCommitment)
                 && Objects.equals(name, that.name)
                 && Objects.equals(netTerms, that.netTerms)
@@ -424,6 +439,7 @@ public final class Plan {
                 description,
                 entitlements,
                 id,
+                issuesLicense,
                 minimumCommitment,
                 name,
                 netTerms,
@@ -459,6 +475,8 @@ public final class Plan {
                 + entitlements
                 + ", id="
                 + id
+                + ", issuesLicense="
+                + issuesLicense
                 + ", minimumCommitment="
                 + minimumCommitment
                 + ", name="
@@ -500,6 +518,7 @@ public final class Plan {
         private JsonField<String> description = JsonField.missing();
         private List<Entitlement> entitlements;
         private String id;
+        private Boolean issuesLicense;
         private JsonField<MinimumCommitment> minimumCommitment = JsonField.missing();
         private String name;
         private Integer netTerms;
@@ -616,6 +635,17 @@ public final class Plan {
          */
         public Builder id(String id) {
             this.id = id;
+            return this;
+        }
+
+        /**
+         * Subscriptions to this plan are issued a software license automatically.
+         *
+         * @param issuesLicense the value
+         * @return this builder
+         */
+        public Builder issuesLicense(Boolean issuesLicense) {
+            this.issuesLicense = issuesLicense;
             return this;
         }
 
