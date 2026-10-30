@@ -17,6 +17,7 @@ import com.meteroid.api.Entitlements;
 import com.meteroid.api.Events;
 import com.meteroid.api.Features;
 import com.meteroid.api.Invoices;
+import com.meteroid.api.Licenses;
 import com.meteroid.api.Metrics;
 import com.meteroid.api.Oauth;
 import com.meteroid.api.OauthApps;
@@ -77,6 +78,7 @@ public final class Meteroid implements AutoCloseable {
     private final Events events;
     private final Features features;
     private final Invoices invoices;
+    private final Licenses licenses;
     private final Metrics metrics;
     private final Oauth oauth;
     private final OauthApps oauthApps;
@@ -155,6 +157,7 @@ public final class Meteroid implements AutoCloseable {
         this.events = new Events(httpClient);
         this.features = new Features(httpClient);
         this.invoices = new Invoices(httpClient);
+        this.licenses = new Licenses(httpClient);
         this.metrics = new Metrics(httpClient);
         this.oauth = new Oauth(httpClient);
         this.oauthApps = new OauthApps(httpClient);
@@ -352,6 +355,15 @@ public final class Meteroid implements AutoCloseable {
      */
     public Invoices invoices() {
         return invoices;
+    }
+
+    /**
+     * The {@code licenses} operations.
+     *
+     * @return the operations
+     */
+    public Licenses licenses() {
+        return licenses;
     }
 
     /**
@@ -590,6 +602,15 @@ public final class Meteroid implements AutoCloseable {
          */
         public Invoices.WithRawResponse invoices() {
             return invoices.withRawResponse();
+        }
+
+        /**
+         * The {@code licenses} operations.
+         *
+         * @return the operations
+         */
+        public Licenses.WithRawResponse licenses() {
+            return licenses.withRawResponse();
         }
 
         /**
