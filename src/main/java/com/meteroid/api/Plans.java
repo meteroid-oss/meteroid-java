@@ -433,7 +433,13 @@ public final class Plans {
                         .build();
         return client.call("PUT", url)
                 .json(replacePlanRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "401",
+                        "403",
+                        "404",
+                        "429")
                 .options(requestOptions)
                 .returning(Plan.class);
     }
