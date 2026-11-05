@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.2](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.1...v0.31.2) (2026-11-05)
+
+
+### Features
+
+* **api:** update `PATCH /api/v1/customers/{id_or_alias}/budgets/{budget_id}`, `PATCH /api/v1/customers/{id_or_alias}/wallets/{currency}`, `POST /api/v1/customers/{id_or_alias}/budgets`, `PUT /api/v1/plans/versions/{plan_version_id}/minimum`, `PUT /api/v1/plans/{plan_id}` ([edd3ce5](https://github.com/meteroid-oss/meteroid-java/commit/edd3ce58604dc47a1f630c20533544bc639e8db6))
+* **api:** update SDKs to meteroid 0.1.0 ([#19](https://github.com/meteroid-oss/meteroid-java/issues/19)) ([edd3ce5](https://github.com/meteroid-oss/meteroid-java/commit/edd3ce58604dc47a1f630c20533544bc639e8db6))
+
 ## [0.31.1](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.0...v0.31.1) (2026-10-30)
 
 
