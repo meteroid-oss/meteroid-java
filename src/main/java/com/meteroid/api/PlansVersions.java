@@ -82,7 +82,13 @@ public final class PlansVersions {
                         .build();
         return client.call("PUT", url)
                 .json(minimumCommitment)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "401",
+                        "403",
+                        "404",
+                        "429")
                 .options(requestOptions)
                 .returning(MinimumCommitment.class);
     }

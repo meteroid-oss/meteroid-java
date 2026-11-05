@@ -335,6 +335,7 @@ public final class CreditsWallets {
                         com.meteroid.models.RestErrorResponse.class,
                         "400",
                         "401",
+                        "403",
                         "404",
                         "409",
                         "429",
