@@ -115,7 +115,7 @@ public final class CustomerPortalTokenResponse {
     }
 
     /**
-     * JWT token for portal access
+     * Opaque token for portal access
      *
      * @return the value, never null
      */
@@ -238,7 +238,7 @@ public final class CustomerPortalTokenResponse {
         }
 
         /**
-         * JWT token for portal access
+         * Opaque token for portal access
          *
          * @param token the value
          * @return this builder

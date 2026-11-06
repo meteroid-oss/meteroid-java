@@ -417,8 +417,10 @@ public final class Customers {
     /**
      * Generate a portal token for a customer
      *
-     * <p>Generates a JWT token that grants access to the customer portal. The token can be used to
-     * access invoices, payment methods, and other portal features.
+     * <p>Generates an opaque token that grants access to the customer portal. A call may return the
+     * token of an earlier call with the same scopes, with up to 10% less lifetime: rely on <code>
+     * expires_at</code>. The token can be used to access invoices, payment methods, and other
+     * portal features.
      *
      * @param idOrAlias the {@code id_or_alias} path parameter
      * @param customerPortalTokenRequest the request body
@@ -432,8 +434,10 @@ public final class Customers {
     /**
      * Generate a portal token for a customer
      *
-     * <p>Generates a JWT token that grants access to the customer portal. The token can be used to
-     * access invoices, payment methods, and other portal features.
+     * <p>Generates an opaque token that grants access to the customer portal. A call may return the
+     * token of an earlier call with the same scopes, with up to 10% less lifetime: rely on <code>
+     * expires_at</code>. The token can be used to access invoices, payment methods, and other
+     * portal features.
      *
      * @param idOrAlias the {@code id_or_alias} path parameter
      * @param customerPortalTokenRequest the request body
@@ -722,8 +726,10 @@ public final class Customers {
         /**
          * Generate a portal token for a customer
          *
-         * <p>Generates a JWT token that grants access to the customer portal. The token can be used
-         * to access invoices, payment methods, and other portal features.
+         * <p>Generates an opaque token that grants access to the customer portal. A call may return
+         * the token of an earlier call with the same scopes, with up to 10% less lifetime: rely on
+         * <code>expires_at</code>. The token can be used to access invoices, payment methods, and
+         * other portal features.
          *
          * @param idOrAlias the {@code id_or_alias} path parameter
          * @param customerPortalTokenRequest the request body
@@ -738,8 +744,10 @@ public final class Customers {
         /**
          * Generate a portal token for a customer
          *
-         * <p>Generates a JWT token that grants access to the customer portal. The token can be used
-         * to access invoices, payment methods, and other portal features.
+         * <p>Generates an opaque token that grants access to the customer portal. A call may return
+         * the token of an earlier call with the same scopes, with up to 10% less lifetime: rely on
+         * <code>expires_at</code>. The token can be used to access invoices, payment methods, and
+         * other portal features.
          *
          * @param idOrAlias the {@code id_or_alias} path parameter
          * @param customerPortalTokenRequest the request body

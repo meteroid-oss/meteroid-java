@@ -202,6 +202,7 @@ public final class UsageCostsSubscription {
                         com.meteroid.models.RestErrorResponse.class,
                         "400",
                         "401",
+                        "403",
                         "404",
                         "429",
                         "500")
@@ -358,6 +359,7 @@ public final class UsageCostsSubscription {
                         com.meteroid.models.RestErrorResponse.class,
                         "400",
                         "401",
+                        "403",
                         "404",
                         "429",
                         "500")
