@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.3](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.2...v0.31.3) (2026-11-06)
+
+
+### Features
+
+* **api:** update `GET /api/v1/usage/customer/{customer_id}/costs`, `GET /api/v1/usage/customer/{customer_id}/events`, `GET /api/v1/usage/subscription/{subscription_id}/costs`, `GET /api/v1/usage/subscription/{subscription_id}/events`, `POST webhook:payment.failed` and 5 more ([e843295](https://github.com/meteroid-oss/meteroid-java/commit/e843295f612d7d3568280d9cb5760016cc83f6d0))
+* **api:** update SDKs to meteroid 0.1.0 ([#21](https://github.com/meteroid-oss/meteroid-java/issues/21)) ([e843295](https://github.com/meteroid-oss/meteroid-java/commit/e843295f612d7d3568280d9cb5760016cc83f6d0))
+
 ## [0.31.2](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.1...v0.31.2) (2026-11-05)
 
 
