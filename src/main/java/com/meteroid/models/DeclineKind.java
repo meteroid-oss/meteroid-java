@@ -50,6 +50,9 @@ public final class DeclineKind implements ToQueryParam {
     public static final DeclineKind DO_NOT_RETRY =
             new DeclineKind("DO_NOT_RETRY", Value.DO_NOT_RETRY);
 
+    /** The value {@code "UNCONFIRMED"}. */
+    public static final DeclineKind UNCONFIRMED = new DeclineKind("UNCONFIRMED", Value.UNCONFIRMED);
+
     private static final Map<String, DeclineKind> constants =
             Map.ofEntries(
                     Map.entry("INSUFFICIENT_FUNDS", INSUFFICIENT_FUNDS),
@@ -60,7 +63,8 @@ public final class DeclineKind implements ToQueryParam {
                     Map.entry("FRAUD", FRAUD),
                     Map.entry("PROCESSING_ERROR", PROCESSING_ERROR),
                     Map.entry("OTHER", OTHER),
-                    Map.entry("DO_NOT_RETRY", DO_NOT_RETRY));
+                    Map.entry("DO_NOT_RETRY", DO_NOT_RETRY),
+                    Map.entry("UNCONFIRMED", UNCONFIRMED));
 
     private final String value;
     private final Value variant;
@@ -163,7 +167,9 @@ public final class DeclineKind implements ToQueryParam {
         /** The {@code OTHER} constant. */
         OTHER,
         /** The {@code DO_NOT_RETRY} constant. */
-        DO_NOT_RETRY
+        DO_NOT_RETRY,
+        /** The {@code UNCONFIRMED} constant. */
+        UNCONFIRMED
     }
 
     /** The values this version of the SDK knows, and {@code _UNKNOWN} for the others. */
@@ -186,6 +192,8 @@ public final class DeclineKind implements ToQueryParam {
         OTHER,
         /** The {@code DO_NOT_RETRY} constant. */
         DO_NOT_RETRY,
+        /** The {@code UNCONFIRMED} constant. */
+        UNCONFIRMED,
         /** A value this version of the SDK does not know. */
         _UNKNOWN
     }
