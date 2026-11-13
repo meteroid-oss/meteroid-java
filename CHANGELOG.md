@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.4](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.3...v0.31.4) (2026-11-13)
+
+
+### Features
+
+* **api:** update `GET /api/v1/licenses`, `GET /api/v1/licenses/{license_id}`, `POST /api/v1/licenses`, `POST /api/v1/licenses/{license_id}/revoke` ([d4922d2](https://github.com/meteroid-oss/meteroid-java/commit/d4922d23ee7f6252e7c0ae8fc4254085325cd9dd))
+* **api:** update SDKs to meteroid 0.1.0 ([#23](https://github.com/meteroid-oss/meteroid-java/issues/23)) ([d4922d2](https://github.com/meteroid-oss/meteroid-java/commit/d4922d23ee7f6252e7c0ae8fc4254085325cd9dd))
+
 ## [0.31.3](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.2...v0.31.3) (2026-11-06)
 
 
