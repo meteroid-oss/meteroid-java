@@ -73,6 +73,7 @@ public final class IssueLicenseResponse {
 
     /**
      * Online: one-time code the customer enters in their installation to activate the license.
+     * Ephemeral: the reusable code, e.g. a CI secret.
      *
      * @return the value, empty when unset or null
      */
@@ -162,6 +163,7 @@ public final class IssueLicenseResponse {
 
         /**
          * Online: one-time code the customer enters in their installation to activate the license.
+         * Ephemeral: the reusable code, e.g. a CI secret.
          *
          * @param activationCode the value, null to send an explicit {@code null}
          * @return this builder

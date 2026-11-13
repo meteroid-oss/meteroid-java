@@ -39,6 +39,10 @@ public final class License {
     @JsonProperty("customer_name")
     private String customerName;
 
+    @JsonProperty("ephemeral_hours")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<Integer> ephemeralHours = JsonField.missing();
+
     @JsonProperty("has_activation_code")
     private Boolean hasActivationCode;
 
@@ -86,6 +90,7 @@ public final class License {
         this.createdAt = builder.createdAt;
         this.customerId = builder.customerId;
         this.customerName = builder.customerName;
+        this.ephemeralHours = builder.ephemeralHours;
         this.hasActivationCode = builder.hasActivationCode;
         this.id = builder.id;
         this.instanceId = builder.instanceId;
@@ -120,6 +125,7 @@ public final class License {
         builder.createdAt = createdAt;
         builder.customerId = customerId;
         builder.customerName = customerName;
+        builder.ephemeralHours = ephemeralHours;
         builder.hasActivationCode = hasActivationCode;
         builder.id = id;
         builder.instanceId = instanceId;
@@ -169,6 +175,15 @@ public final class License {
      */
     public String customerName() {
         return Utils.required(customerName, "customer_name");
+    }
+
+    /**
+     * Ephemeral: each activation of the reusable code gets a license of this many hours.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<Integer> ephemeralHours() {
+        return ephemeralHours.asOptional();
     }
 
     /**
@@ -304,6 +319,7 @@ public final class License {
                 && Objects.equals(createdAt, that.createdAt)
                 && Objects.equals(customerId, that.customerId)
                 && Objects.equals(customerName, that.customerName)
+                && Objects.equals(ephemeralHours, that.ephemeralHours)
                 && Objects.equals(hasActivationCode, that.hasActivationCode)
                 && Objects.equals(id, that.id)
                 && Objects.equals(instanceId, that.instanceId)
@@ -325,6 +341,7 @@ public final class License {
                 createdAt,
                 customerId,
                 customerName,
+                ephemeralHours,
                 hasActivationCode,
                 id,
                 instanceId,
@@ -350,6 +367,8 @@ public final class License {
                 + customerId
                 + ", customerName="
                 + customerName
+                + ", ephemeralHours="
+                + ephemeralHours
                 + ", hasActivationCode="
                 + hasActivationCode
                 + ", id="
@@ -383,6 +402,7 @@ public final class License {
         private OffsetDateTime createdAt;
         private String customerId;
         private String customerName;
+        private JsonField<Integer> ephemeralHours = JsonField.missing();
         private Boolean hasActivationCode;
         private String id;
         private JsonField<String> instanceId = JsonField.missing();
@@ -439,6 +459,17 @@ public final class License {
          */
         public Builder customerName(String customerName) {
             this.customerName = customerName;
+            return this;
+        }
+
+        /**
+         * Ephemeral: each activation of the reusable code gets a license of this many hours.
+         *
+         * @param ephemeralHours the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder ephemeralHours(Integer ephemeralHours) {
+            this.ephemeralHours = JsonField.ofNullable(ephemeralHours);
             return this;
         }
 

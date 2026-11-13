@@ -29,6 +29,10 @@ public final class IssueLicenseRequest {
     @JsonProperty("customer_id")
     private String customerId;
 
+    @JsonProperty("ephemeral_hours")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<Integer> ephemeralHours = JsonField.missing();
+
     @JsonProperty("instance_id")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> instanceId = JsonField.missing();
@@ -50,6 +54,7 @@ public final class IssueLicenseRequest {
 
     private IssueLicenseRequest(Builder builder) {
         this.customerId = builder.customerId;
+        this.ephemeralHours = builder.ephemeralHours;
         this.instanceId = builder.instanceId;
         this.offline = builder.offline;
         this.subscriptionId = builder.subscriptionId;
@@ -74,6 +79,7 @@ public final class IssueLicenseRequest {
     public Builder toBuilder() {
         Builder builder = new Builder();
         builder.customerId = customerId;
+        builder.ephemeralHours = ephemeralHours;
         builder.instanceId = instanceId;
         builder.offline = offline;
         builder.subscriptionId = subscriptionId;
@@ -89,6 +95,18 @@ public final class IssueLicenseRequest {
      */
     public String customerId() {
         return Utils.required(customerId, "customer_id");
+    }
+
+    /**
+     * Ephemeral, for CI and other short-lived installations: the activation code can be used any
+     * number of times, each activation gets a license of this many hours (1 to 24) for the
+     * installation activating, and nothing is refreshed. Not with <code>offline</code> or <code>
+     * validity_days</code>.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<Integer> ephemeralHours() {
+        return ephemeralHours.asOptional();
     }
 
     /**
@@ -161,6 +179,7 @@ public final class IssueLicenseRequest {
         }
         IssueLicenseRequest that = (IssueLicenseRequest) o;
         return Objects.equals(customerId, that.customerId)
+                && Objects.equals(ephemeralHours, that.ephemeralHours)
                 && Objects.equals(instanceId, that.instanceId)
                 && Objects.equals(offline, that.offline)
                 && Objects.equals(subscriptionId, that.subscriptionId)
@@ -172,6 +191,7 @@ public final class IssueLicenseRequest {
     public int hashCode() {
         return Objects.hash(
                 customerId,
+                ephemeralHours,
                 instanceId,
                 offline,
                 subscriptionId,
@@ -184,6 +204,8 @@ public final class IssueLicenseRequest {
         return "IssueLicenseRequest{"
                 + "customerId="
                 + customerId
+                + ", ephemeralHours="
+                + ephemeralHours
                 + ", instanceId="
                 + instanceId
                 + ", offline="
@@ -200,6 +222,7 @@ public final class IssueLicenseRequest {
     /** Builds {@link IssueLicenseRequest}. */
     public static final class Builder {
         private String customerId;
+        private JsonField<Integer> ephemeralHours = JsonField.missing();
         private JsonField<String> instanceId = JsonField.missing();
         private Boolean offline;
         private JsonField<String> subscriptionId = JsonField.missing();
@@ -216,6 +239,20 @@ public final class IssueLicenseRequest {
          */
         public Builder customerId(String customerId) {
             this.customerId = customerId;
+            return this;
+        }
+
+        /**
+         * Ephemeral, for CI and other short-lived installations: the activation code can be used
+         * any number of times, each activation gets a license of this many hours (1 to 24) for the
+         * installation activating, and nothing is refreshed. Not with <code>offline</code> or
+         * <code>validity_days</code>.
+         *
+         * @param ephemeralHours the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder ephemeralHours(Integer ephemeralHours) {
+            this.ephemeralHours = JsonField.ofNullable(ephemeralHours);
             return this;
         }
 

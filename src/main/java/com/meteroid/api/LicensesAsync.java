@@ -139,7 +139,8 @@ public final class LicensesAsync {
     /**
      * Get a license's activation code
      *
-     * <p>Available until the license is activated or revoked.
+     * <p>Available until the license is activated or revoked; for an ephemeral license, until
+     * revoked.
      *
      * @param licenseId the {@code license_id} path parameter
      * @return the response body, once received
@@ -151,7 +152,8 @@ public final class LicensesAsync {
     /**
      * Get a license's activation code
      *
-     * <p>Available until the license is activated or revoked.
+     * <p>Available until the license is activated or revoked; for an ephemeral license, until
+     * revoked.
      *
      * @param licenseId the {@code license_id} path parameter
      * @param requestOptions headers, timeout and retries of this call
@@ -353,7 +355,8 @@ public final class LicensesAsync {
         /**
          * Get a license's activation code
          *
-         * <p>Available until the license is activated or revoked.
+         * <p>Available until the license is activated or revoked; for an ephemeral license, until
+         * revoked.
          *
          * @param licenseId the {@code license_id} path parameter
          * @return the status, headers and body, once received
@@ -366,7 +369,8 @@ public final class LicensesAsync {
         /**
          * Get a license's activation code
          *
-         * <p>Available until the license is activated or revoked.
+         * <p>Available until the license is activated or revoked; for an ephemeral license, until
+         * revoked.
          *
          * @param licenseId the {@code license_id} path parameter
          * @param requestOptions headers, timeout and retries of this call
