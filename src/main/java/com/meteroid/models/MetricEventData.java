@@ -77,6 +77,10 @@ public final class MetricEventData {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> unitSingular = JsonField.missing();
 
+    @JsonProperty("usage_breakdown_key")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> usageBreakdownKey = JsonField.missing();
+
     @JsonProperty("usage_group_key")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> usageGroupKey = JsonField.missing();
@@ -100,6 +104,7 @@ public final class MetricEventData {
         this.unitConversionRounding = builder.unitConversionRounding;
         this.unitPlural = builder.unitPlural;
         this.unitSingular = builder.unitSingular;
+        this.usageBreakdownKey = builder.usageBreakdownKey;
         this.usageGroupKey = builder.usageGroupKey;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -134,6 +139,7 @@ public final class MetricEventData {
         builder.unitConversionRounding = unitConversionRounding;
         builder.unitPlural = unitPlural;
         builder.unitSingular = unitSingular;
+        builder.usageBreakdownKey = usageBreakdownKey;
         builder.usageGroupKey = usageGroupKey;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -266,6 +272,15 @@ public final class MetricEventData {
     }
 
     /**
+     * The {@code usage_breakdown_key} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> usageBreakdownKey() {
+        return usageBreakdownKey.asOptional();
+    }
+
+    /**
      * The {@code usage_group_key} property.
      *
      * @return the value, empty when unset or null
@@ -316,6 +331,7 @@ public final class MetricEventData {
                 && Objects.equals(unitConversionRounding, that.unitConversionRounding)
                 && Objects.equals(unitPlural, that.unitPlural)
                 && Objects.equals(unitSingular, that.unitSingular)
+                && Objects.equals(usageBreakdownKey, that.usageBreakdownKey)
                 && Objects.equals(usageGroupKey, that.usageGroupKey)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
@@ -337,6 +353,7 @@ public final class MetricEventData {
                 unitConversionRounding,
                 unitPlural,
                 unitSingular,
+                usageBreakdownKey,
                 usageGroupKey,
                 additionalProperties);
     }
@@ -372,6 +389,8 @@ public final class MetricEventData {
                 + unitPlural
                 + ", unitSingular="
                 + unitSingular
+                + ", usageBreakdownKey="
+                + usageBreakdownKey
                 + ", usageGroupKey="
                 + usageGroupKey
                 + ", additionalProperties="
@@ -395,6 +414,7 @@ public final class MetricEventData {
         private JsonField<UnitConversionRoundingEnum> unitConversionRounding = JsonField.missing();
         private JsonField<String> unitPlural = JsonField.missing();
         private JsonField<String> unitSingular = JsonField.missing();
+        private JsonField<String> usageBreakdownKey = JsonField.missing();
         private JsonField<String> usageGroupKey = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -551,6 +571,17 @@ public final class MetricEventData {
          */
         public Builder unitSingular(String unitSingular) {
             this.unitSingular = JsonField.ofNullable(unitSingular);
+            return this;
+        }
+
+        /**
+         * The {@code usage_breakdown_key} property.
+         *
+         * @param usageBreakdownKey the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageBreakdownKey(String usageBreakdownKey) {
+            this.usageBreakdownKey = JsonField.ofNullable(usageBreakdownKey);
             return this;
         }
 

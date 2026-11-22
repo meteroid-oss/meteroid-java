@@ -6,6 +6,8 @@ import com.meteroid.RequestOptions;
 import com.meteroid.models.Invoice;
 import com.meteroid.models.InvoiceCustomPropertiesRequest;
 import com.meteroid.models.InvoiceListResponse;
+import com.meteroid.models.RecordInvoicePaymentRequest;
+import com.meteroid.models.Transaction;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +20,8 @@ public final class InvoicesAsync {
     private final Invoices sync;
     private final WithRawResponse withRawResponse;
 
+    private final InvoicesPaymentsAsync payments;
+
     /**
      * The operations, sending through {@code sync}.
      *
@@ -26,6 +30,8 @@ public final class InvoicesAsync {
     public InvoicesAsync(Invoices sync) {
         this.sync = sync;
         this.withRawResponse = new WithRawResponse();
+
+        this.payments = new InvoicesPaymentsAsync(sync.payments());
     }
 
     /**
@@ -35,6 +41,15 @@ public final class InvoicesAsync {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code payments} operations.
+     *
+     * @return the operations
+     */
+    public InvoicesPaymentsAsync payments() {
+        return payments;
     }
 
     /**
@@ -188,6 +203,79 @@ public final class InvoicesAsync {
     }
 
     /**
+     * Mark an invoice as paid
+     *
+     * <p>Record an external payment for the entire remaining balance of a finalized invoice. The
+     * amount must match the remaining balance.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param recordInvoicePaymentRequest the request body
+     * @return the response body, once received
+     */
+    public CompletableFuture<Transaction> markPaid(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RecordInvoicePaymentRequest recordInvoicePaymentRequest) {
+        return markPaid(
+                invoiceId, idempotencyKey, recordInvoicePaymentRequest, RequestOptions.none());
+    }
+
+    /**
+     * Mark an invoice as paid
+     *
+     * <p>Record an external payment for the entire remaining balance of a finalized invoice. The
+     * amount must match the remaining balance.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param recordInvoicePaymentRequest the request body
+     * @param requestOptions headers, timeout and retries of this call
+     * @return the response body, once received
+     */
+    public CompletableFuture<Transaction> markPaid(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RecordInvoicePaymentRequest recordInvoicePaymentRequest,
+            final RequestOptions requestOptions) {
+        return sync.exchangeMarkPaid(
+                        invoiceId, idempotencyKey, recordInvoicePaymentRequest, requestOptions)
+                .sendAsync();
+    }
+
+    /**
+     * Mark an invoice as uncollectible
+     *
+     * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @return the response body, once received
+     */
+    public CompletableFuture<Void> markUncollectible(
+            final String invoiceId, final String idempotencyKey) {
+        return markUncollectible(invoiceId, idempotencyKey, RequestOptions.none());
+    }
+
+    /**
+     * Mark an invoice as uncollectible
+     *
+     * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param requestOptions headers, timeout and retries of this call
+     * @return the response body, once received
+     */
+    public CompletableFuture<Void> markUncollectible(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RequestOptions requestOptions) {
+        return sync.exchangeMarkUncollectible(invoiceId, idempotencyKey, requestOptions)
+                .sendAsync();
+    }
+
+    /**
      * Refresh invoice
      *
      * <p>Recompute a draft invoice against current usage, credits, coupons and tax, and return it.
@@ -250,6 +338,15 @@ public final class InvoicesAsync {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code payments} operations.
+         *
+         * @return the operations
+         */
+        public InvoicesPaymentsAsync.WithRawResponse payments() {
+            return InvoicesAsync.this.payments.withRawResponse();
+        }
 
         /**
          * List invoices with optional filtering by customer, subscription, or status.
@@ -392,6 +489,79 @@ public final class InvoicesAsync {
         public CompletableFuture<ApiResponse<byte[]>> download(
                 final String invoiceId, final RequestOptions requestOptions) {
             return sync.exchangeDownload(invoiceId, requestOptions).sendRawAsync();
+        }
+
+        /**
+         * Mark an invoice as paid
+         *
+         * <p>Record an external payment for the entire remaining balance of a finalized invoice.
+         * The amount must match the remaining balance.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param recordInvoicePaymentRequest the request body
+         * @return the status, headers and body, once received
+         */
+        public CompletableFuture<ApiResponse<Transaction>> markPaid(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RecordInvoicePaymentRequest recordInvoicePaymentRequest) {
+            return markPaid(
+                    invoiceId, idempotencyKey, recordInvoicePaymentRequest, RequestOptions.none());
+        }
+
+        /**
+         * Mark an invoice as paid
+         *
+         * <p>Record an external payment for the entire remaining balance of a finalized invoice.
+         * The amount must match the remaining balance.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param recordInvoicePaymentRequest the request body
+         * @param requestOptions headers, timeout and retries of this call
+         * @return the status, headers and body, once received
+         */
+        public CompletableFuture<ApiResponse<Transaction>> markPaid(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RecordInvoicePaymentRequest recordInvoicePaymentRequest,
+                final RequestOptions requestOptions) {
+            return sync.exchangeMarkPaid(
+                            invoiceId, idempotencyKey, recordInvoicePaymentRequest, requestOptions)
+                    .sendRawAsync();
+        }
+
+        /**
+         * Mark an invoice as uncollectible
+         *
+         * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @return the status, headers and body, once received
+         */
+        public CompletableFuture<ApiResponse<Void>> markUncollectible(
+                final String invoiceId, final String idempotencyKey) {
+            return markUncollectible(invoiceId, idempotencyKey, RequestOptions.none());
+        }
+
+        /**
+         * Mark an invoice as uncollectible
+         *
+         * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param requestOptions headers, timeout and retries of this call
+         * @return the status, headers and body, once received
+         */
+        public CompletableFuture<ApiResponse<Void>> markUncollectible(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RequestOptions requestOptions) {
+            return sync.exchangeMarkUncollectible(invoiceId, idempotencyKey, requestOptions)
+                    .sendRawAsync();
         }
 
         /**

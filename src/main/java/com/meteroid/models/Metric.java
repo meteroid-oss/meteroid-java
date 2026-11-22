@@ -82,6 +82,10 @@ public final class Metric {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> unitSingular = JsonField.missing();
 
+    @JsonProperty("usage_breakdown_key")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> usageBreakdownKey = JsonField.missing();
+
     @JsonProperty("usage_group_key")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> usageGroupKey = JsonField.missing();
@@ -106,6 +110,7 @@ public final class Metric {
         this.unitConversion = builder.unitConversion;
         this.unitPlural = builder.unitPlural;
         this.unitSingular = builder.unitSingular;
+        this.usageBreakdownKey = builder.usageBreakdownKey;
         this.usageGroupKey = builder.usageGroupKey;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -141,6 +146,7 @@ public final class Metric {
         builder.unitConversion = unitConversion;
         builder.unitPlural = unitPlural;
         builder.unitSingular = unitSingular;
+        builder.usageBreakdownKey = usageBreakdownKey;
         builder.usageGroupKey = usageGroupKey;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
@@ -283,7 +289,19 @@ public final class Metric {
     }
 
     /**
-     * The {@code usage_group_key} property.
+     * Event property, e.g. <code>project_id</code>, that breaks each invoice line down by value.
+     * The line is still priced on its total usage, and each value shows its quantity and share of
+     * the amount.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> usageBreakdownKey() {
+        return usageBreakdownKey.asOptional();
+    }
+
+    /**
+     * Event property, e.g. <code>cluster_id</code>, whose values are billed as separate invoice
+     * lines, each priced on its own usage.
      *
      * @return the value, empty when unset or null
      */
@@ -334,6 +352,7 @@ public final class Metric {
                 && Objects.equals(unitConversion, that.unitConversion)
                 && Objects.equals(unitPlural, that.unitPlural)
                 && Objects.equals(unitSingular, that.unitSingular)
+                && Objects.equals(usageBreakdownKey, that.usageBreakdownKey)
                 && Objects.equals(usageGroupKey, that.usageGroupKey)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
@@ -356,6 +375,7 @@ public final class Metric {
                 unitConversion,
                 unitPlural,
                 unitSingular,
+                usageBreakdownKey,
                 usageGroupKey,
                 additionalProperties);
     }
@@ -393,6 +413,8 @@ public final class Metric {
                 + unitPlural
                 + ", unitSingular="
                 + unitSingular
+                + ", usageBreakdownKey="
+                + usageBreakdownKey
                 + ", usageGroupKey="
                 + usageGroupKey
                 + ", additionalProperties="
@@ -417,6 +439,7 @@ public final class Metric {
         private JsonField<UnitConversion> unitConversion = JsonField.missing();
         private JsonField<String> unitPlural = JsonField.missing();
         private JsonField<String> unitSingular = JsonField.missing();
+        private JsonField<String> usageBreakdownKey = JsonField.missing();
         private JsonField<String> usageGroupKey = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
@@ -603,7 +626,21 @@ public final class Metric {
         }
 
         /**
-         * The {@code usage_group_key} property.
+         * Event property, e.g. <code>project_id</code>, that breaks each invoice line down by
+         * value. The line is still priced on its total usage, and each value shows its quantity and
+         * share of the amount.
+         *
+         * @param usageBreakdownKey the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageBreakdownKey(String usageBreakdownKey) {
+            this.usageBreakdownKey = JsonField.ofNullable(usageBreakdownKey);
+            return this;
+        }
+
+        /**
+         * Event property, e.g. <code>cluster_id</code>, whose values are billed as separate invoice
+         * lines, each priced on its own usage.
          *
          * @param usageGroupKey the value, null to send an explicit {@code null}
          * @return this builder

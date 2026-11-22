@@ -65,6 +65,10 @@ public final class InvoiceLineItem {
     @JsonProperty("unit_price")
     private BigDecimal unitPrice;
 
+    @JsonProperty("usage_breakdown")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<InvoiceLineUsageBreakdown> usageBreakdown = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private InvoiceLineItem() {}
@@ -81,6 +85,7 @@ public final class InvoiceLineItem {
         this.subLineItems = Utils.copyList(builder.subLineItems);
         this.taxRate = builder.taxRate;
         this.unitPrice = builder.unitPrice;
+        this.usageBreakdown = builder.usageBreakdown;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -111,6 +116,7 @@ public final class InvoiceLineItem {
         builder.subLineItems = Utils.mutableList(subLineItems);
         builder.taxRate = taxRate;
         builder.unitPrice = unitPrice;
+        builder.usageBreakdown = usageBreakdown;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -216,6 +222,15 @@ public final class InvoiceLineItem {
     }
 
     /**
+     * The {@code usage_breakdown} property.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<InvoiceLineUsageBreakdown> usageBreakdown() {
+        return usageBreakdown.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -254,6 +269,7 @@ public final class InvoiceLineItem {
                 && Objects.equals(subLineItems, that.subLineItems)
                 && Objects.equals(taxRate, that.taxRate)
                 && Objects.equals(unitPrice, that.unitPrice)
+                && Objects.equals(usageBreakdown, that.usageBreakdown)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -271,6 +287,7 @@ public final class InvoiceLineItem {
                 subLineItems,
                 taxRate,
                 unitPrice,
+                usageBreakdown,
                 additionalProperties);
     }
 
@@ -299,6 +316,8 @@ public final class InvoiceLineItem {
                 + taxRate
                 + ", unitPrice="
                 + unitPrice
+                + ", usageBreakdown="
+                + usageBreakdown
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -317,6 +336,7 @@ public final class InvoiceLineItem {
         private List<SubLineItem> subLineItems;
         private BigDecimal taxRate;
         private BigDecimal unitPrice;
+        private JsonField<InvoiceLineUsageBreakdown> usageBreakdown = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -454,6 +474,17 @@ public final class InvoiceLineItem {
          */
         public Builder unitPrice(BigDecimal unitPrice) {
             this.unitPrice = unitPrice;
+            return this;
+        }
+
+        /**
+         * The {@code usage_breakdown} property.
+         *
+         * @param usageBreakdown the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageBreakdown(InvoiceLineUsageBreakdown usageBreakdown) {
+            this.usageBreakdown = JsonField.ofNullable(usageBreakdown);
             return this;
         }
 

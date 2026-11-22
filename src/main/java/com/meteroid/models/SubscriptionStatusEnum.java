@@ -9,8 +9,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Values this version of the SDK does not know are kept, and sent back unchanged: {@link #value()}
- * is an enum to switch on, {@code _UNKNOWN} for them, and {@link #known()} throws on them.
+ * <code>PendingCharge</code>, <code>Paused</code>, <code>Suspended</code>, <code>Superseded</code>
+ * and <code>Errored</code> stay in the published schema; no subscription holds them any more, and a
+ * filter on them lists none.
+ *
+ * <p>Values this version of the SDK does not know are kept, and sent back unchanged: {@link
+ * #value()} is an enum to switch on, {@code _UNKNOWN} for them, and {@link #known()} throws on
+ * them.
  */
 public final class SubscriptionStatusEnum implements ToQueryParam {
     /** The value {@code "PENDING_ACTIVATION"}. */
