@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.6](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.5...v0.31.6) (2026-11-22)
+
+
+### Features
+
+* **api:** update `GET /api/v1/subscriptions/{subscription_id}`, `PATCH /api/v1/subscriptions/{subscription_id}`, `POST /api/v1/subscriptions`, `POST /api/v1/subscriptions/{subscription_id}/cancel` ([a4730cd](https://github.com/meteroid-oss/meteroid-java/commit/a4730cdd8b4ee3d567f78d661aeb58118e6eaa51))
+* **api:** update SDKs to meteroid 0.1.0 ([#27](https://github.com/meteroid-oss/meteroid-java/issues/27)) ([a4730cd](https://github.com/meteroid-oss/meteroid-java/commit/a4730cdd8b4ee3d567f78d661aeb58118e6eaa51))
+
 ## [0.31.5](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.4...v0.31.5) (2026-11-22)
 
 
