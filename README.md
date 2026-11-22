@@ -6,14 +6,14 @@ The official Java SDK for [Meteroid](https://meteroid.com), the open-source bill
 
 <!-- x-release-please-start-version -->
 ```kotlin
-implementation("com.meteroid:meteroid:0.31.4")
+implementation("com.meteroid:meteroid:0.31.5")
 ```
 
 ```xml
 <dependency>
   <groupId>com.meteroid</groupId>
   <artifactId>meteroid</artifactId>
-  <version>0.31.4</version>
+  <version>0.31.5</version>
 </dependency>
 ```
 <!-- x-release-please-end -->

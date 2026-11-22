@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.31.5](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.4...v0.31.5) (2026-11-22)
+
+
+### Features
+
+* **api:** add `POST /api/v1/invoices/{invoice_id}/mark-paid`, `POST /api/v1/invoices/{invoice_id}/mark-uncollectible`, `POST /api/v1/invoices/{invoice_id}/payments`, `POST /api/v1/invoices/{invoice_id}/payments/{transaction_id}/reverse` ([bed6873](https://github.com/meteroid-oss/meteroid-java/commit/bed6873b4d471a30a7ec2e31e9a1cd8f441f70c6))
+* **api:** update `GET /api/v1/credit-notes`, `GET /api/v1/credit-notes/{credit_note_id}`, `GET /api/v1/invoices`, `GET /api/v1/invoices/{invoice_id}`, `GET /api/v1/metrics/{metric_id}` and 11 more ([bed6873](https://github.com/meteroid-oss/meteroid-java/commit/bed6873b4d471a30a7ec2e31e9a1cd8f441f70c6))
+* **api:** update SDKs to meteroid 0.1.0 ([#25](https://github.com/meteroid-oss/meteroid-java/issues/25)) ([bed6873](https://github.com/meteroid-oss/meteroid-java/commit/bed6873b4d471a30a7ec2e31e9a1cd8f441f70c6))
+
 ## [0.31.4](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.3...v0.31.4) (2026-11-13)
 
 
