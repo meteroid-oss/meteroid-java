@@ -9,12 +9,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.meteroid.internal.JsonField;
 import com.meteroid.internal.Utils;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Immutable: build one with {@link #builder()}, change a copy with {@link #toBuilder()}. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,6 +29,13 @@ import java.util.Objects;
         isGetterVisibility = Visibility.NONE,
         setterVisibility = Visibility.NONE)
 public final class CancelSubscriptionResponse {
+    @JsonProperty("pending_events")
+    private List<PendingScheduledEvent> pendingEvents;
+
+    @JsonProperty("scheduled_cancellation_date")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<LocalDate> scheduledCancellationDate = JsonField.missing();
+
     @JsonProperty("subscription")
     private Subscription subscription;
 
@@ -32,6 +44,8 @@ public final class CancelSubscriptionResponse {
     private CancelSubscriptionResponse() {}
 
     private CancelSubscriptionResponse(Builder builder) {
+        this.pendingEvents = Utils.copyList(builder.pendingEvents);
+        this.scheduledCancellationDate = builder.scheduledCancellationDate;
         this.subscription = builder.subscription;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
@@ -52,9 +66,30 @@ public final class CancelSubscriptionResponse {
      */
     public Builder toBuilder() {
         Builder builder = new Builder();
+        builder.pendingEvents = Utils.mutableList(pendingEvents);
+        builder.scheduledCancellationDate = scheduledCancellationDate;
         builder.subscription = subscription;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
+    }
+
+    /**
+     * Changes still scheduled after this request, including the cancellation.
+     *
+     * @return the value, never null
+     */
+    public List<PendingScheduledEvent> pendingEvents() {
+        return Utils.required(pendingEvents, "pending_events");
+    }
+
+    /**
+     * Date the subscription ends at the start of: its first day without service. Empty when the
+     * cancellation applied immediately.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<LocalDate> scheduledCancellationDate() {
+        return scheduledCancellationDate.asOptional();
     }
 
     /**
@@ -94,19 +129,26 @@ public final class CancelSubscriptionResponse {
             return false;
         }
         CancelSubscriptionResponse that = (CancelSubscriptionResponse) o;
-        return Objects.equals(subscription, that.subscription)
+        return Objects.equals(pendingEvents, that.pendingEvents)
+                && Objects.equals(scheduledCancellationDate, that.scheduledCancellationDate)
+                && Objects.equals(subscription, that.subscription)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(subscription, additionalProperties);
+        return Objects.hash(
+                pendingEvents, scheduledCancellationDate, subscription, additionalProperties);
     }
 
     @Override
     public String toString() {
         return "CancelSubscriptionResponse{"
-                + "subscription="
+                + "pendingEvents="
+                + pendingEvents
+                + ", scheduledCancellationDate="
+                + scheduledCancellationDate
+                + ", subscription="
                 + subscription
                 + ", additionalProperties="
                 + additionalProperties
@@ -115,10 +157,49 @@ public final class CancelSubscriptionResponse {
 
     /** Builds {@link CancelSubscriptionResponse}. */
     public static final class Builder {
+        private List<PendingScheduledEvent> pendingEvents;
+        private JsonField<LocalDate> scheduledCancellationDate = JsonField.missing();
         private Subscription subscription;
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
+
+        /**
+         * Changes still scheduled after this request, including the cancellation.
+         *
+         * @param pendingEvents the value
+         * @return this builder
+         */
+        public Builder pendingEvents(List<PendingScheduledEvent> pendingEvents) {
+            this.pendingEvents = Utils.mutableList(pendingEvents);
+            return this;
+        }
+
+        /**
+         * Adds an item to {@code pending_events}.
+         *
+         * @param item the item
+         * @return this builder
+         */
+        public Builder addPendingEventsItem(PendingScheduledEvent item) {
+            if (this.pendingEvents == null) {
+                this.pendingEvents = new ArrayList<>();
+            }
+            this.pendingEvents.add(item);
+            return this;
+        }
+
+        /**
+         * Date the subscription ends at the start of: its first day without service. Empty when the
+         * cancellation applied immediately.
+         *
+         * @param scheduledCancellationDate the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder scheduledCancellationDate(LocalDate scheduledCancellationDate) {
+            this.scheduledCancellationDate = JsonField.ofNullable(scheduledCancellationDate);
+            return this;
+        }
 
         /**
          * The {@code subscription} property.
@@ -172,6 +253,7 @@ public final class CancelSubscriptionResponse {
          * @throws IllegalStateException when a required property is not set
          */
         public CancelSubscriptionResponse build() {
+            Utils.checkRequired(pendingEvents, "pending_events");
             Utils.checkRequired(subscription, "subscription");
             return new CancelSubscriptionResponse(this);
         }
