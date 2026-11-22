@@ -114,6 +114,9 @@ public final class SubscriptionDetails {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<PaymentMethodsConfig> paymentMethodsConfig = JsonField.missing();
 
+    @JsonProperty("pending_events")
+    private List<PendingScheduledEvent> pendingEvents;
+
     @JsonProperty("period")
     private BillingPeriodEnum period;
 
@@ -132,6 +135,10 @@ public final class SubscriptionDetails {
     @JsonProperty("purchase_order")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> purchaseOrder = JsonField.missing();
+
+    @JsonProperty("scheduled_cancellation_date")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<LocalDate> scheduledCancellationDate = JsonField.missing();
 
     @JsonProperty("start_date")
     private LocalDate startDate;
@@ -184,12 +191,14 @@ public final class SubscriptionDetails {
         this.mrrCents = builder.mrrCents;
         this.netTerms = builder.netTerms;
         this.paymentMethodsConfig = builder.paymentMethodsConfig;
+        this.pendingEvents = Utils.copyList(builder.pendingEvents);
         this.period = builder.period;
         this.planId = builder.planId;
         this.planName = builder.planName;
         this.planVersion = builder.planVersion;
         this.planVersionId = builder.planVersionId;
         this.purchaseOrder = builder.purchaseOrder;
+        this.scheduledCancellationDate = builder.scheduledCancellationDate;
         this.startDate = builder.startDate;
         this.status = builder.status;
         this.taxInclusive = builder.taxInclusive;
@@ -240,12 +249,14 @@ public final class SubscriptionDetails {
         builder.mrrCents = mrrCents;
         builder.netTerms = netTerms;
         builder.paymentMethodsConfig = paymentMethodsConfig;
+        builder.pendingEvents = Utils.mutableList(pendingEvents);
         builder.period = period;
         builder.planId = planId;
         builder.planName = planName;
         builder.planVersion = planVersion;
         builder.planVersionId = planVersionId;
         builder.purchaseOrder = purchaseOrder;
+        builder.scheduledCancellationDate = scheduledCancellationDate;
         builder.startDate = startDate;
         builder.status = status;
         builder.taxInclusive = taxInclusive;
@@ -482,6 +493,15 @@ public final class SubscriptionDetails {
     }
 
     /**
+     * Changes scheduled to apply later: cancellation, plan change or amendment.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<List<PendingScheduledEvent>> pendingEvents() {
+        return Optional.ofNullable(pendingEvents);
+    }
+
+    /**
      * Billing period (monthly, annual, etc.)
      *
      * @return the value, never null
@@ -533,6 +553,16 @@ public final class SubscriptionDetails {
      */
     public Optional<String> purchaseOrder() {
         return purchaseOrder.asOptional();
+    }
+
+    /**
+     * Date the subscription ends at the start of, when a cancellation is scheduled: its first day
+     * without service. <code>end_date</code> is not affected by a scheduled cancellation.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<LocalDate> scheduledCancellationDate() {
+        return scheduledCancellationDate.asOptional();
     }
 
     /**
@@ -643,12 +673,14 @@ public final class SubscriptionDetails {
                 && Objects.equals(mrrCents, that.mrrCents)
                 && Objects.equals(netTerms, that.netTerms)
                 && Objects.equals(paymentMethodsConfig, that.paymentMethodsConfig)
+                && Objects.equals(pendingEvents, that.pendingEvents)
                 && Objects.equals(period, that.period)
                 && Objects.equals(planId, that.planId)
                 && Objects.equals(planName, that.planName)
                 && Objects.equals(planVersion, that.planVersion)
                 && Objects.equals(planVersionId, that.planVersionId)
                 && Objects.equals(purchaseOrder, that.purchaseOrder)
+                && Objects.equals(scheduledCancellationDate, that.scheduledCancellationDate)
                 && Objects.equals(startDate, that.startDate)
                 && Objects.equals(status, that.status)
                 && Objects.equals(taxInclusive, that.taxInclusive)
@@ -686,12 +718,14 @@ public final class SubscriptionDetails {
                 mrrCents,
                 netTerms,
                 paymentMethodsConfig,
+                pendingEvents,
                 period,
                 planId,
                 planName,
                 planVersion,
                 planVersionId,
                 purchaseOrder,
+                scheduledCancellationDate,
                 startDate,
                 status,
                 taxInclusive,
@@ -754,6 +788,8 @@ public final class SubscriptionDetails {
                 + netTerms
                 + ", paymentMethodsConfig="
                 + paymentMethodsConfig
+                + ", pendingEvents="
+                + pendingEvents
                 + ", period="
                 + period
                 + ", planId="
@@ -766,6 +802,8 @@ public final class SubscriptionDetails {
                 + planVersionId
                 + ", purchaseOrder="
                 + purchaseOrder
+                + ", scheduledCancellationDate="
+                + scheduledCancellationDate
                 + ", startDate="
                 + startDate
                 + ", status="
@@ -810,12 +848,14 @@ public final class SubscriptionDetails {
         private Long mrrCents;
         private Integer netTerms;
         private JsonField<PaymentMethodsConfig> paymentMethodsConfig = JsonField.missing();
+        private List<PendingScheduledEvent> pendingEvents;
         private BillingPeriodEnum period;
         private String planId;
         private String planName;
         private Integer planVersion;
         private String planVersionId;
         private JsonField<String> purchaseOrder = JsonField.missing();
+        private JsonField<LocalDate> scheduledCancellationDate = JsonField.missing();
         private LocalDate startDate;
         private SubscriptionStatusEnum status;
         private Boolean taxInclusive;
@@ -1158,6 +1198,31 @@ public final class SubscriptionDetails {
         }
 
         /**
+         * Changes scheduled to apply later: cancellation, plan change or amendment.
+         *
+         * @param pendingEvents the value
+         * @return this builder
+         */
+        public Builder pendingEvents(List<PendingScheduledEvent> pendingEvents) {
+            this.pendingEvents = Utils.mutableList(pendingEvents);
+            return this;
+        }
+
+        /**
+         * Adds an item to {@code pending_events}.
+         *
+         * @param item the item
+         * @return this builder
+         */
+        public Builder addPendingEventsItem(PendingScheduledEvent item) {
+            if (this.pendingEvents == null) {
+                this.pendingEvents = new ArrayList<>();
+            }
+            this.pendingEvents.add(item);
+            return this;
+        }
+
+        /**
          * Billing period (monthly, annual, etc.)
          *
          * @param period the value
@@ -1220,6 +1285,18 @@ public final class SubscriptionDetails {
          */
         public Builder purchaseOrder(String purchaseOrder) {
             this.purchaseOrder = JsonField.ofNullable(purchaseOrder);
+            return this;
+        }
+
+        /**
+         * Date the subscription ends at the start of, when a cancellation is scheduled: its first
+         * day without service. <code>end_date</code> is not affected by a scheduled cancellation.
+         *
+         * @param scheduledCancellationDate the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder scheduledCancellationDate(LocalDate scheduledCancellationDate) {
+            this.scheduledCancellationDate = JsonField.ofNullable(scheduledCancellationDate);
             return this;
         }
 
