@@ -119,7 +119,8 @@ public final class Event {
 
     /**
      * RFC 3339 timestamp. Defaults to ingestion time if omitted. Must be between 24 hours ago and 1
-     * hour from now. Set <code>allow_backfilling</code> to remove the past limit.
+     * hour from now. Set <code>allow_backfilling</code> to accept timestamps up to 13 months in the
+     * past.
      *
      * @return the value, empty when unset or null
      */
@@ -258,7 +259,8 @@ public final class Event {
 
         /**
          * RFC 3339 timestamp. Defaults to ingestion time if omitted. Must be between 24 hours ago
-         * and 1 hour from now. Set <code>allow_backfilling</code> to remove the past limit.
+         * and 1 hour from now. Set <code>allow_backfilling</code> to accept timestamps up to 13
+         * months in the past.
          *
          * @param timestamp the value, null to send an explicit {@code null}
          * @return this builder

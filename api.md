@@ -14,7 +14,7 @@ item from that page on, and `pages()` every page, fetching the next ones on dema
 the response body as received. The async client's pages have `nextPage()`, `forEach(...)`,
 `forEachPage(...)` and `toList()`, returning `CompletableFuture`s.
 
-[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Budgets](#budgets) · [Checkout sessions](#checkout-sessions) · [Checks](#checks) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Credit units](#credit-units) · [Credit units prices](#credit-units-prices) · [Credits](#credits) · [Credits grants](#credits-grants) · [Credits wallets](#credits-wallets) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Licenses](#licenses) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Usage customer](#usage-customer) · [Usage costs](#usage-costs) · [Usage costs customer](#usage-costs-customer) · [Usage costs subscription](#usage-costs-subscription) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
+[Add ons](#add-ons) · [Add ons entitlements](#add-ons-entitlements) · [Batch jobs](#batch-jobs) · [Budgets](#budgets) · [Checkout sessions](#checkout-sessions) · [Checks](#checks) · [Connect](#connect) · [Coupons](#coupons) · [Credit notes](#credit-notes) · [Credit units](#credit-units) · [Credit units prices](#credit-units-prices) · [Credits](#credits) · [Credits grants](#credits-grants) · [Credits wallets](#credits-wallets) · [Custom properties](#custom-properties) · [Customers](#customers) · [Entitlements](#entitlements) · [Events](#events) · [Features](#features) · [Invoices](#invoices) · [Invoices payments](#invoices-payments) · [Licenses](#licenses) · [Metrics](#metrics) · [Oauth](#oauth) · [Oauth apps](#oauth-apps) · [Plans](#plans) · [Plans versions](#plans-versions) · [Product families](#product-families) · [Products](#products) · [Products entitlements](#products-entitlements) · [Subscriptions](#subscriptions) · [Usage](#usage) · [Usage customer](#usage-customer) · [Usage costs](#usage-costs) · [Usage costs customer](#usage-costs-customer) · [Usage costs subscription](#usage-costs-subscription) · [Webhook endpoints](#webhook-endpoints) · [Webhook endpoints endpoints](#webhook-endpoints-endpoints)
 
 ## Add ons
 
@@ -235,8 +235,19 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | `Invoice client.invoices().retrieve(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `Invoice client.invoices().updateCustomProperties(String invoiceId, InvoiceCustomPropertiesRequest invoiceCustomPropertiesRequest)` | `PATCH /api/v1/invoices/{invoice_id}/custom-properties` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `byte[] client.invoices().download(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}/download` | bytes |
+| `Transaction client.invoices().markPaid(String invoiceId, String idempotencyKey, RecordInvoicePaymentRequest recordInvoicePaymentRequest)` | `POST /api/v1/invoices/{invoice_id}/mark-paid` | [`Transaction`](src/main/java/com/meteroid/models/Transaction.java) |
+| `void client.invoices().markUncollectible(String invoiceId, String idempotencyKey)` | `POST /api/v1/invoices/{invoice_id}/mark-uncollectible` | nothing |
 | `Invoice client.invoices().refresh(String invoiceId)` | `POST /api/v1/invoices/{invoice_id}/refresh` | [`Invoice`](src/main/java/com/meteroid/models/Invoice.java) |
 | `byte[] client.invoices().downloadXml(String invoiceId)` | `GET /api/v1/invoices/{invoice_id}/xml` | bytes |
+
+### Invoices payments
+
+[`client.invoices().payments()`](src/main/java/com/meteroid/api/InvoicesPayments.java)
+
+| Method | Request | Returns |
+| --- | --- | --- |
+| `Transaction client.invoices().payments().create(String invoiceId, String idempotencyKey, RecordInvoicePaymentRequest recordInvoicePaymentRequest)` | `POST /api/v1/invoices/{invoice_id}/payments` | [`Transaction`](src/main/java/com/meteroid/models/Transaction.java) |
+| `Transaction client.invoices().payments().reverse(String invoiceId, String transactionId, String idempotencyKey, ReverseInvoicePaymentRequest reverseInvoicePaymentRequest)` | `POST /api/v1/invoices/{invoice_id}/payments/{transaction_id}/reverse` | [`Transaction`](src/main/java/com/meteroid/models/Transaction.java) |
 
 ## Licenses
 

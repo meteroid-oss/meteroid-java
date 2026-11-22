@@ -10,7 +10,10 @@ import com.meteroid.models.Invoice;
 import com.meteroid.models.InvoiceCustomPropertiesRequest;
 import com.meteroid.models.InvoiceListResponse;
 import com.meteroid.models.InvoiceStatus;
+import com.meteroid.models.RecordInvoicePaymentRequest;
+import com.meteroid.models.Transaction;
 
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
 
 import java.util.List;
@@ -24,6 +27,8 @@ public final class Invoices {
     private final MeteroidHttpClient client;
     private final WithRawResponse withRawResponse;
 
+    private final InvoicesPayments payments;
+
     /**
      * The operations, sending through {@code client}.
      *
@@ -32,6 +37,8 @@ public final class Invoices {
     public Invoices(MeteroidHttpClient client) {
         this.client = client;
         this.withRawResponse = new WithRawResponse();
+
+        this.payments = new InvoicesPayments(client);
     }
 
     /**
@@ -41,6 +48,15 @@ public final class Invoices {
      */
     public WithRawResponse withRawResponse() {
         return withRawResponse;
+    }
+
+    /**
+     * The {@code payments} operations.
+     *
+     * @return the operations
+     */
+    public InvoicesPayments payments() {
+        return payments;
     }
 
     /**
@@ -302,6 +318,136 @@ public final class Invoices {
     }
 
     /**
+     * Mark an invoice as paid
+     *
+     * <p>Record an external payment for the entire remaining balance of a finalized invoice. The
+     * amount must match the remaining balance.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param recordInvoicePaymentRequest the request body
+     * @return the response body
+     */
+    public Transaction markPaid(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RecordInvoicePaymentRequest recordInvoicePaymentRequest) {
+        return markPaid(
+                invoiceId, idempotencyKey, recordInvoicePaymentRequest, RequestOptions.none());
+    }
+
+    /**
+     * Mark an invoice as paid
+     *
+     * <p>Record an external payment for the entire remaining balance of a finalized invoice. The
+     * amount must match the remaining balance.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param recordInvoicePaymentRequest the request body
+     * @param requestOptions headers, timeout and retries of this call
+     * @return the response body
+     */
+    public Transaction markPaid(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RecordInvoicePaymentRequest recordInvoicePaymentRequest,
+            final RequestOptions requestOptions) {
+        return exchangeMarkPaid(
+                        invoiceId, idempotencyKey, recordInvoicePaymentRequest, requestOptions)
+                .send();
+    }
+
+    MeteroidHttpClient.Exchange<Transaction> exchangeMarkPaid(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RecordInvoicePaymentRequest recordInvoicePaymentRequest,
+            final RequestOptions requestOptions) {
+        Objects.requireNonNull(invoiceId, "invoice_id");
+        Objects.requireNonNull(idempotencyKey, "Idempotency-Key");
+        Objects.requireNonNull(recordInvoicePaymentRequest, "body");
+        HttpUrl url =
+                client.newUrlBuilder()
+                        .addPathSegments("api/v1/invoices")
+                        .addPathSegment(Utils.pathSegment("invoice_id", invoiceId))
+                        .addPathSegments("mark-paid")
+                        .build();
+        Headers.Builder headers = new Headers.Builder();
+        headers.set("Idempotency-Key", Utils.serializeQueryParam(idempotencyKey));
+        return client.call("POST", url)
+                .headers(headers.build())
+                .json(recordInvoicePaymentRequest)
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "401",
+                        "403",
+                        "404",
+                        "409",
+                        "429",
+                        "500")
+                .options(requestOptions)
+                .returning(Transaction.class);
+    }
+
+    /**
+     * Mark an invoice as uncollectible
+     *
+     * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     */
+    public void markUncollectible(final String invoiceId, final String idempotencyKey) {
+        markUncollectible(invoiceId, idempotencyKey, RequestOptions.none());
+    }
+
+    /**
+     * Mark an invoice as uncollectible
+     *
+     * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+     *
+     * @param invoiceId the {@code invoice_id} path parameter
+     * @param idempotencyKey the {@code Idempotency-Key} required parameter
+     * @param requestOptions headers, timeout and retries of this call
+     */
+    public void markUncollectible(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RequestOptions requestOptions) {
+        exchangeMarkUncollectible(invoiceId, idempotencyKey, requestOptions).send();
+    }
+
+    MeteroidHttpClient.Exchange<Void> exchangeMarkUncollectible(
+            final String invoiceId,
+            final String idempotencyKey,
+            final RequestOptions requestOptions) {
+        Objects.requireNonNull(invoiceId, "invoice_id");
+        Objects.requireNonNull(idempotencyKey, "Idempotency-Key");
+        HttpUrl url =
+                client.newUrlBuilder()
+                        .addPathSegments("api/v1/invoices")
+                        .addPathSegment(Utils.pathSegment("invoice_id", invoiceId))
+                        .addPathSegments("mark-uncollectible")
+                        .build();
+        Headers.Builder headers = new Headers.Builder();
+        headers.set("Idempotency-Key", Utils.serializeQueryParam(idempotencyKey));
+        return client.call("POST", url)
+                .headers(headers.build())
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "401",
+                        "403",
+                        "404",
+                        "409",
+                        "429",
+                        "500")
+                .options(requestOptions)
+                .returningNothing();
+    }
+
+    /**
      * Refresh invoice
      *
      * <p>Recompute a draft invoice against current usage, credits, coupons and tax, and return it.
@@ -398,6 +544,15 @@ public final class Invoices {
     /** The operations, returning the status and headers along with the body. */
     public final class WithRawResponse {
         private WithRawResponse() {}
+
+        /**
+         * The {@code payments} operations.
+         *
+         * @return the operations
+         */
+        public InvoicesPayments.WithRawResponse payments() {
+            return Invoices.this.payments.withRawResponse();
+        }
 
         /**
          * List invoices with optional filtering by customer, subscription, or status.
@@ -537,6 +692,81 @@ public final class Invoices {
         public ApiResponse<byte[]> download(
                 final String invoiceId, final RequestOptions requestOptions) {
             return Invoices.this.exchangeDownload(invoiceId, requestOptions).sendRaw();
+        }
+
+        /**
+         * Mark an invoice as paid
+         *
+         * <p>Record an external payment for the entire remaining balance of a finalized invoice.
+         * The amount must match the remaining balance.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param recordInvoicePaymentRequest the request body
+         * @return the status, headers and body
+         */
+        public ApiResponse<Transaction> markPaid(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RecordInvoicePaymentRequest recordInvoicePaymentRequest) {
+            return markPaid(
+                    invoiceId, idempotencyKey, recordInvoicePaymentRequest, RequestOptions.none());
+        }
+
+        /**
+         * Mark an invoice as paid
+         *
+         * <p>Record an external payment for the entire remaining balance of a finalized invoice.
+         * The amount must match the remaining balance.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param recordInvoicePaymentRequest the request body
+         * @param requestOptions headers, timeout and retries of this call
+         * @return the status, headers and body
+         */
+        public ApiResponse<Transaction> markPaid(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RecordInvoicePaymentRequest recordInvoicePaymentRequest,
+                final RequestOptions requestOptions) {
+            return Invoices.this
+                    .exchangeMarkPaid(
+                            invoiceId, idempotencyKey, recordInvoicePaymentRequest, requestOptions)
+                    .sendRaw();
+        }
+
+        /**
+         * Mark an invoice as uncollectible
+         *
+         * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @return the status, headers and body
+         */
+        public ApiResponse<Void> markUncollectible(
+                final String invoiceId, final String idempotencyKey) {
+            return markUncollectible(invoiceId, idempotencyKey, RequestOptions.none());
+        }
+
+        /**
+         * Mark an invoice as uncollectible
+         *
+         * <p>Transition a finalized invoice to uncollectible and stop its payment reminders.
+         *
+         * @param invoiceId the {@code invoice_id} path parameter
+         * @param idempotencyKey the {@code Idempotency-Key} required parameter
+         * @param requestOptions headers, timeout and retries of this call
+         * @return the status, headers and body
+         */
+        public ApiResponse<Void> markUncollectible(
+                final String invoiceId,
+                final String idempotencyKey,
+                final RequestOptions requestOptions) {
+            return Invoices.this
+                    .exchangeMarkUncollectible(invoiceId, idempotencyKey, requestOptions)
+                    .sendRaw();
         }
 
         /**

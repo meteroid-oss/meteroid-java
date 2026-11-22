@@ -177,7 +177,7 @@ public final class Metrics {
         HttpUrl url = client.newUrlBuilder().addPathSegments("api/v1/metrics").build();
         return client.call("POST", url)
                 .json(createMetricRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "429")
+                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "403", "429")
                 .options(requestOptions)
                 .returning(Metric.class);
     }
@@ -260,7 +260,13 @@ public final class Metrics {
                         .build();
         return client.call("PATCH", url)
                 .json(updateMetricRequest)
-                .errors(com.meteroid.models.RestErrorResponse.class, "400", "401", "404", "429")
+                .errors(
+                        com.meteroid.models.RestErrorResponse.class,
+                        "400",
+                        "401",
+                        "403",
+                        "404",
+                        "429")
                 .options(requestOptions)
                 .returning(Metric.class);
     }

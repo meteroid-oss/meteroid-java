@@ -56,6 +56,10 @@ public final class UpdateMetricRequest {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> unitSingular = JsonField.missing();
 
+    @JsonProperty("usage_breakdown_key")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private JsonField<String> usageBreakdownKey = JsonField.missing();
+
     private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
     private UpdateMetricRequest() {}
@@ -68,6 +72,7 @@ public final class UpdateMetricRequest {
         this.unitConversion = builder.unitConversion;
         this.unitPlural = builder.unitPlural;
         this.unitSingular = builder.unitSingular;
+        this.usageBreakdownKey = builder.usageBreakdownKey;
         this.additionalProperties.putAll(builder.additionalProperties);
     }
 
@@ -94,6 +99,7 @@ public final class UpdateMetricRequest {
         builder.unitConversion = unitConversion;
         builder.unitPlural = unitPlural;
         builder.unitSingular = unitSingular;
+        builder.usageBreakdownKey = usageBreakdownKey;
         builder.additionalProperties.putAll(additionalProperties);
         return builder;
     }
@@ -165,6 +171,15 @@ public final class UpdateMetricRequest {
     }
 
     /**
+     * Omit to leave the breakdown key unchanged; send <code>null</code> to remove it.
+     *
+     * @return the value, empty when unset or null
+     */
+    public Optional<String> usageBreakdownKey() {
+        return usageBreakdownKey.asOptional();
+    }
+
+    /**
      * Properties this version of the SDK does not know, kept as received and sent back.
      *
      * @return the properties by name, unmodifiable
@@ -199,6 +214,7 @@ public final class UpdateMetricRequest {
                 && Objects.equals(unitConversion, that.unitConversion)
                 && Objects.equals(unitPlural, that.unitPlural)
                 && Objects.equals(unitSingular, that.unitSingular)
+                && Objects.equals(usageBreakdownKey, that.usageBreakdownKey)
                 && Objects.equals(additionalProperties, that.additionalProperties);
     }
 
@@ -212,6 +228,7 @@ public final class UpdateMetricRequest {
                 unitConversion,
                 unitPlural,
                 unitSingular,
+                usageBreakdownKey,
                 additionalProperties);
     }
 
@@ -232,6 +249,8 @@ public final class UpdateMetricRequest {
                 + unitPlural
                 + ", unitSingular="
                 + unitSingular
+                + ", usageBreakdownKey="
+                + usageBreakdownKey
                 + ", additionalProperties="
                 + additionalProperties
                 + "}";
@@ -246,6 +265,7 @@ public final class UpdateMetricRequest {
         private JsonField<UnitConversion> unitConversion = JsonField.missing();
         private JsonField<String> unitPlural = JsonField.missing();
         private JsonField<String> unitSingular = JsonField.missing();
+        private JsonField<String> usageBreakdownKey = JsonField.missing();
         private final Map<String, JsonNode> additionalProperties = new LinkedHashMap<>();
 
         private Builder() {}
@@ -343,6 +363,17 @@ public final class UpdateMetricRequest {
          */
         public Builder unitSingular(String unitSingular) {
             this.unitSingular = JsonField.ofNullable(unitSingular);
+            return this;
+        }
+
+        /**
+         * Omit to leave the breakdown key unchanged; send <code>null</code> to remove it.
+         *
+         * @param usageBreakdownKey the value, null to send an explicit {@code null}
+         * @return this builder
+         */
+        public Builder usageBreakdownKey(String usageBreakdownKey) {
+            this.usageBreakdownKey = JsonField.ofNullable(usageBreakdownKey);
             return this;
         }
 
