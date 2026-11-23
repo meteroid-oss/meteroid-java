@@ -32,13 +32,18 @@ public final class InvoicePaymentStatus implements ToQueryParam {
     public static final InvoicePaymentStatus PROCESSING =
             new InvoicePaymentStatus("PROCESSING", Value.PROCESSING);
 
+    /** The value {@code "CARRIED"}. */
+    public static final InvoicePaymentStatus CARRIED =
+            new InvoicePaymentStatus("CARRIED", Value.CARRIED);
+
     private static final Map<String, InvoicePaymentStatus> constants =
             Map.ofEntries(
                     Map.entry("UNPAID", UNPAID),
                     Map.entry("PARTIALLY_PAID", PARTIALLY_PAID),
                     Map.entry("PAID", PAID),
                     Map.entry("ERRORED", ERRORED),
-                    Map.entry("PROCESSING", PROCESSING));
+                    Map.entry("PROCESSING", PROCESSING),
+                    Map.entry("CARRIED", CARRIED));
 
     private final String value;
     private final Value variant;
@@ -135,7 +140,9 @@ public final class InvoicePaymentStatus implements ToQueryParam {
         /** The {@code ERRORED} constant. */
         ERRORED,
         /** The {@code PROCESSING} constant. */
-        PROCESSING
+        PROCESSING,
+        /** The {@code CARRIED} constant. */
+        CARRIED
     }
 
     /** The values this version of the SDK knows, and {@code _UNKNOWN} for the others. */
@@ -150,6 +157,8 @@ public final class InvoicePaymentStatus implements ToQueryParam {
         ERRORED,
         /** The {@code PROCESSING} constant. */
         PROCESSING,
+        /** The {@code CARRIED} constant. */
+        CARRIED,
         /** A value this version of the SDK does not know. */
         _UNKNOWN
     }

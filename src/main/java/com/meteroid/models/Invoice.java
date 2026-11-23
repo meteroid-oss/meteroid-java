@@ -40,6 +40,9 @@ public final class Invoice {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<LocalDate> billingPeriodStart = JsonField.missing();
 
+    @JsonProperty("carried_balance")
+    private Long carriedBalance;
+
     @JsonProperty("child_invoice_id")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> childInvoiceId = JsonField.missing();
@@ -173,6 +176,7 @@ public final class Invoice {
         this.amountDue = builder.amountDue;
         this.appliedCredits = builder.appliedCredits;
         this.billingPeriodStart = builder.billingPeriodStart;
+        this.carriedBalance = builder.carriedBalance;
         this.childInvoiceId = builder.childInvoiceId;
         this.coupons = Utils.copyList(builder.coupons);
         this.createdAt = builder.createdAt;
@@ -232,6 +236,7 @@ public final class Invoice {
         builder.amountDue = amountDue;
         builder.appliedCredits = appliedCredits;
         builder.billingPeriodStart = billingPeriodStart;
+        builder.carriedBalance = carriedBalance;
         builder.childInvoiceId = childInvoiceId;
         builder.coupons = Utils.mutableList(coupons);
         builder.createdAt = createdAt;
@@ -301,6 +306,18 @@ public final class Invoice {
      */
     public Optional<LocalDate> billingPeriodStart() {
         return billingPeriodStart.asOptional();
+    }
+
+    /**
+     * Debts carried in from earlier invoices (amounts due below the payment providers' minimum
+     * charge, never collected on their own) less the one this invoice carried to a later invoice,
+     * in minor units. Included in <code>amount_due</code>: <code>
+     * amount_due = total + carried_balance - applied_credits - paid</code>.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Long> carriedBalance() {
+        return Optional.ofNullable(carriedBalance);
     }
 
     /**
@@ -674,6 +691,7 @@ public final class Invoice {
         return Objects.equals(amountDue, that.amountDue)
                 && Objects.equals(appliedCredits, that.appliedCredits)
                 && Objects.equals(billingPeriodStart, that.billingPeriodStart)
+                && Objects.equals(carriedBalance, that.carriedBalance)
                 && Objects.equals(childInvoiceId, that.childInvoiceId)
                 && Objects.equals(coupons, that.coupons)
                 && Objects.equals(createdAt, that.createdAt)
@@ -720,6 +738,7 @@ public final class Invoice {
                 amountDue,
                 appliedCredits,
                 billingPeriodStart,
+                carriedBalance,
                 childInvoiceId,
                 coupons,
                 createdAt,
@@ -769,6 +788,8 @@ public final class Invoice {
                 + appliedCredits
                 + ", billingPeriodStart="
                 + billingPeriodStart
+                + ", carriedBalance="
+                + carriedBalance
                 + ", childInvoiceId="
                 + childInvoiceId
                 + ", coupons="
@@ -853,6 +874,7 @@ public final class Invoice {
         private Long amountDue;
         private Long appliedCredits;
         private JsonField<LocalDate> billingPeriodStart = JsonField.missing();
+        private Long carriedBalance;
         private JsonField<String> childInvoiceId = JsonField.missing();
         private List<CouponLineItem> coupons;
         private OffsetDateTime createdAt;
@@ -927,6 +949,20 @@ public final class Invoice {
          */
         public Builder billingPeriodStart(LocalDate billingPeriodStart) {
             this.billingPeriodStart = JsonField.ofNullable(billingPeriodStart);
+            return this;
+        }
+
+        /**
+         * Debts carried in from earlier invoices (amounts due below the payment providers' minimum
+         * charge, never collected on their own) less the one this invoice carried to a later
+         * invoice, in minor units. Included in <code>amount_due</code>: <code>
+         * amount_due = total + carried_balance - applied_credits - paid</code>.
+         *
+         * @param carriedBalance the value
+         * @return this builder
+         */
+        public Builder carriedBalance(Long carriedBalance) {
+            this.carriedBalance = carriedBalance;
             return this;
         }
 
