@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.31.7](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.6...v0.31.7) (2026-11-23)
+
+
+### Features
+
+* **api:** add `POST /api/v1/events/{event_id}/amend`, `POST /api/v1/events/{event_id}/void` ([62de460](https://github.com/meteroid-oss/meteroid-java/commit/62de46094f20bbc4c7402c6269f353a20c345372))
+* **api:** update `GET /api/v1/invoices`, `GET /api/v1/invoices/{invoice_id}`, `PATCH /api/v1/invoices/{invoice_id}/custom-properties`, `POST /api/v1/invoices/{invoice_id}/refresh` ([62de460](https://github.com/meteroid-oss/meteroid-java/commit/62de46094f20bbc4c7402c6269f353a20c345372))
+* **api:** update SDKs to meteroid 0.1.0 ([#29](https://github.com/meteroid-oss/meteroid-java/issues/29)) ([62de460](https://github.com/meteroid-oss/meteroid-java/commit/62de46094f20bbc4c7402c6269f353a20c345372))
+
 ## [0.31.6](https://github.com/meteroid-oss/meteroid-java/compare/v0.31.5...v0.31.6) (2026-11-22)
 
 
