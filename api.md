@@ -211,6 +211,8 @@ the response body as received. The async client's pages have `nextPage()`, `forE
 | Method | Request | Returns |
 | --- | --- | --- |
 | `IngestEventsResponse client.events().ingest(IngestEventsRequest ingestEventsRequest)` | `POST /api/v1/events/ingest` | [`IngestEventsResponse`](src/main/java/com/meteroid/models/IngestEventsResponse.java) |
+| `EventChangeResponse client.events().amend(String eventId, AmendEventRequest amendEventRequest)` | `POST /api/v1/events/{event_id}/amend` | [`EventChangeResponse`](src/main/java/com/meteroid/models/EventChangeResponse.java) |
+| `EventChangeResponse client.events().void_(String eventId, VoidEventRequest voidEventRequest)` | `POST /api/v1/events/{event_id}/void` | [`EventChangeResponse`](src/main/java/com/meteroid/models/EventChangeResponse.java) |
 
 ## Features
 
