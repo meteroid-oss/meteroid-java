@@ -57,6 +57,9 @@ public final class License {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<OffsetDateTime> lastRefreshedAt = JsonField.missing();
 
+    @JsonProperty("metadata")
+    private Map<String, String> metadata;
+
     @JsonProperty("offline")
     private Boolean offline;
 
@@ -95,6 +98,7 @@ public final class License {
         this.id = builder.id;
         this.instanceId = builder.instanceId;
         this.lastRefreshedAt = builder.lastRefreshedAt;
+        this.metadata = Utils.copyMap(builder.metadata);
         this.offline = builder.offline;
         this.planName = builder.planName;
         this.revokedAt = builder.revokedAt;
@@ -130,6 +134,7 @@ public final class License {
         builder.id = id;
         builder.instanceId = instanceId;
         builder.lastRefreshedAt = lastRefreshedAt;
+        builder.metadata = Utils.mutableMap(metadata);
         builder.offline = offline;
         builder.planName = planName;
         builder.revokedAt = revokedAt;
@@ -220,6 +225,15 @@ public final class License {
      */
     public Optional<OffsetDateTime> lastRefreshedAt() {
         return lastRefreshedAt.asOptional();
+    }
+
+    /**
+     * Signed into the license as is.
+     *
+     * @return the value, never null
+     */
+    public Map<String, String> metadata() {
+        return Utils.required(metadata, "metadata");
     }
 
     /**
@@ -324,6 +338,7 @@ public final class License {
                 && Objects.equals(id, that.id)
                 && Objects.equals(instanceId, that.instanceId)
                 && Objects.equals(lastRefreshedAt, that.lastRefreshedAt)
+                && Objects.equals(metadata, that.metadata)
                 && Objects.equals(offline, that.offline)
                 && Objects.equals(planName, that.planName)
                 && Objects.equals(revokedAt, that.revokedAt)
@@ -346,6 +361,7 @@ public final class License {
                 id,
                 instanceId,
                 lastRefreshedAt,
+                metadata,
                 offline,
                 planName,
                 revokedAt,
@@ -377,6 +393,8 @@ public final class License {
                 + instanceId
                 + ", lastRefreshedAt="
                 + lastRefreshedAt
+                + ", metadata="
+                + metadata
                 + ", offline="
                 + offline
                 + ", planName="
@@ -407,6 +425,7 @@ public final class License {
         private String id;
         private JsonField<String> instanceId = JsonField.missing();
         private JsonField<OffsetDateTime> lastRefreshedAt = JsonField.missing();
+        private Map<String, String> metadata;
         private Boolean offline;
         private JsonField<String> planName = JsonField.missing();
         private JsonField<OffsetDateTime> revokedAt = JsonField.missing();
@@ -514,6 +533,32 @@ public final class License {
          */
         public Builder lastRefreshedAt(OffsetDateTime lastRefreshedAt) {
             this.lastRefreshedAt = JsonField.ofNullable(lastRefreshedAt);
+            return this;
+        }
+
+        /**
+         * Signed into the license as is.
+         *
+         * @param metadata the value
+         * @return this builder
+         */
+        public Builder metadata(Map<String, String> metadata) {
+            this.metadata = Utils.mutableMap(metadata);
+            return this;
+        }
+
+        /**
+         * Puts an entry in {@code metadata}.
+         *
+         * @param key the key
+         * @param item the item
+         * @return this builder
+         */
+        public Builder putMetadataItem(String key, String item) {
+            if (this.metadata == null) {
+                this.metadata = new LinkedHashMap<>();
+            }
+            this.metadata.put(key, item);
             return this;
         }
 
@@ -643,6 +688,7 @@ public final class License {
             Utils.checkRequired(customerName, "customer_name");
             Utils.checkRequired(hasActivationCode, "has_activation_code");
             Utils.checkRequired(id, "id");
+            Utils.checkRequired(metadata, "metadata");
             Utils.checkRequired(offline, "offline");
             Utils.checkRequired(revokedImmediately, "revoked_immediately");
             Utils.checkRequired(status, "status");
