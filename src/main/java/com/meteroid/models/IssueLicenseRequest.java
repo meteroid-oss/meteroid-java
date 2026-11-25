@@ -37,6 +37,9 @@ public final class IssueLicenseRequest {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private JsonField<String> instanceId = JsonField.missing();
 
+    @JsonProperty("metadata")
+    private Map<String, String> metadata;
+
     @JsonProperty("offline")
     private Boolean offline;
 
@@ -56,6 +59,7 @@ public final class IssueLicenseRequest {
         this.customerId = builder.customerId;
         this.ephemeralHours = builder.ephemeralHours;
         this.instanceId = builder.instanceId;
+        this.metadata = Utils.copyMap(builder.metadata);
         this.offline = builder.offline;
         this.subscriptionId = builder.subscriptionId;
         this.validityDays = builder.validityDays;
@@ -81,6 +85,7 @@ public final class IssueLicenseRequest {
         builder.customerId = customerId;
         builder.ephemeralHours = ephemeralHours;
         builder.instanceId = instanceId;
+        builder.metadata = Utils.mutableMap(metadata);
         builder.offline = offline;
         builder.subscriptionId = subscriptionId;
         builder.validityDays = validityDays;
@@ -98,10 +103,9 @@ public final class IssueLicenseRequest {
     }
 
     /**
-     * Ephemeral, for CI and other short-lived installations: the activation code can be used any
-     * number of times, each activation gets a license of this many hours (1 to 24) for the
-     * installation activating, and nothing is refreshed. Not with <code>offline</code> or <code>
-     * validity_days</code>.
+     * Ephemeral, for CI and other short-lived installations: the activation code can be used by any
+     * number of installations, each gets one license of this many hours (1 to 24), never renewed.
+     * Not with <code>offline</code> or <code>validity_days</code>.
      *
      * @return the value, empty when unset or null
      */
@@ -118,6 +122,18 @@ public final class IssueLicenseRequest {
      */
     public Optional<String> instanceId() {
         return instanceId.asOptional();
+    }
+
+    /**
+     * Signed into the license as is, for the licensed software to read: at most 20 entries, keys of
+     * 1 to 64 characters among <code>a-z</code>, <code>0-9</code>, <code>_</code>, <code>.</code>
+     * and <code>-</code>, values up to 256 characters. Reserved: <code>environment</code> only
+     * takes <code>non_production</code>.
+     *
+     * @return the value, empty when unset
+     */
+    public Optional<Map<String, String>> metadata() {
+        return Optional.ofNullable(metadata);
     }
 
     /**
@@ -181,6 +197,7 @@ public final class IssueLicenseRequest {
         return Objects.equals(customerId, that.customerId)
                 && Objects.equals(ephemeralHours, that.ephemeralHours)
                 && Objects.equals(instanceId, that.instanceId)
+                && Objects.equals(metadata, that.metadata)
                 && Objects.equals(offline, that.offline)
                 && Objects.equals(subscriptionId, that.subscriptionId)
                 && Objects.equals(validityDays, that.validityDays)
@@ -193,6 +210,7 @@ public final class IssueLicenseRequest {
                 customerId,
                 ephemeralHours,
                 instanceId,
+                metadata,
                 offline,
                 subscriptionId,
                 validityDays,
@@ -208,6 +226,8 @@ public final class IssueLicenseRequest {
                 + ephemeralHours
                 + ", instanceId="
                 + instanceId
+                + ", metadata="
+                + metadata
                 + ", offline="
                 + offline
                 + ", subscriptionId="
@@ -224,6 +244,7 @@ public final class IssueLicenseRequest {
         private String customerId;
         private JsonField<Integer> ephemeralHours = JsonField.missing();
         private JsonField<String> instanceId = JsonField.missing();
+        private Map<String, String> metadata;
         private Boolean offline;
         private JsonField<String> subscriptionId = JsonField.missing();
         private JsonField<Integer> validityDays = JsonField.missing();
@@ -243,10 +264,9 @@ public final class IssueLicenseRequest {
         }
 
         /**
-         * Ephemeral, for CI and other short-lived installations: the activation code can be used
-         * any number of times, each activation gets a license of this many hours (1 to 24) for the
-         * installation activating, and nothing is refreshed. Not with <code>offline</code> or
-         * <code>validity_days</code>.
+         * Ephemeral, for CI and other short-lived installations: the activation code can be used by
+         * any number of installations, each gets one license of this many hours (1 to 24), never
+         * renewed. Not with <code>offline</code> or <code>validity_days</code>.
          *
          * @param ephemeralHours the value, null to send an explicit {@code null}
          * @return this builder
@@ -266,6 +286,35 @@ public final class IssueLicenseRequest {
          */
         public Builder instanceId(String instanceId) {
             this.instanceId = JsonField.ofNullable(instanceId);
+            return this;
+        }
+
+        /**
+         * Signed into the license as is, for the licensed software to read: at most 20 entries,
+         * keys of 1 to 64 characters among <code>a-z</code>, <code>0-9</code>, <code>_</code>,
+         * <code>.</code> and <code>-</code>, values up to 256 characters. Reserved: <code>
+         * environment</code> only takes <code>non_production</code>.
+         *
+         * @param metadata the value
+         * @return this builder
+         */
+        public Builder metadata(Map<String, String> metadata) {
+            this.metadata = Utils.mutableMap(metadata);
+            return this;
+        }
+
+        /**
+         * Puts an entry in {@code metadata}.
+         *
+         * @param key the key
+         * @param item the item
+         * @return this builder
+         */
+        public Builder putMetadataItem(String key, String item) {
+            if (this.metadata == null) {
+                this.metadata = new LinkedHashMap<>();
+            }
+            this.metadata.put(key, item);
             return this;
         }
 
